@@ -47,7 +47,7 @@ export default function Input({
   return (
     <View style={styles.wrapper}>
       {title && (
-        <Text>
+        <Text style={styles.title}>
           {title} {required && <Text style={styles.required}>*</Text>}
         </Text>
       )}
