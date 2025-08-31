@@ -21,7 +21,7 @@ export default function PostCreateProgressBar({
   const styles = StyleSheet.create({
     wrapper: {
       width: "100%",
-      paddingBottom: SPACING.normal,
+      paddingVertical: SPACING.normal,
     },
     progressContainer: { gap: SPACING.sm, flexDirection: "row" },
     progressSection: {
