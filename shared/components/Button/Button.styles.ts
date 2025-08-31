@@ -1,4 +1,4 @@
-import { COLORS, FONTS, RADIUS, SPACING } from "@/shared/styles";
+import { COLORS, FONT_SIZE, FONTS, RADIUS, SPACING } from "@/shared/styles";
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
@@ -19,14 +19,19 @@ const styles = StyleSheet.create({
   },
   lg: {
     borderRadius: RADIUS.sm,
-    paddingVertical: SPACING.sm,
+    paddingVertical: SPACING.xs,
     width: "100%",
-    minHeight: 52,
+    minHeight: 40,
   },
   primary: {
     backgroundColor: COLORS.primary[90],
     borderWidth: 0,
     color: COLORS.white,
+  },
+  disabled: {
+    color: COLORS.gray[30],
+    backgroundColor: COLORS.gray[10],
+    borderWidth: 0,
   },
   textBase: {
     fontFamily: FONTS.medium,
@@ -40,15 +45,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
   },
-  textAuth: {
-    fontSize: 15,
-    lineHeight: 22,
-    fontFamily: FONTS.semiBold,
-  },
   textLg: {
-    fontSize: 18,
-    lineHeight: 22,
-    fontFamily: FONTS.semiBold,
+    fontSize: FONT_SIZE.b2,
   },
 });
 
@@ -62,6 +60,7 @@ export const sizeStyles = {
 
 export const variantStyles = {
   primary: styles.primary,
+  disabled: styles.disabled,
 } as const;
 
 export const textSizeStyles = {

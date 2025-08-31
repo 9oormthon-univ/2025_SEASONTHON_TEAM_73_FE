@@ -49,7 +49,6 @@ export default function Button({
     buttonStyles.textBase,
     { color: variantStyles[variant].color },
     textSizeStyles[textSize ?? size],
-    disabled && buttonStyles.disabledText,
   ];
 
   return (
