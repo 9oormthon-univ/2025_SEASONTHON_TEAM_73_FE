@@ -1,6 +1,11 @@
 import React from "react";
-import { StyleProp, Text, TextStyle, TouchableOpacity, ViewStyle } from "react-native";
-import { buttonStyles, sizeStyles, textSizeStyles, variantStyles } from "./Button.styles";
+import { StyleProp, Text, TouchableOpacity, ViewStyle } from "react-native";
+import {
+  buttonStyles,
+  sizeStyles,
+  textSizeStyles,
+  variantStyles,
+} from "./Button.styles";
 
 interface ButtonProps {
   text: string;
@@ -10,7 +15,6 @@ interface ButtonProps {
   textSize?: keyof typeof textSizeStyles;
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
-  textStyle?: StyleProp<TextStyle>;
   fullWidth?: boolean;
 }
 
@@ -22,9 +26,14 @@ export const Button: React.FC<ButtonProps> = ({
   textSize = size,
   disabled = false,
   style,
-  textStyle,
   fullWidth = false,
 }) => {
+  const handlePress = () => {
+    if (!disabled) {
+      onPress?.();
+    }
+  };
+
   return (
     <TouchableOpacity
       style={[
@@ -35,22 +44,19 @@ export const Button: React.FC<ButtonProps> = ({
         fullWidth && { width: "100%" },
         style,
       ]}
-      onPress={onPress}
+      onPress={handlePress}
       disabled={disabled}
       activeOpacity={0.8}
     >
-
       <Text
         style={[
           buttonStyles.textBase,
-          textSizeStyles[textSize],
-          disabled && buttonStyles.disabledText,
-          textStyle,
+          textSizeStyles[textSize ?? size],
+          { color: variantStyles[variant].color },
         ]}
       >
         {text}
       </Text>
-
     </TouchableOpacity>
   );
 };
