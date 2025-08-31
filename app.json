@@ -16,7 +16,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.yummjin.livingmate"
     },
     "web": {
       "bundler": "metro",
@@ -38,6 +39,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "fa4180c4-44a2-41dd-9923-48d4f5fda72f"
+      }
     }
   }
 }
