@@ -1,3 +1,4 @@
+import { FONT_SIZE, FONTS } from "@/shared/styles";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -26,8 +27,22 @@ export default function RootLayout() {
     return null;
   }
 
-  return <Stack screenOptions={{ headerShown: false }}>
-          {/* 이 레이아웃 아래 모든 화면의 헤더가 제거됩니다 */}
-          <Stack.Screen name="selectarea" options={{ headerShown: false }} />
-        </Stack>;
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        headerTitleStyle: { fontFamily: FONTS.bold, fontSize: FONT_SIZE.b1 },
+        headerShadowVisible: true,
+      }}
+    >
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen
+        name="post-create"
+        options={{
+          headerShown: true,
+          headerTitle: "새 룸메이트 구하기",
+        }}
+      />
+    </Stack>
+  );
 }
