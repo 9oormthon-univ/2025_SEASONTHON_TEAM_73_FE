@@ -36,13 +36,7 @@ export default function RootLayout() {
       }}
     >
       <Stack.Screen name="(tabs)" />
-      <Stack.Screen
-        name="post-create"
-        options={{
-          headerShown: true,
-          headerTitle: "새 룸메이트 구하기",
-        }}
-      />
+      <Stack.Screen name="post-create" />
     </Stack>
   );
 }
