@@ -132,6 +132,7 @@ export default function Page() {
           size="lg"
           text="다음"
           onPress={handleApply}
+          disabled={selectedAreas.length === 0 || selectedAreas.length > 10}
         />
       </View>
     </View>
