@@ -1,5 +1,5 @@
-import { Header } from '@/shared/components/header/Header';
-import { ApplyButton } from '@/widgets/selectarea/ApplyButton';
+import { Button } from '@/shared/components/Button/Button';
+import { SPACING } from '@/shared/styles';
 import { DescriptionSection } from '@/widgets/selectarea/DesciptionSection';
 import { DistrictList } from '@/widgets/selectarea/DistrictList';
 import { NeighborhoodList } from '@/widgets/selectarea/NeighborhoodList';
@@ -91,7 +91,6 @@ export default function Page() {
 
   return (
     <View style={styles.container}>
-        <Header title="희망 거주 지역 선택" />
 
         <DescriptionSection
             title="서울 자치구와 동을 선택해주세요."
@@ -124,7 +123,17 @@ export default function Page() {
             </View>
         </View>
 
-      <ApplyButton onPress={handleApply} />
+      <View
+        style={{
+          padding: SPACING.normal,
+        }}
+      >
+        <Button
+          size="lg"
+          text="다음"
+          onPress={handleApply}
+        />
+      </View>
     </View>
   );
 }
@@ -138,8 +147,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flex: 1,
     borderTopWidth: 1,
-    borderBottomWidth: 1,
     borderTopColor: '#9D9D9F',
-    borderBottomColor: '#9D9D9F',
   },
 });
