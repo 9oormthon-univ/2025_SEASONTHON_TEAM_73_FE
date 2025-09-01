@@ -2,7 +2,7 @@ import { COLORS, FONT_SIZE, FONTS, RADIUS, SPACING } from "@/shared/styles";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as ImagePicker from "expo-image-picker";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import {
   Alert,
   Image,
@@ -23,19 +23,19 @@ interface FieldProps {
 interface RadioProps extends FieldProps {
   items: string[];
   selected: number[];
-  setSelected: Dispatch<SetStateAction<number[]>>;
+  setSelected: (value: number[]) => void;
   isMultiSelect?: boolean;
 }
 
 interface DatePickerProps extends FieldProps {
   value: Date | null;
-  setValue: Dispatch<SetStateAction<Date | null>>;
+  setValue: (value: Date | null) => void;
   placeholder?: string;
 }
 
 interface TextAreaProps extends FieldProps {
   value: string;
-  setValue: Dispatch<SetStateAction<string>>;
+  setValue: (value: string) => void;
   placeholder?: string;
   multiline?: boolean;
   numberOfLines?: number;
@@ -43,7 +43,7 @@ interface TextAreaProps extends FieldProps {
 
 interface PhotoPickerProps extends FieldProps {
   images: string[];
-  setImages: Dispatch<SetStateAction<string[]>>;
+  setImages: (value: string[]) => void;
   maxCount?: number;
 }
 
@@ -65,14 +65,14 @@ function Radio({
   isMultiSelect = false,
 }: RadioProps) {
   const handlePress = (index: number) => {
-    setSelected((prev) => {
-      if (isMultiSelect) {
-        return prev.includes(index)
-          ? prev.filter((item) => item !== index)
-          : [...prev, index];
-      }
-      return [index];
-    });
+    if (isMultiSelect) {
+      const newSelected = selected.includes(index)
+        ? selected.filter((item) => item !== index)
+        : [...selected, index];
+      setSelected(newSelected);
+    } else {
+      setSelected([index]);
+    }
   };
 
   return (
@@ -128,14 +128,14 @@ function MultiRadio({
   isMultiSelect = false,
 }: RadioProps) {
   const handlePress = (index: number) => {
-    setSelected((prev) => {
-      if (isMultiSelect) {
-        return prev.includes(index)
-          ? prev.filter((item) => item !== index)
-          : [...prev, index];
-      }
-      return [index];
-    });
+    if (isMultiSelect) {
+      const newSelected = selected.includes(index)
+        ? selected.filter((item) => item !== index)
+        : [...selected, index];
+      setSelected(newSelected);
+    } else {
+      setSelected([index]);
+    }
   };
 
   return (
@@ -304,12 +304,12 @@ function PhotoPicker({
     });
 
     if (!result.canceled && result.assets[0]) {
-      setImages((prev) => [...prev, result.assets[0].uri]);
+      setImages([...images, result.assets[0].uri]);
     }
   };
 
   const removeImage = (index: number) => {
-    setImages((prev) => prev.filter((_, i) => i !== index));
+    setImages(images.filter((_, i) => i !== index));
   };
 
   return (
