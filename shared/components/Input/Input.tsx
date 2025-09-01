@@ -14,6 +14,7 @@ interface InputProps extends TextInputProps {
   descriptionDirection?: "left" | "right";
   required?: boolean;
   width?: DimensionValue;
+  error?: string;
 }
 
 export default function Input({
@@ -22,6 +23,7 @@ export default function Input({
   descriptionDirection = "left",
   required,
   width,
+  error,
   ...rest
 }: InputProps) {
   const styles = StyleSheet.create({
@@ -37,10 +39,15 @@ export default function Input({
       paddingVertical: 10,
       paddingHorizontal: SPACING.md,
       borderWidth: 1,
-      borderColor: COLORS.gray[40],
+      borderColor: error ? COLORS.error : COLORS.gray[40],
       borderRadius: RADIUS.xs,
       fontSize: FONT_SIZE.b2,
       fontFamily: FONTS.regular,
+    },
+    errorText: {
+      fontSize: FONT_SIZE.c1,
+      fontFamily: FONTS.regular,
+      color: COLORS.error,
     },
   });
 
@@ -57,26 +64,36 @@ export default function Input({
         {...rest}
       />
       {description && <Text style={styles.description}>{description}</Text>}
+      {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
 }
 
-function Title({ ...rest }: TextInputProps) {
+function Title({ error, ...rest }: TextInputProps & { error?: string }) {
   const styles = StyleSheet.create({
     input: {
       fontSize: FONT_SIZE.h2,
       padding: 10,
       borderBottomWidth: 1,
-      borderBottomColor: COLORS.gray[40],
+      borderBottomColor: error ? COLORS.error : COLORS.gray[40],
+    },
+    errorText: {
+      fontSize: FONT_SIZE.c1,
+      fontFamily: FONTS.regular,
+      color: COLORS.error,
+      marginTop: 5,
     },
   });
   return (
-    <TextInput
-      style={styles.input}
-      placeholder="제목을 입력하세요."
-      placeholderTextColor={COLORS.gray[40]}
-      {...rest}
-    />
+    <View style={{ gap: 5 }}>
+      <TextInput
+        style={styles.input}
+        placeholder="제목을 입력하세요."
+        placeholderTextColor={COLORS.gray[40]}
+        {...rest}
+      />
+      {error && <Text style={styles.errorText}>{error}</Text>}
+    </View>
   );
 }
 
