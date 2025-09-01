@@ -6,7 +6,7 @@ import {
 } from "@/widgets/post-create/components";
 import { ROOM_INFO_DEFAULT_VALUES } from "@/widgets/post-create/constants";
 import { useRoomInfoValidation } from "@/widgets/post-create/hooks";
-import { RoomInfoFormData } from "@/widgets/post-create/types/post";
+import type { RoomInfoFormData } from "@/widgets/post-create/types";
 import { router } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { Dimensions, ScrollView, View } from "react-native";
@@ -206,7 +206,7 @@ export default function RoomInfoScreen() {
       >
         <Button
           size="lg"
-          title="다음"
+          text="다음"
           onPress={handleSubmit(onSubmit)}
           disabled={!isFormValid}
         />
