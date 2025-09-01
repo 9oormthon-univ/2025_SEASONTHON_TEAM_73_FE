@@ -1,3 +1,4 @@
+import React from "react";
 import { StyleProp, Text, TouchableOpacity, ViewStyle } from "react-native";
 import {
   buttonStyles,
@@ -7,58 +8,55 @@ import {
 } from "./Button.styles";
 
 interface ButtonProps {
-  title: string;
-  onPress: () => void;
+  text: string;
+  onPress?: () => void;
   variant?: keyof typeof variantStyles;
   size?: keyof typeof sizeStyles;
   textSize?: keyof typeof textSizeStyles;
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
-  icon?: string | number;
-  iconPosition?: "left" | "right";
-  iconSize?: number;
+  fullWidth?: boolean;
 }
 
-export default function Button({
-  title,
+export const Button: React.FC<ButtonProps> = ({
+  text,
   onPress,
   variant = "primary",
   size = "md",
   textSize = size,
   disabled = false,
   style,
-  icon,
-  iconPosition = "left",
-  iconSize,
-}: ButtonProps) {
+  fullWidth = false,
+}) => {
   const handlePress = () => {
     if (!disabled) {
-      onPress();
+      onPress?.();
     }
   };
-
-  const buttonStyle = [
-    buttonStyles.base,
-    sizeStyles[size],
-    variantStyles[variant],
-    disabled && buttonStyles.disabled,
-    style,
-  ];
-
-  const textStyle = [
-    buttonStyles.textBase,
-    { color: variantStyles[variant].color },
-    textSizeStyles[textSize ?? size],
-  ];
-
+  
   return (
     <TouchableOpacity
-      style={buttonStyle}
+      style={[
+        buttonStyles.base,
+        sizeStyles[size],
+        variantStyles[variant],
+        disabled && buttonStyles.disabled,
+        fullWidth && { width: "100%" },
+        style,
+      ]}
       onPress={handlePress}
       disabled={disabled}
       activeOpacity={0.8}
     >
-      <Text style={textStyle}>{title}</Text>
+      <Text
+        style={[
+          buttonStyles.textBase,
+          textSizeStyles[textSize ?? size],
+          { color: variantStyles[variant].color },
+        ]}
+      >
+        {text}
+      </Text>
     </TouchableOpacity>
   );
-}
+};
