@@ -11,9 +11,6 @@ interface ButtonProps {
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
-  icon?: string | number;
-  iconPosition?: "left" | "right";
-  iconSize?: number;
   fullWidth?: boolean;
 }
 
@@ -26,9 +23,6 @@ export const Button: React.FC<ButtonProps> = ({
   disabled = false,
   style,
   textStyle,
-  icon,
-  iconPosition = "left",
-  iconSize = 16,
   fullWidth = false,
 }) => {
   return (
@@ -45,9 +39,6 @@ export const Button: React.FC<ButtonProps> = ({
       disabled={disabled}
       activeOpacity={0.8}
     >
-      {icon && iconPosition === "left" && (
-        <Text style={{ marginRight: 8, fontSize: iconSize }}>{icon}</Text>
-      )}
 
       <Text
         style={[
@@ -60,9 +51,6 @@ export const Button: React.FC<ButtonProps> = ({
         {text}
       </Text>
 
-      {icon && iconPosition === "right" && (
-        <Text style={{ marginLeft: 8, fontSize: iconSize }}>{icon}</Text>
-      )}
     </TouchableOpacity>
   );
 };
