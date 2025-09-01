@@ -26,5 +26,8 @@ export default function RootLayout() {
     return null;
   }
 
-  return <Stack />;
+  return <Stack screenOptions={{ headerShown: false }}>
+          {/* 이 레이아웃 아래 모든 화면의 헤더가 제거됩니다 */}
+          <Stack.Screen name="selectarea" options={{ headerShown: false }} />
+        </Stack>;
 }

@@ -1,65 +1,56 @@
-import { StyleProp, Text, TouchableOpacity, ViewStyle } from "react-native";
-import {
-  buttonStyles,
-  sizeStyles,
-  textSizeStyles,
-  variantStyles,
-} from "./Button.styles";
+import React from "react";
+import { StyleProp, Text, TextStyle, TouchableOpacity, ViewStyle } from "react-native";
+import { buttonStyles, sizeStyles, textSizeStyles, variantStyles } from "./Button.styles";
 
 interface ButtonProps {
-  title: string;
-  onPress: () => void;
+  text: string;
+  onPress?: () => void;
   variant?: keyof typeof variantStyles;
   size?: keyof typeof sizeStyles;
   textSize?: keyof typeof textSizeStyles;
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
-  icon?: string | number;
-  iconPosition?: "left" | "right";
-  iconSize?: number;
+  textStyle?: StyleProp<TextStyle>;
+  fullWidth?: boolean;
 }
 
-export default function Button({
-  title,
+export const Button: React.FC<ButtonProps> = ({
+  text,
   onPress,
   variant = "primary",
   size = "md",
   textSize = size,
   disabled = false,
   style,
-  icon,
-  iconPosition = "left",
-  iconSize,
-}: ButtonProps) {
-  const handlePress = () => {
-    if (!disabled) {
-      onPress();
-    }
-  };
-
-  const buttonStyle = [
-    buttonStyles.base,
-    sizeStyles[size],
-    variantStyles[variant],
-    disabled && buttonStyles.disabled,
-    style,
-  ];
-
-  const textStyle = [
-    buttonStyles.textBase,
-    { color: variantStyles[variant].color },
-    textSizeStyles[textSize ?? size],
-    disabled && buttonStyles.disabledText,
-  ];
-
+  textStyle,
+  fullWidth = false,
+}) => {
   return (
     <TouchableOpacity
-      style={buttonStyle}
-      onPress={handlePress}
+      style={[
+        buttonStyles.base,
+        sizeStyles[size],
+        variantStyles[variant],
+        disabled && buttonStyles.disabled,
+        fullWidth && { width: "100%" },
+        style,
+      ]}
+      onPress={onPress}
       disabled={disabled}
       activeOpacity={0.8}
     >
-      <Text style={textStyle}>{title}</Text>
+
+      <Text
+        style={[
+          buttonStyles.textBase,
+          textSizeStyles[textSize],
+          disabled && buttonStyles.disabledText,
+          textStyle,
+        ]}
+      >
+        {text}
+      </Text>
+
     </TouchableOpacity>
   );
-}
+};

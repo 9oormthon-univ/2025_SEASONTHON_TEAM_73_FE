@@ -50,6 +50,13 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     fontFamily: FONTS.semiBold,
   },
+  // ✅ 추가
+  disabled: {
+    backgroundColor: "#B3B3B4",
+  },
+  disabledText: {
+    color: "#7D7D7D",
+  },
 });
 
 export const buttonStyles = styles;
