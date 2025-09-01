@@ -3,6 +3,7 @@ import { Stack } from "expo-router";
 
 export default function PostCreateLayout() {
   const title = "새 룸메이트 구하기";
+
   return (
     <Stack
       screenOptions={{
