@@ -20,7 +20,7 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
       <RoomSearchFilter />
-      <ScrollView style={styles.roomList}>
+      <ScrollView style={styles.roomList} showsVerticalScrollIndicator={false}>
         {ROOM_LIST.map((room) => (
           <RoomListItem key={room.id} room={room} />
         ))}
