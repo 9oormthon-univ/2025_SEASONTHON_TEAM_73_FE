@@ -1,7 +1,7 @@
-import { COLORS } from '@/shared/styles';
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { CloseIcon } from './CloseIcon';
+import { COLORS } from "@/shared/styles";
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { CloseIcon } from "./CloseIcon";
 
 interface AreaChipProps {
   text: string;
@@ -21,8 +21,8 @@ export const AreaChip: React.FC<AreaChipProps> = ({ text, onRemove }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 10,
     paddingVertical: 4,
     backgroundColor: COLORS.primary[80],
@@ -30,10 +30,10 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   text: {
-    color: '#FCFCFC',
+    color: "#FCFCFC",
     fontSize: 12,
-    fontWeight: '400',
-    fontFamily: 'SUIT Variable',
+    fontWeight: "400",
+    fontFamily: "SUIT Variable",
     lineHeight: 18,
   },
 });
