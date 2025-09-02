@@ -1,3 +1,4 @@
+import { COLORS, FONT_SIZE, FONTS } from '@/shared/styles';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -44,10 +45,10 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   title: {
-    color: '#17171B',
-    fontSize: 16,
+    color: COLORS.black,
+    fontSize: FONT_SIZE.b1,
     fontWeight: '700',
-    fontFamily: 'SUIT Variable, -apple-system, Roboto, Helvetica, sans-serif',
+    fontFamily: FONTS.bold,
   },
   infoList: {
     marginTop: 10,
@@ -64,17 +65,17 @@ const styles = StyleSheet.create({
     borderBottomColor: '#F2F2F2',
   },
   infoLabel: {
-    color: '#17171B',
-    fontSize: 14,
+    color: COLORS.black,
+    fontSize: FONT_SIZE.b2,
     fontWeight: '700',
-    fontFamily: 'SUIT Variable, -apple-system, Roboto, Helvetica, sans-serif',
+    fontFamily: FONTS.bold,
     width: 108,
   },
   infoValue: {
-    color: '#17171B',
-    fontSize: 14,
+    color: COLORS.black,
+    fontSize: FONT_SIZE.b2,
     fontWeight: '400',
-    fontFamily: 'SUIT Variable, -apple-system, Roboto, Helvetica, sans-serif',
+    fontFamily: FONTS.regular,
     flex: 1,
   },
 });

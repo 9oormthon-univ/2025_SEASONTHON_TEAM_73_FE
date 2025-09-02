@@ -1,4 +1,4 @@
-import { COLORS } from '@/shared/styles';
+import { COLORS, FONT_SIZE, FONTS } from '@/shared/styles';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { CheckIcon } from './CheckIcon';
@@ -35,7 +35,7 @@ export const NeighborhoodList: React.FC<NeighborhoodListProps> = ({
           ]}>
             {neighborhood.name}
           </Text>
-          <CheckIcon color={neighborhood.isSelected ? '#6287F2' : '#CBCBCB'} />
+          <CheckIcon color={neighborhood.isSelected ? COLORS.primary[100] : COLORS.gray[20]} />
         </TouchableOpacity>
       ))}
     </View>
@@ -60,8 +60,8 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
   },
   neighborhoodText: {
-    fontSize: 14,
-    fontFamily: 'SUIT Variable',
+    fontSize: FONT_SIZE.b2,
+    fontFamily: FONTS.regular,
     lineHeight: 21,
   },
   selectedText: {

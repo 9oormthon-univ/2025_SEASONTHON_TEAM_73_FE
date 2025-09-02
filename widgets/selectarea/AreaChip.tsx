@@ -1,3 +1,4 @@
+import { COLORS } from '@/shared/styles';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { CloseIcon } from './CloseIcon';
@@ -24,7 +25,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 4,
-    backgroundColor: '#7394F3',
+    backgroundColor: COLORS.primary[80],
     borderRadius: 20,
     gap: 8,
   },

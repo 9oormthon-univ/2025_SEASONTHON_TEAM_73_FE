@@ -1,13 +1,15 @@
 
 import KakaoMap from '@/widgets/detail/KakaoMap';
-import { useSearchParams } from 'expo-router/build/hooks';
+import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 export default function MapFullScreen() {
-  const params = useSearchParams();
-  const latitude = parseFloat(params.get('latitude') || '37.5665');
-  const longitude = parseFloat(params.get('longitude') || '126.9780');
+  const params = useLocalSearchParams<{ latitude?: string; longitude?: string }>();
+  const lat = Number(params.latitude);
+  const lng = Number(params.longitude);
+  const latitude = Number.isFinite(lat) ? lat : 37.5665;
+  const longitude = Number.isFinite(lng) ? lng : 126.9780;
 
   return (
     <View style={styles.container}>

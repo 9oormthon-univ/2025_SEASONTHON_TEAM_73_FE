@@ -1,3 +1,4 @@
+import { FONT_SIZE, FONTS } from '@/shared/styles';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -23,16 +24,14 @@ const styles = StyleSheet.create({
   },
   title: {
     color: '#17171B',
-    fontSize: 16,
-    fontWeight: '400',
-    fontFamily: 'SUIT Variable',
+    fontSize: FONT_SIZE.b1,
+    fontFamily: FONTS.bold,
     lineHeight: 24,
   },
   subtitle: {
     color: '#717173',
-    fontSize: 12,
-    fontWeight: '400',
-    fontFamily: 'SUIT Variable',
+    fontSize: FONT_SIZE.c1,
+    fontFamily: FONTS.regular,
     lineHeight: 18,
   },
 });

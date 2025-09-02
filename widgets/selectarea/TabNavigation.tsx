@@ -1,3 +1,4 @@
+import { COLORS, FONT_SIZE, FONTS } from '@/shared/styles';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -22,7 +23,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderTopWidth: 0.5,
-    borderTopColor: '#9D9D9F',
+    borderTopColor: COLORS.black,
     height: 37,
   },
   leftTab: {
@@ -30,7 +31,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRightWidth: 0.5,
-    borderRightColor: '#9D9D9F',
+    borderRightColor: COLORS.gray[40],
   },
   tabContent: {
     flex: 1,
@@ -44,9 +45,8 @@ const styles = StyleSheet.create({
   },
   tabText: {
     color: '#000',
-    fontSize: 14,
-    fontWeight: '400',
-    fontFamily: 'SUIT Variable',
+    fontSize: FONT_SIZE.b2,
+    fontFamily: FONTS.regular,
     lineHeight: 21,
     textAlign: 'center',
   },

@@ -1,4 +1,4 @@
-import { COLORS } from '@/shared/styles';
+import { COLORS, FONT_SIZE, FONTS } from '@/shared/styles';
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
@@ -36,8 +36,8 @@ const styles = StyleSheet.create({
     minWidth: 360,
   },
   profileImage: {
-    width: 50,
-    height: 50,
+    width: 36,
+    height: 36,
     borderRadius: 25,
     marginRight: 20,
   },
@@ -49,9 +49,8 @@ const styles = StyleSheet.create({
   },
   nickname: {
     color: '#17171B',
-    fontSize: 14,
-    fontWeight: '700',
-    fontFamily: 'SUIT Variable, -apple-system, Roboto, Helvetica, sans-serif',
+    fontSize: FONT_SIZE.b2,
+    fontFamily: FONTS.bold,
   },
   badge: {
     borderRadius: 100,
@@ -65,9 +64,8 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     color: COLORS.primary[100],
-    fontSize: 12,
-    fontWeight: '700',
-    fontFamily: 'SUIT Variable, -apple-system, Roboto, Helvetica, sans-serif',
+    fontSize: FONT_SIZE.c1,
+    fontFamily: FONTS.regular,
     textAlign: 'center',
   },
 });

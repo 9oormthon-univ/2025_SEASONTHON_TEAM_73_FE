@@ -1,4 +1,4 @@
-import { COLORS } from '@/shared/styles';
+import { COLORS, FONT_SIZE, FONTS } from '@/shared/styles';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     borderRightWidth: 0.5,
-    borderRightColor: '#B3B3B4',
+    borderRightColor: COLORS.gray[80],
   },
   districtItem: {
     height: 40,
@@ -55,8 +55,8 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
   },
   districtText: {
-    fontSize: 14,
-    fontFamily: 'SUIT Variable',
+    fontSize: FONT_SIZE.b2,
+    fontFamily: FONTS.regular,
     lineHeight: 21,
   },
   selectedText: {
