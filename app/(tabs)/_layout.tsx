@@ -22,6 +22,7 @@ export default function HomeLayout() {
       }}
     >
       <Tabs.Screen name="index" options={{ title: "홈" }} />
+      <Tabs.Screen name="map" options={{ title: "지도" }} />
     </Tabs>
   );
 }
