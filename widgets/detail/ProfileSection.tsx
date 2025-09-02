@@ -1,3 +1,4 @@
+import { COLORS } from '@/shared/styles';
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
@@ -55,15 +56,15 @@ const styles = StyleSheet.create({
   badge: {
     borderRadius: 100,
     borderWidth: 1,
-    borderColor: '#6287F2',
-    backgroundColor: '#EDF1FD',
+    borderColor: COLORS.primary[100],
+    backgroundColor: COLORS.primary[10],
     paddingHorizontal: 8,
     paddingVertical: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
   badgeText: {
-    color: '#6287F2',
+    color: COLORS.primary[100],
     fontSize: 12,
     fontWeight: '700',
     fontFamily: 'SUIT Variable, -apple-system, Roboto, Helvetica, sans-serif',

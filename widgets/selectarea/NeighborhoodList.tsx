@@ -1,3 +1,4 @@
+import { COLORS } from '@/shared/styles';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { CheckIcon } from './CheckIcon';
@@ -53,10 +54,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   selectedItem: {
-    backgroundColor: '#EDF1FD',
+    backgroundColor: COLORS.primary[10],
   },
   unselectedItem: {
-    backgroundColor: '#FCFCFC',
+    backgroundColor: COLORS.white,
   },
   neighborhoodText: {
     fontSize: 14,
@@ -64,11 +65,11 @@ const styles = StyleSheet.create({
     lineHeight: 21,
   },
   selectedText: {
-    color: '#6287F2',
+    color: COLORS.primary[100],
     fontWeight: '700',
   },
   unselectedText: {
-    color: '#17171B',
+    color: COLORS.black,
     fontWeight: '400',
   },
 });
