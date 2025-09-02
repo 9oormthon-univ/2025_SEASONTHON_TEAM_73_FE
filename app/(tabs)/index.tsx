@@ -28,6 +28,13 @@ export default function HomeScreen() {
           방 선택 화면으로 이동
         </Text>
       </TouchableOpacity>
+      <TouchableOpacity onPress={() => router.push("/detail")}>
+        <Text
+          style={{ padding: SPACING.xs, backgroundColor: COLORS.primary[50] }}
+        >
+          방 상세 화면으로 이동
+        </Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
