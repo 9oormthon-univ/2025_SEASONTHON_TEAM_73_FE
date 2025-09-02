@@ -1,3 +1,4 @@
+import { COLORS, FONT_SIZE, FONTS } from '@/shared/styles';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -40,7 +41,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     borderRightWidth: 0.5,
-    borderRightColor: '#B3B3B4',
+    borderRightColor: COLORS.gray[80],
   },
   districtItem: {
     height: 40,
@@ -48,22 +49,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   selectedItem: {
-    backgroundColor: '#EDF1FD',
+    backgroundColor: COLORS.primary[10],
   },
   unselectedItem: {
-    backgroundColor: '#FCFCFC',
+    backgroundColor: COLORS.white,
   },
   districtText: {
-    fontSize: 14,
-    fontFamily: 'SUIT Variable',
+    fontSize: FONT_SIZE.b2,
+    fontFamily: FONTS.regular,
     lineHeight: 21,
   },
   selectedText: {
-    color: '#6287F2',
+    color: COLORS.primary[100],
     fontWeight: '700',
   },
   unselectedText: {
-    color: '#17171B',
+    color: COLORS.black,
     fontWeight: '400',
   },
 });

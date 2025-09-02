@@ -1,3 +1,4 @@
+import { FONT_SIZE, FONTS } from '@/shared/styles';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { AreaChip } from './AreaChip';
@@ -52,9 +53,8 @@ const styles = StyleSheet.create({
   },
   title: {
     color: '#2E2E31',
-    fontSize: 14,
-    fontWeight: '700',
-    fontFamily: 'SUIT Variable',
+    fontSize: FONT_SIZE.b1,
+    fontFamily: FONTS.bold,
     lineHeight: 21,
   },
   chipContainer: {
