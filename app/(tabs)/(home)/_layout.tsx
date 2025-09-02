@@ -19,6 +19,7 @@ export default function HomeLayout() {
         name="filter"
         options={{ headerShown: true, headerTitle: "필터" }}
       />
+      <Stack.Screen name="post-create" />
     </Stack>
   );
 }
