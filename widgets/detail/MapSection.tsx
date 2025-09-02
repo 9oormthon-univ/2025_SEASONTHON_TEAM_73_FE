@@ -10,7 +10,9 @@ const MapSection: React.FC = () => {
             <Text style={styles.disclaimer}>지도에 표기되는 위치는 정확한 위치가 아닙니다.</Text>
         </View>
 
-        <KakaoMap latitude={33.450701} longitude={126.570667} />
+        <View style={styles.mapContainer}>
+            <KakaoMap latitude={33.450701} longitude={126.570667} height={200} />
+        </View>
     </View>
   );
 };
@@ -21,6 +23,10 @@ const styles = StyleSheet.create({
     borderBottomColor: '#F2F2F2',
     paddingHorizontal: 18,
     paddingVertical: 20,
+  },
+  mapContainer: {
+    height: 200,
+    marginTop: 20,
   },
   header: {
     maxWidth: "100%",
@@ -37,7 +43,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontFamily: 'SUIT Variable, -apple-system, Roboto, Helvetica, sans-serif',
     marginTop: 4,
-  },
+  }
 });
 
 export default MapSection;
