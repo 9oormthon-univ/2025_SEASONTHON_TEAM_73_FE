@@ -102,7 +102,10 @@ export default function KakaoMap({
               if (selectedMarker) selectedMarker.setImage(whiteIcon);
               marker.setImage(blueIcon);
               selectedMarker = marker;
-              window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'markerClick', data: item.info }));
+              window.ReactNativeWebView.postMessage(JSON.stringify({
+                type: 'markerClick',
+                data: { id: item.id }   // postId 전달
+              }));
             });
           }
 
