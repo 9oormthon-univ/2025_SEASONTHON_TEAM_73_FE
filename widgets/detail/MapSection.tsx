@@ -11,7 +11,7 @@ const MapSection: React.FC = () => {
         </View>
 
         <View style={styles.mapContainer}>
-            <KakaoMap latitude={33.450701} longitude={126.570667} height={200} />
+            <KakaoMap latitude={33.450701} longitude={126.570667} height={200} disableMarkerClick={true}/>
         </View>
     </View>
   );

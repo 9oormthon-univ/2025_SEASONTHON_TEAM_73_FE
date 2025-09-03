@@ -8,10 +8,19 @@ type KakaoMapProps = {
   latitude: number;
   longitude: number;
   height?: number;
-  showExpandIcon?: boolean; // 추가
+  showExpandIcon?: boolean;
+  disableMarkerClick?: boolean; // 🔥 추가
+  onMarkerClick?: (data: any) => void; // 🔥 추가
 };
 
-export default function KakaoMap({ latitude, longitude, height, showExpandIcon = true }: KakaoMapProps) {
+export default function KakaoMap({
+  latitude,
+  longitude,
+  height,
+  showExpandIcon = true,
+  disableMarkerClick = false,
+  onMarkerClick,
+}: KakaoMapProps) {
   const config = Constants as NativeConstants;
   const { KAKAO_MAP_JS_KEY } = config.expoConfig!.extra!;
 
@@ -53,6 +62,20 @@ export default function KakaoMap({ latitude, longitude, height, showExpandIcon =
             position: new kakao.maps.LatLng(${latitude}, ${longitude})
           });
           marker.setMap(map);
+
+          // 🔥 disableMarkerClick이 false일 때만 이벤트 등록
+          if (${disableMarkerClick ? "true" : "false"} === false) {
+            kakao.maps.event.addListener(marker, 'click', function() {
+              const info = {
+                image: "https://api.builder.io/api/v1/image/assets/TEMP/d3791812144ab91c14d2d0514fedca7c4dec99b1?placeholderIfAbsent=true&apiKey=7adddd5587f24b91884c2915be4df62c",
+                price: "500/40",
+                description: "마포구 동교동 부근・투룸, 화장실 1개",
+                etc: "여성・전자담배",
+                schedule: "월 화 수 목 금 출근, 오전 8시"
+              };
+              window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'markerClick', data: info }));
+            });
+          }
         }
 
         window.onload = function() {
@@ -64,7 +87,6 @@ export default function KakaoMap({ latitude, longitude, height, showExpandIcon =
             window.ReactNativeWebView.postMessage('expand');
           });` : ''}
 
-          // 리사이즈 시에도 마커 중심으로
           window.addEventListener('resize', function() {
             if(map && marker) {
               map.setCenter(marker.getPosition());
@@ -76,9 +98,8 @@ export default function KakaoMap({ latitude, longitude, height, showExpandIcon =
     </html>
   `;
 
-
   return (
-    <View style={[styles.container, height ? { height } : { height: "100%" }]}>
+    <View style={[styles.container, height ? { height } : { height: '100%' }]}>
       <WebView
         originWhitelist={['*']}
         source={{ html: htmlContent }}
@@ -88,11 +109,21 @@ export default function KakaoMap({ latitude, longitude, height, showExpandIcon =
         nestedScrollEnabled={true}
         renderToHardwareTextureAndroid={true}
         onMessage={(event) => {
-          if (event.nativeEvent.data === 'expand') {
-            router.push({
-              pathname: "/map",
-              params: { latitude: latitude.toString(), longitude: longitude.toString() },
-            });
+          const data = event.nativeEvent.data;
+          try {
+            const msg = JSON.parse(data);
+            if (msg.type === "markerClick") {
+              onMarkerClick?.(msg.data);
+              return;
+            }
+          } catch (e) {
+            // JSON.parse 실패했을 때는 그냥 문자열로 처리
+            if (data === "expand") {
+              router.push({
+                pathname: "/map",
+                params: { latitude: latitude.toString(), longitude: longitude.toString() },
+              });
+            }
           }
         }}
       />
@@ -102,7 +133,6 @@ export default function KakaoMap({ latitude, longitude, height, showExpandIcon =
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
+    width: '100%',
   },
 });
-
