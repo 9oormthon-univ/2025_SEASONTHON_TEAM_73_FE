@@ -35,6 +35,12 @@ const styles = StyleSheet.create({
     borderColor: COLORS.gray[40],
     color: COLORS.black,
   },
+  outlineActive: {
+    backgroundColor: COLORS.primary[10],
+    borderColor: COLORS.primary[90],
+    color: COLORS.primary[90],
+    borderWidth: 1,
+  },
   disabled: {
     color: COLORS.gray[30],
     backgroundColor: COLORS.gray[10],
@@ -70,6 +76,7 @@ export const variantStyles = {
   primary: styles.primary,
   disabled: styles.disabled,
   outline: styles.outline,
+  outlineActive: styles.outlineActive,
 } as const;
 
 export const textSizeStyles = {
