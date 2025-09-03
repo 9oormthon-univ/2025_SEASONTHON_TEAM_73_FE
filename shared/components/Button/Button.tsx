@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { StyleProp, Text, TouchableOpacity, ViewStyle } from "react-native";
 import {
   buttonStyles,
@@ -16,6 +16,7 @@ interface ButtonProps {
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
   fullWidth?: boolean;
+  icon?: ReactNode;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -25,6 +26,7 @@ export const Button: React.FC<ButtonProps> = ({
   size = "md",
   textSize = size,
   disabled = false,
+  icon,
   style,
   fullWidth = false,
 }) => {
@@ -33,7 +35,7 @@ export const Button: React.FC<ButtonProps> = ({
       onPress?.();
     }
   };
-  
+
   return (
     <TouchableOpacity
       style={[
@@ -43,6 +45,7 @@ export const Button: React.FC<ButtonProps> = ({
         disabled && buttonStyles.disabled,
         fullWidth && { width: "100%" },
         style,
+        icon ? { flexDirection: "row", gap: 8 } : {},
       ]}
       onPress={handlePress}
       disabled={disabled}
@@ -57,6 +60,7 @@ export const Button: React.FC<ButtonProps> = ({
       >
         {text}
       </Text>
+      {icon && icon}
     </TouchableOpacity>
   );
 };

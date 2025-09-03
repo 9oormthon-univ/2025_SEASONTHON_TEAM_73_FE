@@ -8,14 +8,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   sm: {
-    paddingHorizontal: SPACING.sm,
-    paddingVertical: SPACING.xs,
-    minHeight: 32,
+    paddingHorizontal: 12,
+    paddingVertical: SPACING.xxs,
+    borderRadius: 20,
   },
   md: {
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.sm,
-    minHeight: 44,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.xs,
+    minHeight: 40,
+    borderRadius: 100,
   },
   lg: {
     borderRadius: RADIUS.sm,
@@ -28,6 +29,12 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     color: COLORS.white,
   },
+  outline: {
+    backgroundColor: COLORS.white,
+    borderWidth: 1,
+    borderColor: COLORS.gray[40],
+    color: COLORS.black,
+  },
   disabled: {
     color: COLORS.gray[30],
     backgroundColor: COLORS.gray[10],
@@ -38,11 +45,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   textSm: {
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: FONT_SIZE.c1,
+    lineHeight: 18,
+    includeFontPadding: false,
   },
   textMd: {
-    fontSize: 16,
+    fontSize: FONT_SIZE.b2,
     lineHeight: 24,
   },
   textLg: {
@@ -61,6 +69,7 @@ export const sizeStyles = {
 export const variantStyles = {
   primary: styles.primary,
   disabled: styles.disabled,
+  outline: styles.outline,
 } as const;
 
 export const textSizeStyles = {

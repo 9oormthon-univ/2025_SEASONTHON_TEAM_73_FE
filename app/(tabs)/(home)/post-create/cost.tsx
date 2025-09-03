@@ -168,7 +168,7 @@ export default function CostScreen() {
       >
         <Button
           size="lg"
-          title="다음"
+          text="다음"
           onPress={handleSubmit(onSubmit)}
           disabled={!isFormValid}
         />
