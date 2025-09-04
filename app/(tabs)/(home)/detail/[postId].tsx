@@ -13,14 +13,14 @@ import { ScrollView, StyleSheet, View } from "react-native";
 
 const PropertyDetailView: React.FC = () => {
   const { postId } = useLocalSearchParams();
-  console.log(postId);
+  if (!postId) return null;
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <PropertyHeader />
       <ProfileSection />
       <PropertyTitle />
-      <MapSection />
+      <MapSection postId={typeof postId === "string" ? Number(postId) : Array.isArray(postId) ? Number(postId[0]) : 0} />
       <PriceSection />
       <PropertyInfo />
       <DescriptionSection />

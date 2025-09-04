@@ -102,7 +102,10 @@ export default function KakaoMap({
               if (selectedMarker) selectedMarker.setImage(whiteIcon);
               marker.setImage(blueIcon);
               selectedMarker = marker;
-              window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'markerClick', data: item.info }));
+              window.ReactNativeWebView.postMessage(JSON.stringify({
+                type: 'markerClick',
+                data: { id: item.id }   // postId 전달
+              }));
             });
           }
 
@@ -127,10 +130,17 @@ export default function KakaoMap({
         initMap();
 
         ${showExpandIcon ? `
-        const icon = document.getElementById('expandIcon');
-        icon.addEventListener('click', function() {
-          window.ReactNativeWebView.postMessage('expand');
-        });` : ''}
+          const icon = document.getElementById('expandIcon');
+          icon.addEventListener('click', function() {
+            window.ReactNativeWebView.postMessage(JSON.stringify({
+              type: 'expand',
+              data: {
+                latitude: ${latitude},
+                longitude: ${longitude}
+              }
+            }));
+          });` : ''}
+
 
         window.addEventListener('resize', function() {
           if (kakaoMarkers.length > 0) {
@@ -159,13 +169,15 @@ export default function KakaoMap({
             const msg = JSON.parse(data);
             if (msg.type === 'markerClick') {
               onMarkerClick?.(msg.data);
+              console.log(msg.data);
+              return;
+            }
+            if (msg.type === 'expand') {
+              router.push(`/map?latitude=${msg.data.latitude}&longitude=${msg.data.longitude}`);
               return;
             }
           } catch {
-            if (data === 'expand') {
-              const target = markers[0];
-              router.push(`/map?latitude=${target.latitude}&longitude=${target.longitude}`);
-            }
+            console.error("Error parsing message data:", data);
           }
         }}
       />
