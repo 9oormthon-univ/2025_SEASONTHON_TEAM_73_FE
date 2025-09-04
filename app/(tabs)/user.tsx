@@ -1,5 +1,4 @@
 import api from "@/shared/api/axios";
-import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import React, { useState } from "react";
 import { Alert, Button, StyleSheet, Text, TextInput, View } from "react-native";
@@ -19,7 +18,6 @@ export default function LoginScreen() {
         await SecureStore.setItemAsync("refreshToken", refreshToken);
 
         Alert.alert("로그인 성공", `환영합니다, ${res.data.data.username}님!`);
-        router.push("/home");
       } else {
         Alert.alert("로그인 실패", res.data.message);
       }
