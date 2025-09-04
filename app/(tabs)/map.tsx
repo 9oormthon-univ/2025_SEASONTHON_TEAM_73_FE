@@ -45,6 +45,7 @@ export default function MapFullScreen() {
   const handleMarkerClick = async (marker: { id: number }) => {
     try {
       const res = await api.get(`/map/posts/${marker.id}`);
+      console.log(res.data);
       if (res.data.success) {
         const detail = res.data.data;
         if (!detail) return;
@@ -54,6 +55,7 @@ export default function MapFullScreen() {
           detail.userGender = "여성";
         }
         setInfo({
+          id: detail.id,
           image: "https://via.placeholder.com/100", // TODO: 실제 이미지 필드 있으면 교체
           price: `${detail.deposit}/${detail.monthlyRent}`, // 보증금/월세
           description: `${detail.region}・${detail.roomType}, 화장실 ${detail.washroomCount}개`,
