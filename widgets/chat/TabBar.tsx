@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#CBCBCB',
     width: '100%',
     height: 50,
-    top: 30
+    marginBottom: 40,
+    top: 50
   },
 });
