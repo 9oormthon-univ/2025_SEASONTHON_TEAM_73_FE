@@ -1,26 +1,13 @@
+import { Skeleton } from "@/shared/components";
+import { GENDER } from "@/shared/constants";
 import { COLORS, FONT_SIZE, FONTS, RADIUS, SPACING } from "@/shared/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import {
-  Image,
-  ImageSourcePropType,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import type { Room } from "../types";
 
 interface RoomListItemProps {
-  room: {
-    id: number;
-    title: string;
-    type: string;
-    deposit: string;
-    rent: string;
-    location: string;
-    gender: string;
-    image: ImageSourcePropType;
-  };
+  room: Room;
 }
 
 export default function RoomListItem({ room }: RoomListItemProps) {
@@ -29,10 +16,9 @@ export default function RoomListItem({ room }: RoomListItemProps) {
       style={styles.roomCard}
       onPress={() => router.push(`/detail/${room.id}`)}
     >
-      <Image source={room.image} style={styles.roomImage} />
+      <Image source={{ uri: room.imageUrl }} style={styles.roomImage} />
       <View style={styles.roomInfo}>
         <Text style={styles.roomTitle}>{room.title}</Text>
-
         <View style={styles.roomDetail}>
           <Ionicons
             name="home"
@@ -41,7 +27,7 @@ export default function RoomListItem({ room }: RoomListItemProps) {
             color={COLORS.gray[70]}
           />
           <Text style={styles.roomDetailText}>
-            {room.type} • {room.deposit} / {room.rent}
+            {room.roomType} • {room.deposit} / {room.monthlyRent}
           </Text>
         </View>
 
@@ -52,7 +38,7 @@ export default function RoomListItem({ room }: RoomListItemProps) {
             size={14}
             color={COLORS.gray[70]}
           />
-          <Text style={styles.roomDetailText}>{room.location}</Text>
+          <Text style={styles.roomDetailText}>{room.region}</Text>
         </View>
 
         <View style={styles.roomDetail}>
@@ -62,12 +48,37 @@ export default function RoomListItem({ room }: RoomListItemProps) {
             size={14}
             color={COLORS.gray[70]}
           />
-          <Text style={styles.roomDetailText}>{room.gender}</Text>
+          <Text style={styles.roomDetailText}>{GENDER[room.gender]}</Text>
         </View>
       </View>
     </TouchableOpacity>
   );
 }
+
+function RoomSkeleton() {
+  return (
+    <View style={styles.roomCard}>
+      <Skeleton style={styles.roomImage} />
+      <View style={[styles.roomInfo, { gap: SPACING.xs }]}>
+        <Skeleton style={styles.roomDetailText} />
+        <View style={{ gap: 6, flexDirection: "row" }}>
+          <Skeleton style={{ width: 24, marginLeft: 6 }} />
+          <Skeleton style={{ width: 100 }} />
+        </View>
+        <View style={{ gap: 6, flexDirection: "row" }}>
+          <Skeleton style={{ width: 24, marginLeft: 6 }} />
+          <Skeleton style={{ width: 85 }} />
+        </View>
+        <View style={{ gap: 6, flexDirection: "row" }}>
+          <Skeleton style={{ width: 24, marginLeft: 6 }} />
+          <Skeleton style={{ width: 100 }} />
+        </View>
+      </View>
+    </View>
+  );
+}
+
+RoomListItem.Skeleton = RoomSkeleton;
 
 const styles = StyleSheet.create({
   roomCard: {
