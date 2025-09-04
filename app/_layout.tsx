@@ -1,9 +1,13 @@
+import { useAuthStore } from "@/shared/store";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 
 export default function RootLayout() {
+  const { isLoggedIn } = useAuthStore();
+
   const [fontsLoaded] = useFonts({
     "SUIT-Regular": require("../assets/fonts/SUIT-Regular.ttf"),
     "SUIT-Medium": require("../assets/fonts/SUIT-Medium.ttf"),
@@ -26,13 +30,22 @@ export default function RootLayout() {
     return null;
   }
 
+  const queryClient = new QueryClient();
+
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="(tabs)" />
-    </Stack>
+    <QueryClientProvider client={queryClient}>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Stack.Protected guard={!isLoggedIn}>
+          <Stack.Screen name="login" />
+        </Stack.Protected>
+        <Stack.Protected guard={isLoggedIn}>
+          <Stack.Screen name="(tabs)" />
+        </Stack.Protected>
+      </Stack>
+    </QueryClientProvider>
   );
 }
