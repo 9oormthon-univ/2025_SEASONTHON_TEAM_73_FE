@@ -26,7 +26,7 @@ export default function MapFullScreen() {
             latitude: post.displayLatitude,
             longitude: post.displayLongitude,
             info: {
-              image: "https://via.placeholder.com/100", // 나중에 실제 이미지로 교체
+              image: post.imageUrl, // 나중에 실제 이미지로 교체
               price: post.title, // 임시: title을 price 자리에 표시
               description: post.title,
               etc: "",
@@ -45,7 +45,7 @@ export default function MapFullScreen() {
   const handleMarkerClick = async (marker: { id: number }) => {
     try {
       const res = await api.get(`/map/posts/${marker.id}`);
-      console.log(res.data);
+      //console.log(res.data);
       if (res.data.success) {
         const detail = res.data.data;
         if (!detail) return;
