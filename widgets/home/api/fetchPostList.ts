@@ -19,11 +19,9 @@ export const useFetchPostList = () => {
     queryKey: ["postListInfinite"],
     queryFn: fetchPostList,
     getNextPageParam: (lastPage) => {
-      // 마지막 페이지인지 확인
       if (lastPage.last) {
         return undefined;
       }
-      // 다음 페이지 번호 반환
       return lastPage.number + 1;
     },
     initialPageParam: 0,
