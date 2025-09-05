@@ -1,3 +1,4 @@
+import { COLORS, FONT_SIZE } from '@/shared/styles';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -18,9 +19,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    color: '#434347',
+    color: COLORS.gray[80],
     textAlign: 'center',
-    fontSize: 12,
+    fontSize: FONT_SIZE.c1,
     fontWeight: '700',
   },
 });

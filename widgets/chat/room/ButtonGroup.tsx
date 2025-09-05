@@ -1,3 +1,4 @@
+import { COLORS, FONT_SIZE } from '@/shared/styles';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ActionButton } from './ActionButton';
@@ -30,8 +31,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     width: '100%',
     gap: 8,
-    fontSize: 14,
-    fontWeight: '400',
-    backgroundColor: '#FCFCFC',
+    fontSize: FONT_SIZE.b2,
+    backgroundColor: COLORS.white,
   },
 });

@@ -1,3 +1,4 @@
+import { COLORS, FONTS } from '@/shared/styles';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ButtonGroup } from './ButtonGroup';
@@ -26,9 +27,9 @@ export const MessageRequestDialog: React.FC<MessageRequestDialogProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    maxWidth: 360,
-    fontFamily: 'SUIT Variable, -apple-system, Roboto, Helvetica, sans-serif',
-    backgroundColor: '#FCFCFC',
+    flex: 1,
+    fontFamily: FONTS.regular,
+    backgroundColor: COLORS.white,
     paddingTop: 12,
     paddingRight: 18,
     paddingBottom: 12,

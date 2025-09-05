@@ -1,4 +1,5 @@
 import { useAuthStore } from '@/shared/store';
+import { COLORS } from '@/shared/styles';
 import { ChatInput } from '@/widgets/chat/room/ChatInput';
 import { ChatMessage } from '@/widgets/chat/room/ChatMessage';
 import { DateSeparator } from '@/widgets/chat/room/DateSeparator';
@@ -230,7 +231,7 @@ const ChatScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FCFCFC' },
+  container: { flex: 1, backgroundColor: COLORS.white },
   messagesContainer: { flex: 1 },
   messagesContent: { paddingVertical: 20, gap: 20, alignSelf: 'stretch' },
   dateGroup: { flexDirection: 'column', alignItems: 'center', gap: 10, flex: 1, alignSelf: 'stretch' },

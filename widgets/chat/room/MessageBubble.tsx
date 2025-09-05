@@ -1,3 +1,4 @@
+import { COLORS, FONT_SIZE } from '@/shared/styles';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -53,25 +54,24 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     borderBottomRightRadius: 0,
     borderBottomLeftRadius: 20,
-    backgroundColor: '#7394F3',
+    backgroundColor: COLORS.primary[80],
   },
   otherBubble: {
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     borderBottomRightRadius: 20,
     borderBottomLeftRadius: 0,
-    backgroundColor: '#F2F2F2',
+    backgroundColor: COLORS.gray[5],
   },
   text: {
-    fontSize: 14,
+    fontSize: FONT_SIZE.b2,
     lineHeight: 21,
   },
-  ownText: { color: '#FCFCFC' },
-  otherText: { color: '#17171B' },
+  ownText: { color: COLORS.white },
+  otherText: { color: COLORS.black },
   time: {
-    color: '#9D9D9F',
-    fontSize: 12,
-    fontWeight: '400',
+    color: COLORS.gray[40],
+    fontSize: FONT_SIZE.c1,
     lineHeight: 18,
   },
 });

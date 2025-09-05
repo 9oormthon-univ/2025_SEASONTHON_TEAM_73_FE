@@ -1,4 +1,4 @@
-import { COLORS } from '@/shared/styles';
+import { COLORS, FONT_SIZE } from '@/shared/styles';
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
@@ -27,7 +27,7 @@ const ChatListItem: React.FC<ChatListItemProps> = ({ chat }) => {
         <Text   style={styles.message}
                 numberOfLines={1}       // 한 줄만 보여주고
                 ellipsizeMode="tail"    // 끝에 ... 표시
-        >{chat.lastMessage?.content ?? 'dasdksanlasnfjkanjfkasbnjfkasbnfjklasbkdjaskd;jas;idhsauif;ahsfuisa;hfnuai;'}</Text>
+        >{chat.lastMessage?.content ?? ''}</Text>
       </View>
     </View>
   );
@@ -54,8 +54,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
-  title: { fontWeight: 'bold', fontSize: 16 },
-  message: { fontSize: 14, color: '#666', marginTop: 6 },
+  title: { fontWeight: 'bold', fontSize: FONT_SIZE.b1 },
+  message: { fontSize: FONT_SIZE.b2, color: COLORS.gray[70], marginTop: 6 },
 });
 
 export default ChatListItem;

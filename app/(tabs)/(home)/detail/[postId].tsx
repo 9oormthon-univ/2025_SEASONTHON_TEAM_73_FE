@@ -1,7 +1,7 @@
 import api from "@/shared/api/axios";
 import { Button } from "@/shared/components/Button/Button";
 import { useAuthStore } from "@/shared/store";
-import { SPACING } from "@/shared/styles";
+import { COLORS, SPACING } from "@/shared/styles";
 import DescriptionSection from "@/widgets/detail/DescriptionSection";
 import MapSection from "@/widgets/detail/MapSection";
 import PriceSection from "@/widgets/detail/PriceSection";
@@ -64,7 +64,7 @@ const PropertyDetailView: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FCFCFC",
+    backgroundColor: COLORS.white,
     maxWidth: 480,
   },
 });

@@ -1,4 +1,4 @@
-import { FONT_SIZE } from '@/shared/styles';
+import { COLORS, FONT_SIZE } from '@/shared/styles';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -40,17 +40,17 @@ const styles = StyleSheet.create({
   },
   activeTabContainer: {
     borderBottomWidth: 3,
-    borderBottomColor: '#6287F2',
+    borderBottomColor: COLORS.primary[90],
   },
   titleText: {
     fontSize: FONT_SIZE.b1,
   },
   activeTitleText: {
-    color: '#6287F2',
+    color: COLORS.primary[90],
     fontWeight: '700',
   },
   inactiveTitleText: {
-    color: '#CBCBCB',
+    color: COLORS.gray[20],
     fontWeight: '400',
   },
 });

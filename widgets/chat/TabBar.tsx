@@ -1,3 +1,4 @@
+import { COLORS } from '@/shared/styles';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Tab } from './Tab';
@@ -35,7 +36,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: '#CBCBCB',
+    borderBottomColor: COLORS.gray[20],
     width: '100%',
     height: 50,
     marginBottom: 40,

@@ -1,3 +1,4 @@
+import { COLORS, FONT_SIZE } from '@/shared/styles';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -18,10 +19,9 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   dateText: {
-    color: '#5B5B5E',
+    color: COLORS.gray[70],
     textAlign: 'center',
-    fontSize: 12,
-    fontWeight: '400',
+    fontSize: FONT_SIZE.c1,
     lineHeight: 18,
   },
 });

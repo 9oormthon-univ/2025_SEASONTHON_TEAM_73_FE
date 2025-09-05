@@ -1,3 +1,4 @@
+import { COLORS, FONT_SIZE } from '@/shared/styles';
 import React, { useState } from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import Svg, { Path, Rect } from 'react-native-svg';
@@ -58,20 +59,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 18,
     paddingVertical: 12,
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.white,
   },
   inputField: {
     flex: 1, // 입력창이 남는 공간 차지
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#9D9D9F',
-    backgroundColor: '#FCFCFC',
+    borderColor: COLORS.gray[40],
+    backgroundColor: COLORS.white,
     paddingHorizontal: 12,
     paddingVertical: 8,
     marginRight: 8, // 버튼과 간격
   },
   textInput: {
-    fontSize: 14,
+    fontSize: FONT_SIZE.b2,
     color: '#17171B',
     padding: 0,
     height: 24,

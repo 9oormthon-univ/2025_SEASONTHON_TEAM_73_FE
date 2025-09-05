@@ -1,3 +1,4 @@
+import { COLORS, FONT_SIZE } from '@/shared/styles';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -31,7 +32,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     minHeight: 40,
     flex: 1,
-    backgroundColor: '#6287F2',
+    backgroundColor: COLORS.primary[90],
     paddingTop: 10,
     paddingRight: 40,
     paddingBottom: 10,
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#6287F2',
+    borderColor: COLORS.primary[90],
     minHeight: 40,
     flex: 1,
     paddingTop: 10,
@@ -55,15 +56,13 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   primaryText: {
-    color: '#FCFCFC',
-    fontSize: 14,
-    fontWeight: '400',
+    color: COLORS.white,
+    fontSize: FONT_SIZE.b2,
     textAlign: 'center',
   },
   secondaryText: {
-    color: '#6287F2',
-    fontSize: 14,
-    fontWeight: '400',
+    color: COLORS.primary[90],
+    fontSize: FONT_SIZE.b2,
     textAlign: 'center',
   },
 });
