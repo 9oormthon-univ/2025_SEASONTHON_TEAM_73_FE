@@ -58,7 +58,7 @@ const ChatScreen: React.FC = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       Alert.alert('채팅 신청 거절 완료');
-      router.back(); // 리스트 화면으로 돌아가기
+      router.push(`/index`); // 홈 화면으로 돌아가기
     } catch (err) {
       console.error('채팅 신청 거절 실패', err);
       Alert.alert('❌ 채팅 신청 거절 실패');
@@ -67,7 +67,7 @@ const ChatScreen: React.FC = () => {
 
   // 기존 메시지 가져오기 (ACTIVE 상태일 때만)
   useEffect(() => {
-    if (!roomId || isPending) return;
+    if (!roomId) return;
 
     const fetchMessages = async () => {
       try {
@@ -108,7 +108,7 @@ const ChatScreen: React.FC = () => {
     };
 
     fetchMessages();
-  }, [roomId, token, userId, isPending]);
+  }, [roomId, token, userId]);
 
   // WebSocket 연결 (ACTIVE 상태일 때만)
   useEffect(() => {
@@ -185,42 +185,53 @@ const ChatScreen: React.FC = () => {
     if (!isPending) scrollViewRef.current?.scrollToEnd({ animated: true });
   }, [chatData, isPending]);
 
-  if (isPending) {
-    return (
-      <View style={styles.containerPendig}>
-        <MessageRequestDialog
-          userName={senderName as string}
-          onAccept={handleAccept}
-          onReject={handleReject}
-        />
-      </View>
-    );
-  }
-
   return (
     <View style={styles.container}>
-      <ScrollView ref={scrollViewRef} style={styles.messagesContainer} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        ref={scrollViewRef} 
+        style={styles.messagesContainer} 
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.messagesContent}>
           {chatData.map((dateGroup, dateIndex) => (
             <View key={dateIndex} style={styles.dateGroup}>
               <DateSeparator date={dateGroup.date} />
               <View style={styles.messagesGroup}>
                 {dateGroup.messages.map((message) => (
-                  <ChatMessage key={message.id} text={message.text} isOwn={message.isOwn} time={message.time} />
+                  <ChatMessage 
+                    key={message.id} 
+                    text={message.text} 
+                    isOwn={message.isOwn} 
+                    time={message.time} 
+                  />
                 ))}
               </View>
             </View>
           ))}
         </View>
       </ScrollView>
-      <ChatInput onSendMessage={handleSendMessage} onPhotoPress={handlePhotoPress} />
+
+      {isPending && (
+        <View style={styles.containerPendig}>
+          <MessageRequestDialog
+            userName={senderName as string}
+            onAccept={handleAccept}
+            onReject={handleReject}
+          />
+        </View>
+      )}
+
+      {!isPending && (
+        <ChatInput onSendMessage={handleSendMessage} onPhotoPress={handlePhotoPress} />
+      )}
     </View>
   );
+
 };
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FCFCFC' },
-  messagesContainer: { flex: 1, marginTop: 36 },
+  messagesContainer: { flex: 1 },
   messagesContent: { paddingVertical: 20, gap: 20, alignSelf: 'stretch' },
   dateGroup: { flexDirection: 'column', alignItems: 'center', gap: 10, flex: 1, alignSelf: 'stretch' },
   messagesGroup: { flexDirection: 'column', gap: 10, alignSelf: 'stretch' },

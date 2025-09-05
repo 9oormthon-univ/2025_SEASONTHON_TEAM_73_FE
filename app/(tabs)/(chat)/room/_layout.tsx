@@ -20,6 +20,7 @@ export default function RoomLayout() {
             route: { params?: { senderName?: string } }
           }) => ({
             headerTitle: route.params?.senderName ?? "Unknown Sender",
+            headerBackVisible: true,
           })}
         />
       </Stack>

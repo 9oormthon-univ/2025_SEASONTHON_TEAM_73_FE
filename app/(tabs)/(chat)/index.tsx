@@ -28,6 +28,7 @@ export default function ChatList() {
   useEffect(() => {
     const fetchChats = async () => {
       try {
+        // 병렬 처리
         const [receiverRes, senderRes] = await Promise.all([
           api.get('/chatrooms/receiver', { headers: { Authorization: `Bearer ${accessToken}` } }),
           api.get('/chatrooms/sender', { headers: { Authorization: `Bearer ${accessToken}` } }),
