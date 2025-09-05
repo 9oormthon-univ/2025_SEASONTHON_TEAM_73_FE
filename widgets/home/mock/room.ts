@@ -1,6 +1,6 @@
 export const ROOM_LIST = [
   {
-    id: 1,
+    id: 27,
     title: "강남 한복판 룸메이트 구합니다.",
     type: "원룸",
     deposit: "2000만원",
@@ -10,7 +10,7 @@ export const ROOM_LIST = [
     image: require("@/assets/images/react-logo.png"),
   },
   {
-    id: 2,
+    id: 28,
     title: "신촌역 근처 룸메이트 구합니다.",
     type: "오피스텔",
     deposit: "400만원",
@@ -20,7 +20,7 @@ export const ROOM_LIST = [
     image: require("@/assets/images/react-logo.png"),
   },
   {
-    id: 3,
+    id: 29,
     title: "홍대 인근 룸메이트 모집합니다.",
     type: "투룸",
     deposit: "350만원",
@@ -30,7 +30,7 @@ export const ROOM_LIST = [
     image: require("@/assets/images/react-logo.png"),
   },
   {
-    id: 4,
+    id: 30,
     title: "여의도에서 룸메이트 찾습니다.",
     type: "아파트",
     deposit: "600만원",
@@ -40,7 +40,7 @@ export const ROOM_LIST = [
     image: require("@/assets/images/react-logo.png"),
   },
   {
-    id: 5,
+    id: 31,
     title: "여의도에서 룸메이트 찾습니다.",
     type: "아파트",
     deposit: "600만원",

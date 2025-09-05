@@ -13,7 +13,9 @@ interface AuthState extends UserToken {
   logout: () => void;
   setToken: (token: UserToken) => void;
   userName: string;
+  userId: string;
   setUserName: (name: string) => void;
+  setUserId: (id: string) => void;
 }
 
 export const useAuthStore = create(
@@ -37,7 +39,9 @@ export const useAuthStore = create(
           refreshToken: refreshToken,
         })),
       userName: "",
+      userId: "",
       setUserName: (name: string) => set(() => ({ userName: name })),
+      setUserId: (id: string) => set(() => ({ userId: id })),
     }),
     {
       name: "auth-store",

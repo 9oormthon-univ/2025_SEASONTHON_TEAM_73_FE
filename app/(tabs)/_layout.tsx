@@ -53,7 +53,7 @@ export default function HomeLayout() {
         }}
       />
       <Tabs.Screen
-        name="chat"
+        name="(chat)"
         options={{
           title: "채팅",
           tabBarIcon: ({ color }) => (
