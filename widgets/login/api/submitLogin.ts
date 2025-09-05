@@ -8,6 +8,7 @@ import type { LoginFormData } from "../types";
 type SubmitLoginResponse = BaseResponse<{
   accessToken: string;
   refreshToken: string;
+  userId: number;
 }>;
 
 const submitLogin = async (data: LoginFormData) => {
@@ -21,12 +22,13 @@ const submitLogin = async (data: LoginFormData) => {
 export const useSubmitLogin = () => {
   return useMutation({
     mutationFn: submitLogin,
-    onSuccess: ({ accessToken, refreshToken }) => {
-      console.log(accessToken, refreshToken);
+    onSuccess: ({ accessToken, refreshToken, userId }) => {
+      console.log(accessToken, refreshToken, userId);
       useAuthStore.setState({
         isLoggedIn: true,
         accessToken,
         refreshToken,
+        userId: userId.toString(),
       });
     },
   });
