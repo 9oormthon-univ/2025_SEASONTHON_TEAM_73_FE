@@ -1,6 +1,11 @@
+import { router } from 'expo-router';
 import React from 'react';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, TouchableOpacity } from 'react-native';
 import ChatListItem from './ChatListItem';
+
+interface ChatRequestListProps {
+  requests: ChatRoom[];
+}
 
 type ChatRoom = {
   chatRoomId: number;
@@ -9,19 +14,27 @@ type ChatRoom = {
   receiverName: string;
   unreadCount: number;
   lastMessage: { content: string | null; createdAt: string } | null;
+  chatRoomStatus: 'PENDING' | 'ACCEPTED';
 };
-
-interface ChatRequestListProps {
-  requests: ChatRoom[];
-}
 
 const ChatRequestList: React.FC<ChatRequestListProps> = ({ requests }) => {
   return (
-    <ScrollView >
+    <ScrollView>
       {requests.map((request) => (
-        <View key={request.chatRoomId}>
+        <TouchableOpacity
+          key={request.chatRoomId}
+          onPress={() =>
+            router.push({
+              pathname: `/room/${request.chatRoomId}` as any,
+              params: { 
+                senderName: request.senderName,
+                chatRoomStatus: request.chatRoomStatus, // 상태 전달
+              },
+            })
+          }
+        >
           <ChatListItem chat={request} />
-        </View>
+        </TouchableOpacity>
       ))}
     </ScrollView>
   );

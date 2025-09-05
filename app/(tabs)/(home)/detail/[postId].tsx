@@ -1,4 +1,6 @@
+import api from "@/shared/api/axios";
 import { Button } from "@/shared/components/Button/Button";
+import { useAuthStore } from "@/shared/store";
 import { SPACING } from "@/shared/styles";
 import DescriptionSection from "@/widgets/detail/DescriptionSection";
 import MapSection from "@/widgets/detail/MapSection";
@@ -7,13 +9,37 @@ import ProfileSection from "@/widgets/detail/ProfileSection";
 import PropertyHeader from "@/widgets/detail/PropertyHeader";
 import PropertyInfo from "@/widgets/detail/PropertyInfo";
 import PropertyTitle from "@/widgets/detail/PropertyTitle";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 
 const PropertyDetailView: React.FC = () => {
   const { postId } = useLocalSearchParams();
   if (!postId) return null;
+  const accessToken = useAuthStore.getState().accessToken;
+
+  const handleCreateChatRoom = async () => {
+    try {
+      const res = await api.post(`/chatrooms/${postId}`, 
+    {},  // body는 빈 객체
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+      const chatRoom = res.data.data;
+
+      // 채팅방 화면으로 이동 (chatRoomId 전달)
+      router.push({
+        pathname: `/room/${chatRoom.chatRoomId}` as any,
+        params: { senderName: chatRoom.receiverName },
+      });
+      console.log("채팅방 생성 및 이동:", chatRoom);
+    } catch (err) {
+      console.error("채팅방 생성 실패:", err);
+    }
+  };
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -29,7 +55,7 @@ const PropertyDetailView: React.FC = () => {
           padding: SPACING.normal,
         }}
       >
-        <Button size="lg" text="채팅하기" onPress={() => {}} disabled={false} />
+        <Button size="lg" text="채팅하기" onPress={handleCreateChatRoom} disabled={false} />
       </View>
     </ScrollView>
   );

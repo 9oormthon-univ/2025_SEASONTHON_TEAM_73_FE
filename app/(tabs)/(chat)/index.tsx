@@ -16,6 +16,7 @@ type ChatRoom = {
     content: string | null;
     createdAt: string;
   } | null;
+  chatRoomStatus: 'PENDING' | 'ACCEPTED';
 };
 
 export default function ChatList() {
@@ -27,12 +28,18 @@ export default function ChatList() {
   useEffect(() => {
     const fetchChats = async () => {
       try {
-        const res = await api.get('/chatrooms/receiver', {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
-        // 안전하게 접근 + 기본값
-        const pending = res.data?.data?.PENDING ?? [];
-        const accepted = res.data?.data?.ACCEPTED ?? [];
+        const [receiverRes, senderRes] = await Promise.all([
+          api.get('/chatrooms/receiver', { headers: { Authorization: `Bearer ${accessToken}` } }),
+          api.get('/chatrooms/sender', { headers: { Authorization: `Bearer ${accessToken}` } }),
+        ]);
+
+        // receiver, sender 각각 데이터 안전하게 접근 + 기본값
+        const pending = receiverRes.data?.data?.PENDING ?? [];
+        const acceptedReceiver = receiverRes.data?.data?.ACCEPTED ?? [];
+        const acceptedSender = senderRes.data?.data?.ACCEPTED ?? [];
+
+        // 수신/발신 ACCEPTED 합치기
+        const accepted = [...acceptedReceiver, ...acceptedSender];
 
         setPendingRequests(pending);
         setAcceptedRooms(accepted);
@@ -42,7 +49,8 @@ export default function ChatList() {
     };
 
     fetchChats();
-  }, []);
+  }, [activeTab]);
+
 
   return (
     <View style={styles.container}>

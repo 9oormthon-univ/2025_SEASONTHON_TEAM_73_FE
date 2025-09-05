@@ -1,6 +1,6 @@
 import { COLORS } from '@/shared/styles';
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 
 type ChatRoom = {
   chatRoomId: number;
@@ -17,7 +17,7 @@ interface ChatListItemProps {
 
 const ChatListItem: React.FC<ChatListItemProps> = ({ chat }) => {
   return (
-    <TouchableOpacity style={styles.item}>
+    <View style={styles.item}>
       <Image
         source={require('./images/friendIcon.png')}
         style={styles.avatar}
@@ -29,7 +29,7 @@ const ChatListItem: React.FC<ChatListItemProps> = ({ chat }) => {
                 ellipsizeMode="tail"    // 끝에 ... 표시
         >{chat.lastMessage?.content ?? 'dasdksanlasnfjkanjfkasbnjfkasbnfjklasbkdjaskd;jas;idhsauif;ahsfuisa;hfnuai;'}</Text>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 
