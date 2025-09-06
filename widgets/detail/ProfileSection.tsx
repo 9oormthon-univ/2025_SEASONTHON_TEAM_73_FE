@@ -66,6 +66,7 @@ const styles = StyleSheet.create({
     color: '#17171B',
     fontSize: FONT_SIZE.b2,
     fontFamily: FONTS.bold,
+    lineHeight: 30
   },
   badge: {
     borderRadius: 100,

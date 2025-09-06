@@ -12,7 +12,7 @@ export const OtherHabitsContent: React.FC<OtherHabitsContentProps> = ({ etc }) =
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <InfoSection title="흡연 여부" value={etc.smoking ? '흡연' : '비흡연'} />
+        <InfoSection title="흡연 여부" value={etc.smoking} />
         <InfoSection title="키우는 반려 동물" value={etc.pet.length > 0 ? etc.pet.join(', ') : '없음'} showBorder={false} />
       </View>
     </View>

@@ -70,7 +70,8 @@ const PropertyDetailView: React.FC = () => {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <PropertyHeader />
+      <PropertyHeader images={postData.imageUrl ? postData.imageUrl : ""} />
+
       <ProfileSection
         userId={postData.userId} 
         nickname={postData.userName}
