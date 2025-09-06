@@ -1,9 +1,9 @@
-import { Button } from "@/shared/components";
-import { COLORS, SPACING } from "@/shared/styles";
+import { COLORS, FONTS, SPACING } from "@/shared/styles";
 import { useFetchPostList, useSubmitPostSearch } from "@/widgets/home/api";
 import { RoomListItem, RoomSearchFilter } from "@/widgets/home/components";
 import { useDefaultFilter } from "@/widgets/home/contexts";
 import { Room } from "@/widgets/home/types";
+import { SIZES } from "@/widgets/menu/constants";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
@@ -12,6 +12,7 @@ import {
   FlatList,
   ListRenderItem,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -88,6 +89,28 @@ export default function HomeScreen() {
     return null;
   };
 
+  const renderEmptyComponent = () => {
+    // 로딩 중이면 empty component를 표시하지 않음
+    if (isLoading || isSearchLoading) {
+      return null;
+    }
+
+    return (
+      <View style={styles.emptyContainer}>
+        <Ionicons
+          name="home-outline"
+          size={48}
+          color={COLORS.gray[30]}
+          style={styles.emptyIcon}
+        />
+        <Text style={styles.emptyText}>방이 없어요</Text>
+        <Text style={styles.emptySubText}>
+          조건에 맞는 방을 찾을 수 없습니다
+        </Text>
+      </View>
+    );
+  };
+
   const keyExtractor = (item: Room) => item.id.toString();
 
   if (
@@ -102,7 +125,12 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
         <RoomSearchFilter />
-        <View style={styles.loadingContainer}>
+        <View
+          style={[
+            styles.loadingContainer,
+            { paddingBottom: NAVIGATION_BOTTOM_TABS_HEIGHT + SPACING.md },
+          ]}
+        >
           <RoomListItem.Skeleton />
           <RoomListItem.Skeleton />
           <RoomListItem.Skeleton />
@@ -115,7 +143,24 @@ export default function HomeScreen() {
   if (isError) {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.errorContainer}>{/* 에러 처리는 추후 개선 */}</View>
+        <View style={styles.searchContainer}>
+          <TouchableOpacity>
+            <Ionicons name="search" size={24} color={COLORS.black} />
+          </TouchableOpacity>
+        </View>
+        <RoomSearchFilter />
+        <View style={styles.errorContainer}>
+          <Ionicons
+            name="alert-circle-outline"
+            size={48}
+            color={COLORS.gray[30]}
+            style={styles.errorIcon}
+          />
+          <Text style={styles.errorText}>에러가 발생했어요</Text>
+          <Text style={styles.errorSubText}>
+            방들을 받아오던 중 문제가 발생했습니다
+          </Text>
+        </View>
       </SafeAreaView>
     );
   }
@@ -135,21 +180,18 @@ export default function HomeScreen() {
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.1}
         ListFooterComponent={renderFooter}
+        ListEmptyComponent={renderEmptyComponent}
         showsVerticalScrollIndicator={false}
         style={styles.roomList}
-      />
-
-      {/* 요거는 임시로 만들어둔 글 작성하기 화면 버튼이에용! */}
-      <Button
-        text="글 작성하기"
-        size="md"
-        variant="primary"
-        onPress={onCreatePress}
-        style={styles.createButton}
+        contentContainerStyle={{
+          paddingBottom: NAVIGATION_BOTTOM_TABS_HEIGHT + SPACING.md,
+        }}
       />
     </SafeAreaView>
   );
 }
+
+const { NAVIGATION_BOTTOM_TABS_HEIGHT } = SIZES;
 
 const styles = StyleSheet.create({
   container: {
@@ -168,21 +210,59 @@ const styles = StyleSheet.create({
   createButton: {
     position: "absolute",
     right: SPACING.normal,
-    bottom: SPACING.md,
+    bottom: NAVIGATION_BOTTOM_TABS_HEIGHT + SPACING.md,
     zIndex: 1000,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "flex-start",
-    alignItems: "center",
   },
   errorContainer: {
-    flex: 1,
+    height: 500,
     justifyContent: "center",
     alignItems: "center",
   },
   footerLoader: {
     paddingVertical: SPACING.md,
     alignItems: "center",
+  },
+  emptyContainer: {
+    height: 500,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyIcon: {
+    marginBottom: SPACING.xs,
+  },
+  emptyText: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: COLORS.gray[70],
+    textAlign: "center",
+    marginBottom: SPACING.xs,
+    fontFamily: FONTS.medium,
+  },
+  emptySubText: {
+    fontSize: 14,
+    color: COLORS.gray[50],
+    textAlign: "center",
+    fontFamily: FONTS.regular,
+  },
+  errorIcon: {
+    marginBottom: SPACING.xs,
+  },
+  errorText: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: COLORS.gray[70],
+    textAlign: "center",
+    marginBottom: SPACING.xs,
+    fontFamily: FONTS.medium,
+  },
+  errorSubText: {
+    fontSize: 14,
+    color: COLORS.gray[50],
+    textAlign: "center",
+    fontFamily: FONTS.regular,
   },
 });
