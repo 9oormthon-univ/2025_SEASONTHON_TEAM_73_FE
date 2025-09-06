@@ -1,13 +1,13 @@
 import React, { useRef, useState } from "react";
 import {
-    Dimensions,
-    FlatList,
-    Image,
-    NativeScrollEvent,
-    NativeSyntheticEvent,
-    StyleSheet,
-    Text,
-    View,
+  Dimensions,
+  FlatList,
+  Image,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 const { width } = Dimensions.get("window");
@@ -18,7 +18,11 @@ const images = [
   "https://api.builder.io/api/v1/image/assets/TEMP/12534525cfd5e286f981627b7e137775c093cf79?placeholderIfAbsent=true&apiKey=7adddd5587f24b91884c2915be4df62c",
 ];
 
-const PropertyHeader: React.FC = () => {
+type PropertyHeaderProps = {
+  images: string[]; // API에서 받은 이미지 배열
+};
+
+const PropertyHeader: React.FC<PropertyHeaderProps> = ({ images }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList<string>>(null);
 
@@ -27,12 +31,20 @@ const PropertyHeader: React.FC = () => {
     setCurrentIndex(index);
   };
 
+  // 이미지가 없을 경우 대체 이미지
+  const displayImages =
+    images && images.length > 0
+      ? images
+      : [
+          "https://via.placeholder.com/400x250.png?text=이미지가+없습니다",
+        ];
+
   return (
     <View style={styles.container}>
       {/* 이미지 슬라이더 */}
       <FlatList
         ref={flatListRef}
-        data={images}
+        data={displayImages}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
