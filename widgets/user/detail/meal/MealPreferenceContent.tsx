@@ -2,31 +2,25 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { InfoSection } from '../InfoSection';
 
-export const MealPreferenceContent: React.FC = () => {
+interface MealPreferenceContentProps {
+  mealHabit: any;
+}
+
+export const MealPreferenceContent: React.FC<MealPreferenceContentProps> = ({ mealHabit }) => {
+  if (!mealHabit) return null;
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <InfoSection
-          title="주 요리 횟수"
-          value="7시 기상, 9시 출근"
-        />
-        <InfoSection
-          title="음식 냄새 민감도"
-          value="18시 퇴근, 00시 취침"
-        />
-        <InfoSection
-          title="주 음주 횟수"
-          value="11시 기상, 2시 취침"
-        />
-        <InfoSection
-          title="사용 식기"
-          value="3회 이상"
-          showBorder={false}
-        />
+        <InfoSection title="주 요리 횟수" value={mealHabit.cookingCount} />
+        <InfoSection title="음식 냄새 민감도" value={mealHabit.smellLevel} />
+        <InfoSection title="주 음주 횟수" value={mealHabit.alcoholCount} />
+        <InfoSection title="사용 식기" value={mealHabit.dishShare} showBorder={false} />
       </View>
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {

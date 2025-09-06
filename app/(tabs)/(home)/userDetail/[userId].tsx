@@ -68,12 +68,13 @@ export const MyPageScreen: React.FC = () => {
             smoking={user.smoking}
         />
         <TabNavigation activeTab={activeTab} onTabPress={handleTabPress} />
-        {activeTab === 0 && <LifestyleContent />}
-        {activeTab === 1 && <MealPreferenceContent />} 
-        {activeTab === 2 && <CleaningHabitContent />}
-        {activeTab === 3 && <NoiseSensitivityContent />}
-        {activeTab === 4 && <OtherHabitsContent />}    
-        {activeTab === 5 && <DiseaseContent />}        
+        {activeTab === 0 && <LifestyleContent lifeHabit={user.lifeHabit} />}
+        {activeTab === 1 && <MealPreferenceContent mealHabit={user.mealHabit} />}
+        {activeTab === 2 && <CleaningHabitContent cleaningHabit={user.cleaningHabit} />}
+        {activeTab === 3 && <NoiseSensitivityContent soundSensitivity={user.soundSensitivity} />}
+        {activeTab === 4 && <OtherHabitsContent etc={user.etc} />}
+        {activeTab === 5 && <DiseaseContent disease={user.disease} />}
+     
     </ScrollView>
   );
 };

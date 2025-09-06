@@ -3,26 +3,32 @@ import { StyleSheet, View } from 'react-native';
 import { InfoSection } from './InfoSection';
 import { WorkScheduleSection } from './WorkScheduleSection';
 
-export const LifestyleContent: React.FC = () => {
+interface LifestyleContentProps {
+  lifeHabit: any; // API 데이터 타입에 맞게 지정 가능
+}
+
+export const LifestyleContent: React.FC<LifestyleContentProps> = ({ lifeHabit }) => {
+  if (!lifeHabit) return null;
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>
         <WorkScheduleSection activeDays={[true, true, true, true, true, false, false]} />
         <InfoSection
           title="기상 시간, 출근 시간"
-          value="7시 기상, 9시 출근"
+          value={`${lifeHabit.wakeUpTimeWorkday} 기상, ${lifeHabit.goWorkTime} 출근`}
         />
         <InfoSection
           title="퇴근 시간, 취침 시간"
-          value="18시 퇴근, 00시 취침"
+          value={`${lifeHabit.comeHomeTime} 퇴근, ${lifeHabit.sleepTimeWorkday} 취침`}
         />
         <InfoSection
           title="휴일 기상 시간, 휴일 취침 시간"
-          value="11시 기상, 2시 취침"
+          value={`${lifeHabit.wakeUpTimeHoliday} 기상, ${lifeHabit.sleepTimeHoliday} 취침`}
         />
         <InfoSection
           title="알람 횟수"
-          value="3회 이상"
+          value={lifeHabit.alarmCount === 'ONCE' ? '1회' : lifeHabit.alarmCount === 'TWICE' ? '2회' : '3회 이상'}
           showBorder={false}
         />
       </View>
@@ -31,19 +37,6 @@ export const LifestyleContent: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 18,
-    paddingVertical: 20,
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: 10,
-    left: 0,
-    backgroundColor: '#FCFCFC',
-  },
-  content: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    alignSelf: 'stretch',
-  },
+  container: { flex: 1, paddingHorizontal: 18, paddingVertical: 20, flexDirection: 'column', alignItems: 'center', gap: 10, left: 0, backgroundColor: '#FCFCFC' },
+  content: { flexDirection: 'column', alignItems: 'flex-start', alignSelf: 'stretch' },
 });

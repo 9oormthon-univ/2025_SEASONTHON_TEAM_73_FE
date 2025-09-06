@@ -2,23 +2,23 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { InfoSection } from '../InfoSection';
 
-export const OtherHabitsContent: React.FC = () => {
+interface OtherHabitsContentProps {
+  etc: any;
+}
+
+export const OtherHabitsContent: React.FC<OtherHabitsContentProps> = ({ etc }) => {
+  if (!etc) return null;
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <InfoSection
-          title="흡연 여부"
-          value="7시 기상, 9시 출근"
-        />
-        <InfoSection
-          title="키우는 반려 동물"
-          value="18시 퇴근, 00시 취침"
-          showBorder={false}
-        />
+        <InfoSection title="흡연 여부" value={etc.smoking ? '흡연' : '비흡연'} />
+        <InfoSection title="키우는 반려 동물" value={etc.pet.length > 0 ? etc.pet.join(', ') : '없음'} showBorder={false} />
       </View>
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
