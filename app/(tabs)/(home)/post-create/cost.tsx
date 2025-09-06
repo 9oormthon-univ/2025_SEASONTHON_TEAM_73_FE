@@ -9,11 +9,18 @@ import { useCostValidation } from "@/widgets/post-create/hooks";
 import { CostFormData } from "@/widgets/post-create/types/post";
 import { router, useLocalSearchParams } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
-import { Dimensions, ScrollView, View } from "react-native";
+import {
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  View,
+} from "react-native";
 
 export default function CostScreen() {
   const { width } = Dimensions.get("screen");
-  const halfInputWidth = (width - 20 * 3) / 2;
+  const halfInputWidth = (width - 18 * 2 - 20) / 2;
+  const thirdInputWidth = (width - 18 * 2 - 10 * 2) / 3;
 
   const params = useLocalSearchParams();
   const roomInfo = params.roomInfo
@@ -34,9 +41,6 @@ export default function CostScreen() {
   const { isFormValid } = useCostValidation(formData);
 
   const onSubmit = (data: CostFormData) => {
-    console.log(data);
-    console.log("이전 화면 데이터", roomInfo);
-
     router.push({
       pathname: "/post-create/description",
       params: {
@@ -47,123 +51,173 @@ export default function CostScreen() {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <ScrollView style={containerStyle.wrapper}>
-        <PostCreateProgressBar
-          totalScreens={3}
-          currentIndex={1}
-          title="비용 정보"
-        />
-        <View style={{ gap: 20 }}>
-          <Controller
-            control={control}
-            name="deposit"
-            rules={{ required: "보증금을 입력해주세요." }}
-            render={({ field: { onChange, value } }) => (
-              <Input
-                title="보증금"
-                required
-                placeholder="보증금을 입력해주세요."
-                description="(단위: 만 원)"
-                keyboardType="number-pad"
-                value={value}
-                onChangeText={onChange}
-                error={errors.deposit?.message}
+    <>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <ScrollView
+          style={containerStyle.wrapper}
+          contentContainerStyle={{ flexGrow: 1 }}
+        >
+          <PostCreateProgressBar
+            totalScreens={3}
+            currentIndex={1}
+            title="비용 정보"
+          />
+          <View style={{ gap: 20, paddingBottom: 20 }}>
+            <View style={{ gap: 10, flexDirection: "row" }}>
+              <Controller
+                control={control}
+                name="deposit"
+                rules={{ required: "보증금을 입력해주세요." }}
+                render={({ field: { onChange, value } }) => (
+                  <Input
+                    style={{ width: thirdInputWidth }}
+                    title="보증금"
+                    required
+                    keyboardType="number-pad"
+                    value={value ? String(value) : ""}
+                    onChangeText={onChange}
+                    error={errors.deposit?.message}
+                  />
+                )}
               />
-            )}
-          />
 
-          <Controller
-            control={control}
-            name="monthlyRent"
-            rules={{ required: "월세를 입력해주세요." }}
-            render={({ field: { onChange, value } }) => (
-              <Input
-                title="월세"
-                required
-                placeholder="월세를 입력해주세요."
-                description="(단위: 만 원)"
-                keyboardType="number-pad"
-                value={value}
-                onChangeText={onChange}
-                error={errors.monthlyRent?.message}
+              <Controller
+                control={control}
+                name="monthlyRent"
+                rules={{ required: "월세를 입력해주세요." }}
+                render={({ field: { onChange, value } }) => (
+                  <Input
+                    title="월세"
+                    style={{ width: thirdInputWidth }}
+                    required
+                    keyboardType="number-pad"
+                    value={value ? String(value) : ""}
+                    onChangeText={(text) => onChange(Number(text) || 0)}
+                    error={errors.monthlyRent?.message}
+                  />
+                )}
               />
-            )}
-          />
 
-          <Controller
-            control={control}
-            name="maintenanceFee"
-            rules={{ required: "관리비를 입력해주세요." }}
-            render={({ field: { onChange, value } }) => (
-              <Input
-                title="관리비"
-                required
-                placeholder="관리비를 입력해주세요."
-                description="(단위: 만 원)"
-                keyboardType="number-pad"
-                value={value}
-                onChangeText={onChange}
-                error={errors.maintenanceFee?.message}
+              <Controller
+                control={control}
+                name="maintenanceFee"
+                rules={{ required: "관리비를 입력해주세요." }}
+                render={({ field: { onChange, value } }) => (
+                  <Input
+                    title="관리비"
+                    style={{ width: thirdInputWidth }}
+                    required
+                    keyboardType="number-pad"
+                    value={value ? String(value) : ""}
+                    onChangeText={(text) => onChange(Number(text) || 0)}
+                    error={errors.maintenanceFee?.message}
+                  />
+                )}
               />
-            )}
-          />
+            </View>
 
-          <PostCreateField.MultiRadio
-            title="지불 구조"
-            required
-            isMultiSelect
-            items={["보증금 분담", "월세 분담", "관리비 분담", "공과금 분담"]}
-            selected={formData.paymentStructure}
-            setSelected={(selected) => setValue("paymentStructure", selected)}
-          />
-
-          <PostCreateField.DatePicker
-            title="입주 가능일"
-            required
-            value={formData.moveInDate}
-            setValue={(value) => setValue("moveInDate", value)}
-          />
-
-          <View style={{ flexDirection: "row", gap: 20 }}>
-            <Controller
-              control={control}
-              name="minStayPeriod"
-              render={({ field: { onChange, value } }) => (
-                <Input
-                  title="최소 거주 기간"
-                  description="(단위: 개월)"
-                  placeholder="3"
-                  width={halfInputWidth}
-                  keyboardType="number-pad"
-                  value={value}
-                  onChangeText={onChange}
-                  error={errors.minStayPeriod?.message}
-                />
-              )}
+            <PostCreateField.MultiRadio
+              title="지불 구조"
+              required
+              isMultiSelect
+              items={["보증금 분담", "월세 분담", "관리비 분담", "공과금 분담"]}
+              selected={
+                [
+                  formData.depositShare ? 0 : null,
+                  formData.rentShare ? 1 : null,
+                  formData.maintenanceShare ? 2 : null,
+                  formData.utilitiesShare ? 3 : null,
+                ].filter((item) => item !== null) as number[]
+              }
+              setSelected={(selected) => {
+                setValue("depositShare", selected.includes(0));
+                setValue("rentShare", selected.includes(1));
+                setValue("maintenanceShare", selected.includes(2));
+                setValue("utilitiesShare", selected.includes(3));
+              }}
             />
+
+            <PostCreateField.DatePicker
+              title="입주 가능일"
+              required
+              value={
+                formData.availableDate ? new Date(formData.availableDate) : null
+              }
+              setValue={(value) =>
+                setValue(
+                  "availableDate",
+                  value ? value.toISOString().split("T")[0] : ""
+                )
+              }
+            />
+
+            <View style={{ flexDirection: "row", gap: 20 }}>
+              <Controller
+                control={control}
+                name="minStayMonths"
+                render={({ field: { onChange, value } }) => (
+                  <Input
+                    title="최소 거주 기간"
+                    suffix="개월"
+                    width={halfInputWidth}
+                    keyboardType="number-pad"
+                    value={value ? String(value) : ""}
+                    onChangeText={(text) => onChange(Number(text) || 0)}
+                    error={errors.minStayMonths?.message}
+                  />
+                )}
+              />
+
+              <Controller
+                control={control}
+                name="maxStayMonths"
+                render={({ field: { onChange, value } }) => (
+                  <Input
+                    title="최대 거주 기간"
+                    suffix="개월"
+                    width={halfInputWidth}
+                    keyboardType="number-pad"
+                    value={value ? String(value) : ""}
+                    onChangeText={(text) => onChange(Number(text) || 0)}
+                    error={errors.maxStayMonths?.message}
+                  />
+                )}
+              />
+            </View>
             <Controller
               control={control}
-              name="maxStayPeriod"
+              name="preferredGender"
               render={({ field: { onChange, value } }) => (
-                <Input
-                  title="최대 거주 기간"
-                  description="(단위: 개월)"
-                  placeholder="2"
-                  width={halfInputWidth}
-                  keyboardType="number-pad"
-                  value={value}
-                  onChangeText={onChange}
-                  error={errors.maxStayPeriod?.message}
+                <PostCreateField.Radio
+                  title="모집 성별"
+                  items={["남자", "여자"]}
+                  isMultiSelect
+                  required
+                  selected={
+                    [
+                      value.includes("MALE") ? 0 : null,
+                      value.includes("FEMALE") ? 1 : null,
+                    ].filter((item) => item !== null) as number[]
+                  }
+                  setSelected={(selected) => {
+                    const newGenders: ("MALE" | "FEMALE")[] = [];
+                    if (selected.includes(0)) newGenders.push("MALE");
+                    if (selected.includes(1)) newGenders.push("FEMALE");
+                    onChange(newGenders);
+                  }}
                 />
               )}
             />
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
       <View
         style={{
           padding: SPACING.normal,
+          backgroundColor: "white",
         }}
       >
         <Button
@@ -173,6 +227,6 @@ export default function CostScreen() {
           disabled={!isFormValid}
         />
       </View>
-    </View>
+    </>
   );
 }
