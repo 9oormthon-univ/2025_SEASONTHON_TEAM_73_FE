@@ -18,7 +18,9 @@ export default function RoomListItem({ room }: RoomListItemProps) {
     >
       <Image source={{ uri: room.imageUrl }} style={styles.roomImage} />
       <View style={styles.roomInfo}>
-        <Text style={styles.roomTitle}>{room.title}</Text>
+        <Text style={styles.roomTitle} numberOfLines={1} ellipsizeMode="tail">
+          {room.title}
+        </Text>
         <View style={styles.roomDetail}>
           <Ionicons
             name="home"
