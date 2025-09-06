@@ -71,7 +71,6 @@ const PropertyDetailView: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {" "}
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <PropertyHeader images={postData.imageUrl ? postData.imageUrl : ""} />
 
