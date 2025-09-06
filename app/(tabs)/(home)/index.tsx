@@ -143,8 +143,23 @@ export default function HomeScreen() {
   if (isError) {
     return (
       <SafeAreaView style={styles.container}>
+        <View style={styles.searchContainer}>
+          <TouchableOpacity>
+            <Ionicons name="search" size={24} color={COLORS.black} />
+          </TouchableOpacity>
+        </View>
+        <RoomSearchFilter />
         <View style={styles.errorContainer}>
-          <Text>방들을 받아오던 중 에러가 발생했어요.</Text>
+          <Ionicons
+            name="alert-circle-outline"
+            size={48}
+            color={COLORS.gray[30]}
+            style={styles.errorIcon}
+          />
+          <Text style={styles.errorText}>에러가 발생했어요</Text>
+          <Text style={styles.errorSubText}>
+            방들을 받아오던 중 문제가 발생했습니다
+          </Text>
         </View>
       </SafeAreaView>
     );
@@ -200,8 +215,7 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "flex-start",
   },
   errorContainer: {
     height: 500,
@@ -229,6 +243,23 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.medium,
   },
   emptySubText: {
+    fontSize: 14,
+    color: COLORS.gray[50],
+    textAlign: "center",
+    fontFamily: FONTS.regular,
+  },
+  errorIcon: {
+    marginBottom: SPACING.xs,
+  },
+  errorText: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: COLORS.gray[70],
+    textAlign: "center",
+    marginBottom: SPACING.xs,
+    fontFamily: FONTS.medium,
+  },
+  errorSubText: {
     fontSize: 14,
     color: COLORS.gray[50],
     textAlign: "center",
