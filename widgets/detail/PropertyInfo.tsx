@@ -2,19 +2,48 @@ import { COLORS, FONT_SIZE, FONTS } from '@/shared/styles';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-const PropertyInfo: React.FC = () => {
+type Props = {
+  roomType: string;
+  areaSize: number;
+  floor: number;
+  buildingFloor: number;
+  roomCount: number;
+  washroomCount: number;
+  hasElevator: boolean;
+  availableDate: string;
+  minStayMonths: number;
+  maxStayMonths: number;
+};
+
+const PropertyInfo: React.FC<Props> = ({
+  roomType,
+  areaSize,
+  floor,
+  buildingFloor,
+  roomCount,
+  washroomCount,
+  hasElevator,
+  availableDate,
+  minStayMonths,
+  maxStayMonths
+}) => {
+  const formatDate = (date?: string) => {
+    if (!date) return "-";
+    return date.split("T")[0];
+  };
+
   const infoItems = [
-    { label: '방 종류', value: '투룸' },
-    { label: '전용 면적', value: '18.73㎡' },
-    { label: '해당층/최고층', value: '3/12' },
-    { label: '방 개수', value: '2개' },
-    { label: '화장실 개수', value: '1개' },
-    { label: '난방 구조', value: '중앙 난방' },
-    { label: '엘리베이터', value: '있음' },
-    { label: '입주 가능일', value: '2025.09.05' },
-    { label: '최소 거주 기간', value: '4개월' },
-    { label: '최대 거주 기간', value: '12개월' },
+    { label: "방 종류", value: roomType || "-" },
+    { label: "전용 면적", value: areaSize ? `${areaSize}㎡` : "-" },
+    { label: "해당층/최고층", value: floor && buildingFloor ? `${floor}/${buildingFloor}` : "-" },
+    { label: "방 개수", value: roomCount ? `${roomCount}개` : "-" },
+    { label: "화장실 개수", value: washroomCount ? `${washroomCount}개` : "-" },
+    { label: "엘리베이터", value: hasElevator ? "있음" : "없음" },
+    { label: "입주 가능일", value: formatDate(availableDate) },
+    { label: "최소 거주 기간", value: minStayMonths ? `${minStayMonths}개월` : "-" },
+    { label: "최대 거주 기간", value: maxStayMonths ? `${maxStayMonths}개월` : "-" },
   ];
+
 
   return (
     <View style={styles.container}>

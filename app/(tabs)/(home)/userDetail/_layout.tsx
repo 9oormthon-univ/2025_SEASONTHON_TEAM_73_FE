@@ -12,7 +12,7 @@ export default function ChatLayout() {
           contentStyle: { backgroundColor: COLORS.white },
         }}
       >
-        <Stack.Screen name="index" options={{ headerShown: false, headerTitle: "채팅" }}/>
+        <Stack.Screen name="[userId]" options={{ headerShown: true, headerTitle: "유저 프로필" }}/>
 
       </Stack>
     </FilterDefaultProvider>
