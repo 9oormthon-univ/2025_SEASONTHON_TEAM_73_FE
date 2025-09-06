@@ -6,6 +6,7 @@ import {
   PostCreateProgressBar,
 } from "@/widgets/post-create/components";
 import { ROOM_INFO_DEFAULT_VALUES } from "@/widgets/post-create/constants";
+import { usePostCreate } from "@/widgets/post-create/contexts";
 import { useRoomInfoValidation } from "@/widgets/post-create/hooks";
 import type { RoomInfoFormData } from "@/widgets/post-create/types";
 import { router } from "expo-router";
@@ -22,6 +23,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function RoomInfoScreen() {
   const { width } = Dimensions.get("screen");
   const halfInputWidth = (width - 20 * 3) / 2;
+  const { setRoomInfo } = usePostCreate();
 
   const {
     control,
@@ -37,10 +39,8 @@ export default function RoomInfoScreen() {
   const { isFormValid } = useRoomInfoValidation(formData);
 
   const onSubmit = (data: RoomInfoFormData) => {
-    router.push({
-      pathname: "/post-create/cost",
-      params: { roomInfo: JSON.stringify(data) },
-    });
+    setRoomInfo(data);
+    router.push("/post-create/cost");
   };
 
   return (

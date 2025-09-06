@@ -5,12 +5,9 @@ import {
   PostCreateProgressBar,
 } from "@/widgets/post-create/components";
 import { DESCRIPTION_DEFAULT_VALUES } from "@/widgets/post-create/constants";
-import type {
-  CostFormData,
-  DescriptionFormData,
-  RoomInfoFormData,
-} from "@/widgets/post-create/types/post";
-import { router, useLocalSearchParams } from "expo-router";
+import { usePostCreate } from "@/widgets/post-create/contexts";
+import type { DescriptionFormData } from "@/widgets/post-create/types/post";
+import { router } from "expo-router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
@@ -24,14 +21,8 @@ import { useSubmitPost } from "../../../../widgets/post-create/api";
 
 export default function DescriptionScreen() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const params = useLocalSearchParams();
-  const roomInfo: RoomInfoFormData | null = params.roomInfo
-    ? JSON.parse(params.roomInfo as string)
-    : null;
-  const cost: CostFormData = params.cost
-    ? JSON.parse(params.cost as string)
-    : null;
+  const { roomInfo, cost, setDescription, getCombinedData, clearAll } =
+    usePostCreate();
 
   const { handleSubmit, setValue, watch } = useForm<DescriptionFormData>({
     defaultValues: DESCRIPTION_DEFAULT_VALUES,
@@ -45,51 +36,70 @@ export default function DescriptionScreen() {
     if (isSubmitting) return;
     setIsSubmitting(true);
 
-    const { images, ...roomInfoWithoutImages } = roomInfo || {};
-
-    const sanitizedRoomInfo = {
-      ...roomInfoWithoutImages,
-      areaSize: (roomInfoWithoutImages as any)?.areaSize ?? 0,
-      floor: (roomInfoWithoutImages as any)?.floor ?? 1,
-      buildingFloor: (roomInfoWithoutImages as any)?.buildingFloor ?? 1,
-      roomCount: (roomInfoWithoutImages as any)?.roomCount ?? 1,
-      washroomCount: (roomInfoWithoutImages as any)?.washroomCount ?? 1,
-    };
-
-    const sanitizedCost = {
-      ...cost,
-      deposit: cost?.deposit ?? 0,
-      monthlyRent: cost?.monthlyRent ?? 0,
-      maintenanceFee: cost?.maintenanceFee ?? 0,
-      minStayMonths: cost?.minStayMonths ?? 1,
-      maxStayMonths: cost?.maxStayMonths ?? 12,
-    };
-
-    const combinedData = {
-      ...sanitizedRoomInfo,
-      ...sanitizedCost,
-      ...data,
-    };
-
-    const submitData = new FormData();
-
-    // JSON 데이터를 문자열로 추가
-    submitData.append("data", JSON.stringify(combinedData));
-
-    if (images && images.length > 0) {
-      images.forEach((image, index) => {
-        submitData.append("imageFiles", {
-          uri: image,
-          name: `image_${index}.jpg`,
-          type: "image/jpeg",
-        } as any);
-      });
+    // 모든 데이터가 있는지 확인
+    if (!roomInfo || !cost) {
+      Alert.alert("오류", "필수 정보가 누락되었습니다. 다시 시도해주세요.");
+      setIsSubmitting(false);
+      return;
     }
 
-    console.log("submitData", submitData);
+    // Context에 description 데이터 저장
+    setDescription(data);
 
-    submitPost(submitData, {
+    // Context에서 결합된 데이터 가져오기 (현재 폼 데이터 전달)
+    const combinedData = getCombinedData(data);
+    if (!combinedData) {
+      Alert.alert("오류", "데이터 처리 중 오류가 발생했습니다.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    const { images, ...dataWithoutImages } = combinedData;
+
+    // 이미지 정보 로깅
+    console.log("images:", images);
+    console.log("images length:", images?.length || 0);
+
+    // undefined, NaN, null 값 정리
+    const cleanedData = Object.fromEntries(
+      Object.entries(dataWithoutImages).map(([key, value]) => {
+        if (value === undefined || value === null || Number.isNaN(value)) {
+          return [
+            key,
+            value === null ? null : typeof value === "number" ? 0 : "",
+          ];
+        }
+        return [key, value];
+      })
+    );
+
+    // JSON 직렬화 전 데이터 확인
+    console.log("dataWithoutImages:", dataWithoutImages);
+    console.log("cleanedData:", cleanedData);
+
+    let jsonString: string;
+    try {
+      jsonString = JSON.stringify(cleanedData);
+      console.log("JSON string:", jsonString);
+      console.log("JSON string length:", jsonString.length);
+    } catch (error) {
+      console.error("JSON.stringify 오류:", error);
+      Alert.alert("오류", "데이터 직렬화 중 오류가 발생했습니다.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    // 이미지 URL들을 cleanedData에 포함
+    const finalData = {
+      ...cleanedData,
+      images: images || [],
+    };
+
+    console.log("최종 전송 데이터:", finalData);
+
+    submitPost(finalData, {
       onSuccess: () => {
+        clearAll(); // 성공 시 Context 데이터 초기화
         Alert.alert("성공", "게시글이 성공적으로 등록되었습니다.", [
           { text: "확인", onPress: () => router.navigate("/") },
         ]);
