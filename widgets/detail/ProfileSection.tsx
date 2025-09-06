@@ -15,7 +15,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   userId,
   nickname,
   badgeText = '대학생 인증',
-  profileImageUrl = 'https://api.builder.io/api/v1/image/assets/TEMP/12534525cfd5e286f981627b7e137775c093cf79?placeholderIfAbsent=true&apiKey=7adddd5587f24b91884c2915be4df62c',
+  profileImageUrl = "https://api.builder.io/api/v1/image/assets/TEMP/6bbcfd6c72685e98e894256a944ad514466dd509?placeholderIfAbsent=true&apiKey=7adddd5587f24b91884c2915be4df62c",
 }) => {
   const handleNavigateToProfile = () => {
     router.push(`/userDetail/${userId}` as any); // 프로필 페이지로 이동

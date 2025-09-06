@@ -1,7 +1,7 @@
 import api from '@/shared/api/axios';
 import { COLORS, FONT_SIZE } from '@/shared/styles';
 import KakaoMap from '@/widgets/detail/KakaoMap';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -92,7 +92,7 @@ export default function MapFullScreen() {
           style={styles.overlay}
           onPress={() => setInfo(null)} // overlay 클릭 시 info null
         >
-          <Pressable style={styles.infoBox} onPress={(e) => e.stopPropagation()}>
+          <Pressable style={styles.infoBox} onPress={() => {router.push(`/(tabs)/(home)/detail/${info.id}`)}}>
             <Image source={{ uri: info.image }} style={styles.image} />
             <View style={styles.textBox}>
               <Text style={styles.price}>{info.price}</Text>
@@ -110,7 +110,7 @@ export default function MapFullScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   overlay: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 },
-  infoBox: { flexDirection: "row", top:650, padding: 10, margin: 18, gap: 20, borderWidth: 1, borderColor: "#ddd", backgroundColor: "#fff", borderRadius: 8 },
+  infoBox: { flexDirection: "row", top:600, padding: 10, margin: 18, gap: 20, borderWidth: 1, borderColor: "#ddd", backgroundColor: "#fff", borderRadius: 8 },
   image: { width: 90, height: 90, borderRadius: 8, aspectRatio: 1, paddingRight: 10 },
   textBox: { flex: 1, flexShrink: 1 },
   price: { fontWeight: "bold", fontSize: FONT_SIZE.b1, marginBottom: 4 },
