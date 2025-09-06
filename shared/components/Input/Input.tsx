@@ -15,6 +15,7 @@ interface InputProps extends TextInputProps {
   required?: boolean;
   width?: DimensionValue;
   error?: string;
+  suffix?: string;
 }
 
 export default function Input({
@@ -24,10 +25,16 @@ export default function Input({
   required,
   width,
   error,
+  suffix,
+  style,
   ...rest
 }: InputProps) {
   const styles = StyleSheet.create({
-    wrapper: { gap: 10, width: width || "100%" },
+    wrapper: {
+      gap: 10,
+      width: width || "100%",
+      ...(style as any),
+    },
     title: { fontSize: FONT_SIZE.b2, fontFamily: FONTS.regular },
     required: { color: COLORS.error },
     description: {
@@ -35,7 +42,21 @@ export default function Input({
       fontFamily: FONTS.regular,
       textAlign: descriptionDirection,
     },
+    inputContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      borderWidth: 1,
+      borderColor: error ? COLORS.error : COLORS.gray[40],
+      borderRadius: RADIUS.xs,
+    },
     input: {
+      flex: 1,
+      paddingVertical: 10,
+      paddingHorizontal: SPACING.md,
+      fontSize: FONT_SIZE.b2,
+      fontFamily: FONTS.regular,
+    },
+    inputSimple: {
       paddingVertical: 10,
       paddingHorizontal: SPACING.md,
       borderWidth: 1,
@@ -43,6 +64,12 @@ export default function Input({
       borderRadius: RADIUS.xs,
       fontSize: FONT_SIZE.b2,
       fontFamily: FONTS.regular,
+    },
+    suffix: {
+      paddingHorizontal: SPACING.md,
+      fontSize: FONT_SIZE.b2,
+      fontFamily: FONTS.regular,
+      color: COLORS.gray[60],
     },
     errorText: {
       fontSize: FONT_SIZE.c1,
@@ -58,11 +85,22 @@ export default function Input({
           {title} {required && <Text style={styles.required}>*</Text>}
         </Text>
       )}
-      <TextInput
-        style={styles.input}
-        placeholderTextColor={COLORS.gray[40]}
-        {...rest}
-      />
+      {suffix ? (
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholderTextColor={COLORS.gray[40]}
+            {...rest}
+          />
+          <Text style={styles.suffix}>{suffix}</Text>
+        </View>
+      ) : (
+        <TextInput
+          style={styles.inputSimple}
+          placeholderTextColor={COLORS.gray[40]}
+          {...rest}
+        />
+      )}
       {description && <Text style={styles.description}>{description}</Text>}
       {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
@@ -72,7 +110,8 @@ export default function Input({
 function Title({ error, ...rest }: TextInputProps & { error?: string }) {
   const styles = StyleSheet.create({
     input: {
-      fontSize: FONT_SIZE.h2,
+      fontSize: FONT_SIZE.b1,
+      fontFamily: FONTS.regular,
       padding: 10,
       borderBottomWidth: 1,
       borderBottomColor: error ? COLORS.error : COLORS.gray[40],
