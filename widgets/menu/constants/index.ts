@@ -34,4 +34,6 @@ export const HIDDEN_TABBAR_PATHS = [
   "/region",
   "/room",
   "/post-create",
+  "/user/profile",
+  "/user/verify",
 ] as const;

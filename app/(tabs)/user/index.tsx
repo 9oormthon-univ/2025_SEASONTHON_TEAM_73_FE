@@ -1,60 +1,62 @@
-import api from '@/shared/api/axios';
-import { useAuthStore } from '@/shared/store';
-import { COLORS } from '@/shared/styles';
-import { MenuListItem } from '@/widgets/user/MenuListItem';
-import { UserProfileSection } from '@/widgets/user/UserProfileSection';
-import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import api from "@/shared/api/axios";
+import { useAuthStore } from "@/shared/store";
+import { COLORS } from "@/shared/styles";
+import { MenuListItem } from "@/widgets/user/MenuListItem";
+import { UserProfileSection } from "@/widgets/user/UserProfileSection";
+import { router } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { ScrollView, StyleSheet } from "react-native";
 
 export const MyPageScreen: React.FC = () => {
-    const { logout } = useAuthStore();
-    const [user, setUser] = useState<any>([]);
+  const { logout } = useAuthStore();
+  const [user, setUser] = useState<any>([]);
 
-    useEffect(() => {
-        const getUser = async () => {
-            try {
-                const res = await api.get("/profile/me");
-                if (res.data.success) {
-                    if(res.data.data.gender === "MALE") {
-                        res.data.data.gender = "남성"
-                    } else {
-                        res.data.data.gender = "여성"
-                    }
-                    setUser(res.data.data);
-                }
-            } catch (error) {
-                console.error("프로필 가져오는데 문제가 발생했습니다", error)
-            }
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const res = await api.get("/profile/me");
+        if (res.data.success) {
+          if (res.data.data.gender === "MALE") {
+            res.data.data.gender = "남성";
+          } else {
+            res.data.data.gender = "여성";
+          }
+          setUser(res.data.data);
         }
-
-        getUser();
-    },[])
-    //console.log(user);
-
-    const handleEditProfile = () => {
-        console.log('Edit profile pressed');
+      } catch (error) {
+        console.error("프로필 가져오는데 문제가 발생했습니다", error);
+      }
     };
 
-    const handleMyPersonality = () => {
-        console.log('My personality pressed');
-    };
+    getUser();
+  }, []);
+  //console.log(user);
 
-    const handleTwoFactorAuth = () => {
-        router.push("/(tabs)/(user)/verify")
-    };
+  const handleEditProfile = () => {
+    console.log("Edit profile pressed");
+  };
 
-    const handleDeleteAccount = () => {
-        console.log('Delete account pressed');
-    };
+  const handleMyPersonality = () => {
+    console.log("My personality pressed");
+    router.push("/user/profile");
+  };
 
-    const handleCustomerSupport = () => {
-        console.log('Customer support pressed');
-    };
+  const handleTwoFactorAuth = () => {
+    console.log("Two factor auth pressed");
+    router.push("/user/verify");
+  };
 
-    const handleTermsOfService = () => {
-        console.log('Terms of service pressed');
-    };
+  const handleDeleteAccount = () => {
+    console.log("Delete account pressed");
+  };
+
+  const handleCustomerSupport = () => {
+    console.log("Customer support pressed");
+  };
+
+  const handleTermsOfService = () => {
+    console.log("Terms of service pressed");
+  };
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>

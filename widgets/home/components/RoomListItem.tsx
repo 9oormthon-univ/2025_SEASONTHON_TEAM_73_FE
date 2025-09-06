@@ -1,5 +1,4 @@
 import { Skeleton } from "@/shared/components";
-import { GENDER } from "@/shared/constants";
 import { COLORS, FONT_SIZE, FONTS, RADIUS, SPACING } from "@/shared/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -50,9 +49,9 @@ export default function RoomListItem({ room }: RoomListItemProps) {
             size={14}
             color={COLORS.gray[70]}
           />
-          <Text style={styles.roomDetailText}>{`${
-            GENDER[room.userGender]
-          } 거주 중 · ${room.smoking}`}</Text>
+          <Text
+            style={styles.roomDetailText}
+          >{`${room.userGender}성 거주 중 · ${room.smoking}`}</Text>
         </View>
       </View>
     </TouchableOpacity>
