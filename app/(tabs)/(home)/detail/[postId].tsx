@@ -76,7 +76,7 @@ const PropertyDetailView: React.FC = () => {
         userId={postData.userId} 
         nickname={postData.userName}
         badgeText={badge}
-        profileImageUrl={postData.imageUrl}
+        profileImageUrl="https://api.builder.io/api/v1/image/assets/TEMP/6bbcfd6c72685e98e894256a944ad514466dd509?placeholderIfAbsent=true&apiKey=7adddd5587f24b91884c2915be4df62c"
       />
       <PropertyTitle
         title={postData.title}
