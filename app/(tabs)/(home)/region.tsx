@@ -38,7 +38,6 @@ export default function Page() {
     null
   );
 
-  // 이미 선택된 지역들에 대해 neighborhoods 상태 업데이트
   useEffect(() => {
     if (selectedRegions.length > 0) {
       setNeighborhoods((prev) =>

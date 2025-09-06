@@ -35,7 +35,7 @@ export default function HomeLayout() {
       <Tabs
         screenOptions={{
           headerShown: false,
-          tabBarStyle: { display: "none" }, // 기본 탭바 숨기기
+          tabBarStyle: { display: "none" },
         }}
       >
         <Tabs.Screen name="(home)" />
