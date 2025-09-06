@@ -277,6 +277,7 @@ const ChatScreen: React.FC = () => {
                       text={message.text}
                       isOwn={message.isOwn}
                       time={message.time}
+                      senderId={message.senderId}
                     />
                   ))}
                 </View>
