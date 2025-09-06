@@ -30,8 +30,6 @@ export default function ProfileFinalScreen() {
   const [formData, setFormData] =
     useState<ProfileFinalFormData>(DEFAULT_VALUES);
 
-  const isFormValid = formData.introduce.trim() !== "";
-
   const handleSubmit = async () => {
     try {
       // 모든 폼 데이터를 수집
@@ -39,11 +37,16 @@ export default function ProfileFinalScreen() {
       const sleep = JSON.parse(sleepInfo as string);
       const habits = JSON.parse(habitsInfo as string);
 
+      // pet 배열을 쉼표로 구분된 문자열로 변환
+      const petString =
+        sleep.pet && sleep.pet.length > 0 ? sleep.pet.join(", ") : "";
+
       const completeProfileData = {
         ...basic,
         ...sleep,
         ...habits,
         ...formData,
+        pet: petString ? [petString] : [], // JSON 형태에 맞게 조정
       };
 
       console.log("Complete Profile Data:", completeProfileData);
@@ -85,26 +88,12 @@ export default function ProfileFinalScreen() {
           />
           <View style={{ gap: 20, paddingBottom: 20 }}>
             <PostCreateField.TextArea
-              title="질병 및 건강 상태"
-              description="알러지나 특별한 건강 상태가 있다면 작성해주세요 (선택사항)"
-              value={formData.disease}
-              setValue={(value) =>
-                setFormData((prev) => ({ ...prev, disease: value }))
-              }
-              placeholder="없음 또는 구체적인 내용을 작성해주세요"
-              multiline
-              numberOfLines={3}
-            />
-
-            <PostCreateField.TextArea
-              title="자기소개"
-              description="자신을 소개하고 어떤 룸메이트를 찾고 있는지 작성해주세요"
-              required
+              title="소개글"
               value={formData.introduce}
               setValue={(value) =>
                 setFormData((prev) => ({ ...prev, introduce: value }))
               }
-              placeholder="안녕하세요! 저는 깔끔하고 배려심 많은 룸메이트를 찾고 있습니다. 함께 즐겁게 생활할 수 있는 분을 만나고 싶어요..."
+              placeholder="카테고리에서 선택하지 못한 특이사항 또는 취미나 관심 진로에 대해 적어주시면 더 좋은 룸메이트를 찾는게 도움이 돼요."
               multiline
               numberOfLines={8}
             />
@@ -116,12 +105,7 @@ export default function ProfileFinalScreen() {
           padding: SPACING.normal,
         }}
       >
-        <Button
-          size="lg"
-          text="프로필 완성"
-          onPress={handleSubmit}
-          disabled={!isFormValid}
-        />
+        <Button size="lg" text="프로필 완성" onPress={handleSubmit} />
       </View>
     </SafeAreaView>
   );

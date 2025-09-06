@@ -1,12 +1,25 @@
 import { Button } from "@/shared/components";
-import { containerStyle, SPACING } from "@/shared/styles";
+import {
+  COLORS,
+  containerStyle,
+  FONT_SIZE,
+  FONTS,
+  SPACING,
+} from "@/shared/styles";
 import {
   PostCreateField,
   PostCreateProgressBar,
 } from "@/widgets/post-create/components";
 import { router } from "expo-router";
 import { useForm } from "react-hook-form";
-import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface ProfileBasicFormData {
@@ -60,11 +73,12 @@ export default function ProfileBasicScreen() {
             title="생활 루틴"
           />
           <View style={{ gap: 20, paddingBottom: 20 }}>
+            <Text style={styles.title}>식사 습관</Text>
             <PostCreateField.MultiRadio
               title="주 식사 방식"
               selected={[formData.cookingCount === "COOK" ? 0 : 1]}
               setSelected={(selected) => {
-                const cookingMap = ["ORDER", "COOK"] as const;
+                const cookingMap = ["COOK", "ORDER"] as const;
                 setValue("cookingCount", cookingMap[selected[0] || 0]);
               }}
               items={["주로 해 먹어요", "주로 외식/배달음식 먹어요"]}
@@ -88,7 +102,6 @@ export default function ProfileBasicScreen() {
 
             <PostCreateField.MultiRadio
               title="주 음주 횟수"
-              required
               selected={[
                 formData.alcoholCount === "ZERO"
                   ? 0
@@ -109,7 +122,7 @@ export default function ProfileBasicScreen() {
 
             <PostCreateField.MultiRadio
               title="사용 식기"
-              selected={[formData.dishShare === "SHARE" ? 0 : 1]}
+              selected={[formData.dishShare === "PERSONAL" ? 0 : 1]}
               setSelected={(selected) =>
                 setValue(
                   "dishShare",
@@ -119,9 +132,22 @@ export default function ProfileBasicScreen() {
               items={["개인 식기", "공용 식기"]}
             />
 
+            <Text
+              style={[
+                styles.title,
+                {
+                  paddingTop: SPACING.lg,
+                  borderTopWidth: 1,
+                  borderTopColor: COLORS.gray[10],
+                  marginTop: SPACING.md,
+                },
+              ]}
+            >
+              청소 습관
+            </Text>
+
             <PostCreateField.MultiRadio
               title="정리정돈 성향"
-              required
               selected={[
                 formData.tidinessLevel === "HIGH"
                   ? 0
@@ -142,7 +168,6 @@ export default function ProfileBasicScreen() {
 
             <PostCreateField.MultiRadio
               title="화장실 청소 민감도"
-              required
               selected={[
                 formData.bathroomCleaningLevel === "LOW"
                   ? 0
@@ -177,3 +202,11 @@ export default function ProfileBasicScreen() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  title: {
+    fontSize: FONT_SIZE.b1,
+    fontFamily: FONTS.semiBold,
+    marginBottom: SPACING.sm,
+  },
+});

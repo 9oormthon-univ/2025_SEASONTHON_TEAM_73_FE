@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
+  Image,
   ListRenderItem,
   StyleSheet,
   Text,
@@ -168,6 +169,10 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.searchContainer}>
+        <Image
+          source={require("@/assets/icons/logo.png")}
+          style={styles.logo}
+        />
         <TouchableOpacity>
           <Ionicons name="search" size={24} color={COLORS.black} />
         </TouchableOpacity>
@@ -200,7 +205,8 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     flexDirection: "row",
-    justifyContent: "flex-end",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
   },
@@ -264,5 +270,9 @@ const styles = StyleSheet.create({
     color: COLORS.gray[50],
     textAlign: "center",
     fontFamily: FONTS.regular,
+  },
+  logo: {
+    width: 44,
+    height: 30,
   },
 });

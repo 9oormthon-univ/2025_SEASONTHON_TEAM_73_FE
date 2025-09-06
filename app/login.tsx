@@ -4,6 +4,7 @@ import { useSubmitLogin } from "@/widgets/login/api";
 import type { LoginFormData } from "@/widgets/login/types";
 import { Controller, useForm } from "react-hook-form";
 import { StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen() {
   const { control, handleSubmit, watch } = useForm<LoginFormData>({
@@ -24,8 +25,8 @@ export default function LoginScreen() {
   };
 
   return (
-    <>
-      <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <View style={{ gap: 20 }}>
         <Controller
           control={control}
           name="username"
@@ -66,7 +67,7 @@ export default function LoginScreen() {
           onPress={handleSubmit(onSubmit)}
         />
       </View>
-    </>
+    </SafeAreaView>
   );
 }
 
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   buttonContainer: {
-    padding: SPACING.normal,
+    paddingVertical: SPACING.normal,
     backgroundColor: COLORS.white,
   },
 });
