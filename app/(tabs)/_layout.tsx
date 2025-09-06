@@ -10,6 +10,7 @@ export default function HomeLayout() {
   const isFilterScreen = pathname.includes("/filter");
   const isRegionScreen = pathname.includes("/region");
   const isPostCreateScreen = pathname.includes("/post-create");
+  const isChatScreen = pathname.includes("/room");
 
   return (
     <Tabs
@@ -21,7 +22,8 @@ export default function HomeLayout() {
           isDetailScreen ||
           isFilterScreen ||
           isRegionScreen ||
-          isPostCreateScreen
+          isPostCreateScreen ||
+          isChatScreen
             ? { display: "none" }
             : {
                 boxShadow: `0 -2px 4px 0 rgba(0, 0, 0, 0.05)`,

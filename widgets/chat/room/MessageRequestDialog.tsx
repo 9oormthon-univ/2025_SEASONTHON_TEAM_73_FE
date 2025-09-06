@@ -1,8 +1,8 @@
-import { COLORS, FONTS } from '@/shared/styles';
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { ButtonGroup } from './ButtonGroup';
-import { MessageText } from './MessageText';
+import { COLORS, FONTS } from "@/shared/styles";
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import { ButtonGroup } from "./ButtonGroup";
+import { MessageText } from "./MessageText";
 
 interface MessageRequestDialogProps {
   userName?: string;
@@ -11,7 +11,7 @@ interface MessageRequestDialogProps {
 }
 
 export const MessageRequestDialog: React.FC<MessageRequestDialogProps> = ({
-  userName = '현용',
+  userName = "현용",
   onReject,
   onAccept,
 }) => {
