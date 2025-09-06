@@ -1,29 +1,37 @@
-export const MAX_DEPOSIT = 100;
+export const MAX_DEPOSIT = 1000;
 
-export const MAX_RENT = 100;
+export const MAX_RENT = 1000;
 
 export const FILTERS = {
-  DEPOSIT: "deposit",
-  RENT: "rent",
-  REGION: "region",
-  ROOM_TYPE: "roomType",
-  GENDER: "gender",
+  DEPOSIT: "Deposit",
+  RENT: "MonthlyCost",
+  REGION: "dongs",
+  ROOM_TYPE: "roomTypes",
+  GENDER: "preferredGender",
 } as const;
 
 export const FILTER_DEFAULT = {
-  [FILTERS.DEPOSIT]: {
-    min: 0,
-    max: MAX_DEPOSIT,
-  },
-  [FILTERS.RENT]: {
-    min: 0,
-    max: MAX_RENT,
-  },
-  [FILTERS.ROOM_TYPE]: null,
-  [FILTERS.GENDER]: null,
+  minDeposit: 0,
+  maxDeposit: MAX_DEPOSIT,
+  minMonthlyCost: 0,
+  maxMonthlyCost: MAX_RENT,
+  roomTypes: [],
+  preferredGender: [],
+  keyword: "",
+  dongs: [],
 };
 
-export const ROOM_TYPE = ["원룸", "투룸", "오피스텔", "빌라", "아파트"];
+export const ROOM_TYPE = {
+  ONE_ROOM: "원룸",
+  TWO_ROOM: "투룸",
+  VILLA: "빌라",
+  OFFICETEL: "오피스텔",
+  APARTMENT: "아파트",
+} as const;
+
+export const ROOM_TYPE_KEYS = Object.keys(
+  ROOM_TYPE
+) as (keyof typeof ROOM_TYPE)[];
 
 export const GENDER = ["남성", "여성"];
 

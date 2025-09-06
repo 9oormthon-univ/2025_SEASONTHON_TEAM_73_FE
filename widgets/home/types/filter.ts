@@ -1,15 +1,20 @@
-import { FILTERS } from "../constants";
+import { Gender } from "@/shared/constants";
 
 export type PriceRange = {
   min: number;
   max: number;
 };
 
-export type DefaultFilter = {
-  [FILTERS.DEPOSIT]: PriceRange;
-  [FILTERS.RENT]: PriceRange;
-  [FILTERS.ROOM_TYPE]: number[] | null;
-  [FILTERS.GENDER]: number[] | null;
-};
+export type DefaultFilter = SearchFilter &
+  RegionFilter & {
+    minDeposit: number;
+    maxDeposit: number;
+    minMonthlyCost: number;
+    maxMonthlyCost: number;
+    roomTypes: string[];
+    preferredGender: Gender[];
+  };
 
-export type RegionFilter = any; // 나중에 백엔드 보고 타입 정의
+export type SearchFilter = { keyword: string };
+
+export type RegionFilter = { dongs: string[] };
