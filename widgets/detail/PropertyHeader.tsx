@@ -6,8 +6,7 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
   StyleSheet,
-  Text,
-  View,
+  View
 } from "react-native";
 
 const { width } = Dimensions.get("window");
@@ -19,7 +18,7 @@ const images = [
 ];
 
 type PropertyHeaderProps = {
-  images: string[]; // API에서 받은 이미지 배열
+  images: string; // API에서 받은 이미지 배열
 };
 
 const PropertyHeader: React.FC<PropertyHeaderProps> = ({ images }) => {
@@ -31,18 +30,10 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({ images }) => {
     setCurrentIndex(index);
   };
 
-  // 이미지가 없을 경우 대체 이미지
-  const displayImages =
-    images && images.length > 0
-      ? images
-      : [
-          "https://via.placeholder.com/400x250.png?text=이미지가+없습니다",
-        ];
-
   return (
     <View style={styles.container}>
       {/* 이미지 슬라이더 */}
-      <FlatList
+      {/* <FlatList
         ref={flatListRef}
         data={displayImages}
         horizontal
@@ -54,14 +45,18 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({ images }) => {
         )}
         onScroll={handleScroll}
         scrollEventThrottle={16}
+      /> */}
+      <Image
+        source={{ uri: images || "https://via.placeholder.com/400x250.png?text=이미지없음" }}
+        style={styles.image}
       />
 
       {/* 인디케이터 */}
-      <View style={styles.indicator}>
+      {/* <View style={styles.indicator}>
         <Text style={styles.indicatorText}>
           {currentIndex + 1} / {images.length}
         </Text>
-      </View>
+      </View> */}
     </View>
   );
 };
