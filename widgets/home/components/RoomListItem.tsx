@@ -48,7 +48,9 @@ export default function RoomListItem({ room }: RoomListItemProps) {
             size={14}
             color={COLORS.gray[70]}
           />
-          <Text style={styles.roomDetailText}>{GENDER[room.gender]}</Text>
+          <Text style={styles.roomDetailText}>{`${
+            GENDER[room.userGender]
+          } 거주 중 · ${room.smoking}`}</Text>
         </View>
       </View>
     </TouchableOpacity>

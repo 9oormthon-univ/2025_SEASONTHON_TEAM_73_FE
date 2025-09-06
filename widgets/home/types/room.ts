@@ -9,5 +9,6 @@ export type Room = {
   roomType: string;
   deposit: number;
   monthlyRent: number;
-  gender: Gender;
+  userGender: Gender;
+  smoking: boolean;
 };
