@@ -84,6 +84,7 @@ export default function MapFullScreen() {
         markers={markers}
         onMarkerClick={(data) => handleMarkerClick(data)}
         resetSelectedMarker={info === null} // info가 null이면 마커 흰색으로
+        showExpandIcon={false}
       />
 
       {info && (
@@ -108,8 +109,8 @@ export default function MapFullScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  overlay: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, justifyContent: "flex-end" },
-  infoBox: { flexDirection: "row", padding: 10, margin: 18, gap: 20, borderTopWidth: 1, borderColor: "#ddd", backgroundColor: "#fff", borderRadius: 8 },
+  overlay: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 },
+  infoBox: { flexDirection: "row", top:650, padding: 10, margin: 18, gap: 20, borderWidth: 1, borderColor: "#ddd", backgroundColor: "#fff", borderRadius: 8 },
   image: { width: 90, height: 90, borderRadius: 8, aspectRatio: 1, paddingRight: 10 },
   textBox: { flex: 1, flexShrink: 1 },
   price: { fontWeight: "bold", fontSize: FONT_SIZE.b1, marginBottom: 4 },
