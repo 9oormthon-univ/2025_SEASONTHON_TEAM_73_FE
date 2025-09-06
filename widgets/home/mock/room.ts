@@ -1,6 +1,6 @@
 export const ROOM_LIST = [
   {
-    id: 27,
+    id: 15,
     title: "강남 한복판 룸메이트 구합니다.",
     type: "원룸",
     deposit: "2000만원",

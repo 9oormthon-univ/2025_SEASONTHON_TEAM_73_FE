@@ -1,22 +1,31 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-const DescriptionSection: React.FC = () => {
+type Props = {
+  preferredGender?: string[];
+  description?: string;
+};
+
+const DescriptionSection: React.FC<Props> = ({ preferredGender = [], description = "" }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>부가설명</Text>
       <View style={styles.genderRow}>
         <Text style={styles.genderLabel}>모집 성별</Text>
-        <Text style={styles.genderValue}>남성, 여성</Text>
+        <Text style={styles.genderValue}>
+          {preferredGender.length === 0
+            ? "-"
+            : preferredGender.includes("ANY")
+              ? "성별 무관"
+              : preferredGender.join(", ")}
+        </Text>
       </View>
-      <Text style={styles.description}>
-        월세 반반 내면서 방 따로 쓰면서 같이 살 룸메 구해요..!{'\n'}
-        짐이 적어서 제가 더 작은 방 써도 괜찮아요.{'\n'}
-        제 프로필 들어가서 생활패턴 확인하시고, 얼추 맞는다 싶으면 채팅 걸어주세요!
-      </Text>
+      <Text style={styles.description}>{description || "-"}</Text>
     </View>
   );
 };
+
+
 
 const styles = StyleSheet.create({
   container: {

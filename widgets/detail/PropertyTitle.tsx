@@ -2,15 +2,26 @@ import { COLORS, FONT_SIZE, FONTS } from '@/shared/styles';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-const PropertyTitle: React.FC = () => {
+type Props = {
+  title: string;
+  deposit: number;
+  monthlyRent: number;
+  maintenanceFee: number;
+  location: string;
+};
+
+const PropertyTitle: React.FC<Props> = ({ title, deposit, monthlyRent, maintenanceFee, location }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>강남 한복판 룸메이트 구합니다.</Text>
-      <Text style={styles.price}>1000/90/12</Text>
-      <Text style={styles.location}>강남구 논현1동</Text>
+      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.price}>
+        {deposit}/{monthlyRent}/{maintenanceFee}
+      </Text>
+      <Text style={styles.location}>{location}</Text>
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {

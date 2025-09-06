@@ -135,11 +135,14 @@ export default function KakaoMap({
             window.ReactNativeWebView.postMessage(JSON.stringify({
               type: 'expand',
               data: {
-                latitude: ${latitude},
-                longitude: ${longitude}
+                postId: ${markers.length > 0 ? markers[0].id : 0}, 
+                latitude: ${markers.length > 0 ? markers[0].latitude : latitude},   // ✅ 마커 좌표 우선
+                longitude: ${markers.length > 0 ? markers[0].longitude : longitude} // ✅ 마커 좌표 우선
               }
             }));
-          });` : ''}
+
+          });
+          ;` : ''}
 
 
         window.addEventListener('resize', function() {
@@ -173,8 +176,17 @@ export default function KakaoMap({
               return;
             }
             if (msg.type === 'expand') {
-              router.push(`/map?latitude=${msg.data.latitude}&longitude=${msg.data.longitude}`);
-              return;
+              if (msg.type === 'expand') {
+                router.push({
+                    pathname: '/map',
+                    params: {
+                      postId: String(msg.data.postId),
+                      latitude: String(msg.data.latitude),
+                      longitude: String(msg.data.longitude),
+                    },
+                  });                
+                return;
+              }
             }
           } catch {
             console.error("Error parsing message data:", data);
