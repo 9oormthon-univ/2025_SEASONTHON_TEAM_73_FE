@@ -3,4 +3,5 @@ export const REQUEST = {
   LOGIN: "/auth/login",
   LOGOUT: "/auth/logout",
   POST_LIST: "/posts",
+  POST_SEARCH: "/posts/search",
 };
