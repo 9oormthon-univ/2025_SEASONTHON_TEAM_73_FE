@@ -13,7 +13,7 @@ export const NoiseSensitivityContent: React.FC<NoiseSensitivityContentProps> = (
     <View style={styles.container}>
       <View style={styles.content}>
         <InfoSection title="잠귀 민감도" value={soundSensitivity.sleepLevel} />
-        <InfoSection title="잠버릇" value={soundSensitivity.sleepHabit.join(', ')} />
+        <InfoSection title="잠버릇" value={soundSensitivity.sleepHabit[0] === "NONE" ? "없음" : soundSensitivity.sleepHabit.join(', ')} />
         <InfoSection title="나의 휴대폰 모드" value={soundSensitivity.phoneMode} />
         <InfoSection title="나의 이어폰 사용" value={soundSensitivity.earphoneUsage} showBorder={false} />
       </View>
