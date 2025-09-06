@@ -59,7 +59,7 @@ const PropertyDetailView: React.FC = () => {
 
     // 채팅방 화면으로 이동 (chatRoomId 전달)
     router.push({
-      pathname: `/room/${chatRoom.chatRoomId}` as any,
+      pathname: `/chat/room/${chatRoom.chatRoomId}` as any,
       params: { senderName: chatRoom.receiverName },
     });
     console.log("채팅방 생성 및 이동:", chatRoom);

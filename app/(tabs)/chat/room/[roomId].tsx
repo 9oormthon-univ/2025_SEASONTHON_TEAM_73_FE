@@ -141,7 +141,7 @@ const ChatScreen: React.FC = () => {
     if (!roomId || isPending) return;
 
     const ws = new WebSocket(
-      `${WS_BASE_URL}?token=${encodeURIComponent(token)}`
+      `wss://livingmate.store/ws-chat?token=${encodeURIComponent(token)}`
     );
     socketRef.current = ws;
 
