@@ -1,6 +1,10 @@
-export const MAX_DEPOSIT = 1000;
+export const MAX_DEPOSIT = 20000;
 
-export const MAX_RENT = 1000;
+export const DEPOSIT_STEP = 100;
+
+export const MAX_RENT = 200;
+
+export const RENT_STEP = 10;
 
 export const FILTERS = {
   DEPOSIT: "Deposit",

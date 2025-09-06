@@ -15,6 +15,7 @@ interface FilterDefaultContextProps extends DefaultFilter {
   setRentRange: (min: number, max: number) => void;
   setRoomTypes: (value: string[]) => void;
   setGender: (value: Gender) => void;
+  setGenders: (value: Gender[]) => void;
   setKeyword: (value: string) => void;
   setDongs: (value: string[]) => void;
   resetFilter: () => void;
@@ -71,6 +72,12 @@ export const FilterDefaultProvider = ({
             : [...currentGenders, value],
         };
       }),
+    []
+  );
+
+  const setGenders = useCallback(
+    (value: Gender[]) =>
+      setDefaultFilter((prev) => ({ ...prev, preferredGender: value })),
     []
   );
 
@@ -167,6 +174,7 @@ export const FilterDefaultProvider = ({
         setRentRange,
         setRoomTypes,
         setGender,
+        setGenders,
         setKeyword,
         setDongs,
         resetFilter,

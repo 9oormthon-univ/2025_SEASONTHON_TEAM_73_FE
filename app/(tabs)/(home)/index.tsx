@@ -1,10 +1,12 @@
 import { Button } from "@/shared/components";
 import { COLORS, SPACING } from "@/shared/styles";
-import { useFetchPostList } from "@/widgets/home/api";
+import { useFetchPostList, useSubmitPostSearch } from "@/widgets/home/api";
 import { RoomListItem, RoomSearchFilter } from "@/widgets/home/components";
+import { useDefaultFilter } from "@/widgets/home/contexts";
 import { Room } from "@/widgets/home/types";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -16,6 +18,10 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
+  const { defaultFilter, applied } = useDefaultFilter();
+  const [searchResults, setSearchResults] = useState<Room[]>([]);
+  const [isFirstRender, setIsFirstRender] = useState(true);
+
   const {
     data,
     fetchNextPage,
@@ -25,14 +31,39 @@ export default function HomeScreen() {
     isError,
   } = useFetchPostList();
 
+  const { mutate: submitPostSearch, isPending: isSearchLoading } =
+    useSubmitPostSearch();
+
+  useEffect(() => {
+    if (applied && !isFirstRender) {
+      submitPostSearch(defaultFilter, {
+        onSuccess: (data) => {
+          setSearchResults(data.content);
+        },
+      });
+    }
+  }, [applied, defaultFilter, submitPostSearch, isFirstRender]);
+
+  useEffect(() => {
+    if (applied && isFirstRender) {
+      setIsFirstRender(false);
+    }
+  }, [applied, isFirstRender]);
+
   const onCreatePress = () => {
     router.push("/post-create");
   };
 
-  const allRooms = data?.pages.flatMap((page) => page.content) ?? [];
+  // 첫 렌더링이거나 아직 필터를 적용하지 않았으면 useFetchPostList 데이터 사용
+  // 필터를 적용했으면 검색 결과 사용
+  const allRooms =
+    !applied || isFirstRender
+      ? data?.pages.flatMap((page) => page.content) ?? []
+      : searchResults;
 
   const handleLoadMore = () => {
-    if (hasNextPage && !isFetchingNextPage) {
+    // 첫 렌더링이거나 필터가 적용되지 않은 경우에만 페이지네이션 동작
+    if ((!applied || isFirstRender) && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
   };
@@ -42,18 +73,34 @@ export default function HomeScreen() {
   );
 
   const renderFooter = () => {
-    if (!isFetchingNextPage) return null;
+    // 첫 렌더링이거나 필터가 적용되지 않은 경우에만 페이지네이션 로더 표시
+    if ((!applied || isFirstRender) && isFetchingNextPage) {
+      return (
+        <View style={styles.footerLoader}>
+          <ActivityIndicator size="small" color={COLORS.black} />
+        </View>
+      );
+    }
 
-    return (
-      <View style={styles.footerLoader}>
-        <ActivityIndicator size="small" color={COLORS.black} />
-      </View>
-    );
+    // 검색 중일 때 로더 표시
+    if (applied && !isFirstRender && isSearchLoading) {
+      return (
+        <View style={styles.footerLoader}>
+          <ActivityIndicator size="small" color={COLORS.black} />
+        </View>
+      );
+    }
+
+    return null;
   };
 
   const keyExtractor = (item: Room) => item.id.toString();
 
-  if (isLoading) {
+  // 첫 로딩이거나 검색 로딩 중일 때 스켈레톤 표시
+  if (
+    isLoading ||
+    (applied && !isFirstRender && isSearchLoading && searchResults.length === 0)
+  ) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.searchContainer}>
