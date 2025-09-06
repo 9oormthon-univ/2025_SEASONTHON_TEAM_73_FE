@@ -7,16 +7,27 @@ export const useCostValidation = (formData: CostFormData) => {
       deposit,
       monthlyRent,
       maintenanceFee,
-      paymentStructure,
-      moveInDate,
+      depositShare,
+      rentShare,
+      maintenanceShare,
+      utilitiesShare,
+      availableDate,
+      preferredGender,
     } = formData;
 
+    const hasPaymentStructure =
+      depositShare || rentShare || maintenanceShare || utilitiesShare;
+
     return (
-      deposit.trim() !== "" &&
-      monthlyRent.trim() !== "" &&
-      maintenanceFee.trim() !== "" &&
-      paymentStructure.length > 0 &&
-      moveInDate !== null
+      deposit &&
+      monthlyRent &&
+      monthlyRent > 0 &&
+      maintenanceFee &&
+      maintenanceFee > 0 &&
+      hasPaymentStructure &&
+      availableDate !== null &&
+      availableDate !== "" &&
+      preferredGender.length > 0
     );
   }, [formData]);
 
