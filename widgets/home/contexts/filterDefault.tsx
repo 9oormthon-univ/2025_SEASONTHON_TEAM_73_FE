@@ -7,7 +7,7 @@ import {
 } from "react";
 import { Gender } from "../../../shared/constants";
 import { FILTER_DEFAULT } from "../constants";
-import { DefaultFilter } from "../types";
+import { DefaultFilter, SelectedRegion } from "../types";
 
 interface FilterDefaultContextProps extends DefaultFilter {
   defaultFilter: DefaultFilter;
@@ -18,6 +18,7 @@ interface FilterDefaultContextProps extends DefaultFilter {
   setGenders: (value: Gender[]) => void;
   setKeyword: (value: string) => void;
   setDongs: (value: string[]) => void;
+  setSelectedRegions: (value: SelectedRegion[]) => void;
   resetFilter: () => void;
   resetDepositRange: () => void;
   resetRentRange: () => void;
@@ -25,8 +26,6 @@ interface FilterDefaultContextProps extends DefaultFilter {
   resetGender: () => void;
   resetKeyword: () => void;
   resetDongs: () => void;
-  applied: boolean;
-  setApplied: (value: boolean) => void;
 }
 
 const FilterDefaultContext = createContext<FilterDefaultContextProps | null>(
@@ -38,7 +37,6 @@ export const FilterDefaultProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const [applied, setApplied] = useState(false);
   const [defaultFilter, setDefaultFilter] =
     useState<DefaultFilter>(FILTER_DEFAULT);
 
@@ -51,6 +49,7 @@ export const FilterDefaultProvider = ({
     preferredGender,
     keyword,
     dongs,
+    selectedRegions,
   } = defaultFilter;
 
   const setRoomTypes = useCallback(
@@ -93,6 +92,12 @@ export const FilterDefaultProvider = ({
     []
   );
 
+  const setSelectedRegions = useCallback(
+    (value: SelectedRegion[]) =>
+      setDefaultFilter((prev) => ({ ...prev, selectedRegions: value })),
+    []
+  );
+
   const setDepositRange = useCallback((min: number, max: number) => {
     setDefaultFilter((prev) => ({
       ...prev,
@@ -111,7 +116,6 @@ export const FilterDefaultProvider = ({
 
   const resetFilter = useCallback(() => {
     setDefaultFilter(FILTER_DEFAULT);
-    setApplied(false);
   }, []);
 
   const resetDepositRange = useCallback(() => {
@@ -155,6 +159,7 @@ export const FilterDefaultProvider = ({
     setDefaultFilter((prev) => ({
       ...prev,
       dongs: FILTER_DEFAULT.dongs,
+      selectedRegions: FILTER_DEFAULT.selectedRegions,
     }));
   }, []);
 
@@ -170,6 +175,7 @@ export const FilterDefaultProvider = ({
         preferredGender,
         keyword,
         dongs,
+        selectedRegions,
         setDepositRange,
         setRentRange,
         setRoomTypes,
@@ -177,6 +183,7 @@ export const FilterDefaultProvider = ({
         setGenders,
         setKeyword,
         setDongs,
+        setSelectedRegions,
         resetFilter,
         resetDepositRange,
         resetRentRange,
@@ -184,8 +191,6 @@ export const FilterDefaultProvider = ({
         resetGender,
         resetKeyword,
         resetDongs,
-        applied,
-        setApplied,
       }}
     >
       {children}

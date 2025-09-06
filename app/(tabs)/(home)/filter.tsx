@@ -27,7 +27,6 @@ export default function FilterScreen() {
     setGenders,
     setDepositRange,
     setRentRange,
-    setApplied,
   } = useDefaultFilter();
 
   const [localDeposit, setLocalDeposit] = useState<[number, number]>([
@@ -46,7 +45,6 @@ export default function FilterScreen() {
     setRentRange(localRent[0], localRent[1]);
     setRoomTypes(localRoomTypes);
     setGenders(localGender as Gender[]);
-    setApplied(true);
     router.back();
   };
 

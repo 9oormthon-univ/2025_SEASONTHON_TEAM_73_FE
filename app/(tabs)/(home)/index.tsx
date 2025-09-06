@@ -18,7 +18,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
-  const { defaultFilter, applied } = useDefaultFilter();
+  const { defaultFilter } = useDefaultFilter();
   const [searchResults, setSearchResults] = useState<Room[]>([]);
   const [isFirstRender, setIsFirstRender] = useState(true);
 
@@ -35,35 +35,31 @@ export default function HomeScreen() {
     useSubmitPostSearch();
 
   useEffect(() => {
-    if (applied && !isFirstRender) {
+    if (!isFirstRender) {
       submitPostSearch(defaultFilter, {
         onSuccess: (data) => {
           setSearchResults(data.content);
         },
       });
     }
-  }, [applied, defaultFilter, submitPostSearch, isFirstRender]);
+  }, [defaultFilter, submitPostSearch, isFirstRender]);
 
   useEffect(() => {
-    if (applied && isFirstRender) {
+    if (isFirstRender) {
       setIsFirstRender(false);
     }
-  }, [applied, isFirstRender]);
+  }, [isFirstRender]);
 
   const onCreatePress = () => {
     router.push("/post-create");
   };
 
-  // 첫 렌더링이거나 아직 필터를 적용하지 않았으면 useFetchPostList 데이터 사용
-  // 필터를 적용했으면 검색 결과 사용
-  const allRooms =
-    !applied || isFirstRender
-      ? data?.pages.flatMap((page) => page.content) ?? []
-      : searchResults;
+  const allRooms = isFirstRender
+    ? data?.pages.flatMap((page) => page.content) ?? []
+    : searchResults;
 
   const handleLoadMore = () => {
-    // 첫 렌더링이거나 필터가 적용되지 않은 경우에만 페이지네이션 동작
-    if ((!applied || isFirstRender) && hasNextPage && !isFetchingNextPage) {
+    if (isFirstRender && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
   };
@@ -73,8 +69,7 @@ export default function HomeScreen() {
   );
 
   const renderFooter = () => {
-    // 첫 렌더링이거나 필터가 적용되지 않은 경우에만 페이지네이션 로더 표시
-    if ((!applied || isFirstRender) && isFetchingNextPage) {
+    if (isFirstRender && isFetchingNextPage) {
       return (
         <View style={styles.footerLoader}>
           <ActivityIndicator size="small" color={COLORS.black} />
@@ -82,8 +77,7 @@ export default function HomeScreen() {
       );
     }
 
-    // 검색 중일 때 로더 표시
-    if (applied && !isFirstRender && isSearchLoading) {
+    if (!isFirstRender && isSearchLoading) {
       return (
         <View style={styles.footerLoader}>
           <ActivityIndicator size="small" color={COLORS.black} />
@@ -96,10 +90,9 @@ export default function HomeScreen() {
 
   const keyExtractor = (item: Room) => item.id.toString();
 
-  // 첫 로딩이거나 검색 로딩 중일 때 스켈레톤 표시
   if (
     isLoading ||
-    (applied && !isFirstRender && isSearchLoading && searchResults.length === 0)
+    (!isFirstRender && isSearchLoading && searchResults.length === 0)
   ) {
     return (
       <SafeAreaView style={styles.container}>
