@@ -36,7 +36,6 @@ export default function KakaoMap({
   const { KAKAO_MAP_JS_KEY } = config.expoConfig!.extra!;
   const webRef = useRef<WebView>(null);
 
-  // info 상태가 null일 때 마커 색상 초기화
   useEffect(() => {
     if (resetSelectedMarker) {
       webRef.current?.injectJavaScript(`
@@ -76,15 +75,12 @@ export default function KakaoMap({
       let map;
       let kakaoMarkers = [];
       let selectedMarker = null;
+      let selectedCircle = null; // 클릭된 마커 주변 원 (CustomOverlay)
 
       function initMap() {
         const mapContainer = document.getElementById('map');
         map = new kakao.maps.Map(mapContainer, { center: new kakao.maps.LatLng(${latitude}, ${longitude}), level: 3 });
 
-        const whiteIcon = new kakao.maps.MarkerImage(
-          "https://api.builder.io/api/v1/image/assets/TEMP/5e6132a35f2c32e1b7d52b4a998f9f6dae48afc0?placeholderIfAbsent=true&apiKey=7adddd5587f24b91884c2915be4df62c",
-          new kakao.maps.Size(36,36)
-        );
         const blueIcon = new kakao.maps.MarkerImage(
           "https://api.builder.io/api/v1/image/assets/TEMP/f5b4673581cf7cf2b93b1b57c2dcdbf1fdf37fed?placeholderIfAbsent=true&apiKey=7adddd5587f24b91884c2915be4df62c",
           new kakao.maps.Size(36,36)
@@ -94,17 +90,34 @@ export default function KakaoMap({
 
         markerData.forEach(item => {
           const position = new kakao.maps.LatLng(item.latitude, item.longitude);
-          const marker = new kakao.maps.Marker({ position, image: whiteIcon, map: map });
+          const marker = new kakao.maps.Marker({ position, image: blueIcon, map: map });
           marker.itemInfo = item.info;
 
           if (${disableMarkerClick ? "true" : "false"} === false) {
             kakao.maps.event.addListener(marker, 'click', function() {
-              if (selectedMarker) selectedMarker.setImage(whiteIcon);
-              marker.setImage(blueIcon);
+              // 이전 원 제거
+              if (selectedCircle) selectedCircle.setMap(null);
+
+              // 클릭된 마커 주변 원 생성 (CustomOverlay로 픽셀 고정)
+              selectedCircle = new kakao.maps.CustomOverlay({
+                position: marker.getPosition(),
+                content: \`
+                  <div style="
+                    width: 60px; 
+                    height: 60px; 
+                    background: rgba(59,130,246,0.2); 
+                    border-radius: 50%;
+                    transform: translate(1%, -30%);
+                  "></div>
+                \`,
+                map: map
+              });
+
               selectedMarker = marker;
+
               window.ReactNativeWebView.postMessage(JSON.stringify({
                 type: 'markerClick',
-                data: { id: item.id }   // postId 전달
+                data: { id: item.id }
               }));
             });
           }
@@ -112,17 +125,14 @@ export default function KakaoMap({
           kakaoMarkers.push(marker);
         });
 
-        // 초기 마커 중앙 고정
         if (kakaoMarkers.length > 0) {
           map.setCenter(kakaoMarkers[0].getPosition());
         }
 
         window.resetMarker = function() {
-          if (selectedMarker) selectedMarker.setImage(whiteIcon);
+          if (selectedCircle) selectedCircle.setMap(null);
+          selectedCircle = null;
           selectedMarker = null;
-          // if (kakaoMarkers.length > 0) {
-          //   map.setCenter(kakaoMarkers[0].getPosition());
-          // }
         };
       }
 
@@ -136,14 +146,11 @@ export default function KakaoMap({
               type: 'expand',
               data: {
                 postId: ${markers.length > 0 ? markers[0].id : 0}, 
-                latitude: ${markers.length > 0 ? markers[0].latitude : latitude},   // ✅ 마커 좌표 우선
-                longitude: ${markers.length > 0 ? markers[0].longitude : longitude} // ✅ 마커 좌표 우선
+                latitude: ${markers.length > 0 ? markers[0].latitude : latitude},   
+                longitude: ${markers.length > 0 ? markers[0].longitude : longitude}
               }
             }));
-
-          });
-          ;` : ''}
-
+          });` : ''}
 
         window.addEventListener('resize', function() {
           if (kakaoMarkers.length > 0) {
@@ -172,21 +179,18 @@ export default function KakaoMap({
             const msg = JSON.parse(data);
             if (msg.type === 'markerClick') {
               onMarkerClick?.(msg.data);
-              console.log(msg.data);
               return;
             }
             if (msg.type === 'expand') {
-              if (msg.type === 'expand') {
-                router.push({
-                    pathname: '/map',
-                    params: {
-                      postId: String(msg.data.postId),
-                      latitude: String(msg.data.latitude),
-                      longitude: String(msg.data.longitude),
-                    },
-                  });                
-                return;
-              }
+              router.push({
+                pathname: '/map',
+                params: {
+                  postId: String(msg.data.postId),
+                  latitude: String(msg.data.latitude),
+                  longitude: String(msg.data.longitude),
+                },
+              });
+              return;
             }
           } catch {
             console.error("Error parsing message data:", data);
