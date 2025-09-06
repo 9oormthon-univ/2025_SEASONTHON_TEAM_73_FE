@@ -1,26 +1,41 @@
+// ProfileSection.tsx
 import { COLORS, FONT_SIZE, FONTS } from '@/shared/styles';
+import { router } from 'expo-router';
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const ProfileSection: React.FC = () => {
+type ProfileSectionProps = {
+  userId: number; // 상대방 유저 ID
+  nickname: string;
+  badgeText?: string;
+  profileImageUrl?: string;
+};
+
+const ProfileSection: React.FC<ProfileSectionProps> = ({
+  userId,
+  nickname,
+  badgeText = '대학생 인증',
+  profileImageUrl = 'https://api.builder.io/api/v1/image/assets/TEMP/12534525cfd5e286f981627b7e137775c093cf79?placeholderIfAbsent=true&apiKey=7adddd5587f24b91884c2915be4df62c',
+}) => {
+  const handleNavigateToProfile = () => {
+    router.push(`/userDetail/${userId}` as any); // 프로필 페이지로 이동
+  };
+
   return (
-    <View style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={handleNavigateToProfile} activeOpacity={0.8}>
       <View style={styles.profileContent}>
-        <Image
-          source={{
-            uri: 'https://api.builder.io/api/v1/image/assets/TEMP/12534525cfd5e286f981627b7e137775c093cf79?placeholderIfAbsent=true&apiKey=7adddd5587f24b91884c2915be4df62c',
-          }}
-          style={styles.profileImage}
-        />
+        <Image source={{ uri: profileImageUrl }} style={styles.profileImage} />
         {/* 닉네임 + 뱃지를 감싸는 컨테이너 */}
         <View style={styles.nameBadgeWrapper}>
-          <Text style={styles.nickname}>닉네임</Text>
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>대학생 인증</Text>
-          </View>
+          <Text style={styles.nickname}>{nickname}</Text>
+          {badgeText && (
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>{badgeText}</Text>
+            </View>
+          )}
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

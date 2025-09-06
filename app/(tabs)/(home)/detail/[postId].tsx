@@ -10,13 +10,14 @@ import PropertyHeader from "@/widgets/detail/PropertyHeader";
 import PropertyInfo from "@/widgets/detail/PropertyInfo";
 import PropertyTitle from "@/widgets/detail/PropertyTitle";
 import { router, useLocalSearchParams } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 
 const PropertyDetailView: React.FC = () => {
   const { postId } = useLocalSearchParams();
   if (!postId) return null;
   const accessToken = useAuthStore.getState().accessToken;
+  const [postData, setPostData] = useState<any>([]);
 
   const handleCreateChatRoom = async () => {
     try {
@@ -44,7 +45,12 @@ const PropertyDetailView: React.FC = () => {
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <PropertyHeader />
-      <ProfileSection />
+      <ProfileSection
+        userId={postData.userId} 
+        nickname={postData.nickname}
+        badgeText={postData.badge}
+        profileImageUrl={postData.profileImage}
+      />
       <PropertyTitle />
       <MapSection postId={typeof postId === "string" ? Number(postId) : Array.isArray(postId) ? Number(postId[0]) : 0} />
       <PriceSection />
