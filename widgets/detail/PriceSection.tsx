@@ -1,41 +1,59 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-const PriceSection: React.FC = () => {
+type Props = {
+  deposit: number;
+  monthlyRent: number;
+  maintenanceFee: number;
+  depositShare: boolean;
+  rentShare: boolean;
+  maintenanceShare: boolean;
+  utilitiesShare: boolean;
+};
+
+const PriceSection: React.FC<Props> = ({
+  deposit,
+  monthlyRent,
+  maintenanceFee,
+  depositShare,
+  rentShare,
+  maintenanceShare,
+  utilitiesShare
+}) => {
+  const tags = [];
+  if (depositShare) tags.push("보증금 분담");
+  if (rentShare) tags.push("월세 분담");
+  if (maintenanceShare) tags.push("관리비 분담");
+  if (utilitiesShare) tags.push("공과금 분담");
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>가격정보</Text>
       <View style={styles.priceList}>
         <View style={styles.priceRow}>
           <Text style={styles.priceLabel}>보증금</Text>
-          <Text style={styles.priceValue}>1000만원</Text>
+          <Text style={styles.priceValue}>{deposit}만원</Text>
         </View>
         <View style={styles.priceRowWithBorder}>
           <Text style={styles.priceLabel}>월세</Text>
-          <Text style={styles.priceValue}>90만원</Text>
+          <Text style={styles.priceValue}>{monthlyRent}만원</Text>
         </View>
         <View style={styles.priceRowLast}>
           <Text style={styles.priceLabel}>관리비</Text>
-          <Text style={styles.priceValue}>12만원</Text>
+          <Text style={styles.priceValue}>{maintenanceFee}만원</Text>
         </View>
       </View>
       <View style={styles.tagContainer}>
-        <View style={styles.tag}>
-          <Text style={styles.tagText}>보증금 분담</Text>
-        </View>
-        <View style={styles.tag}>
-          <Text style={styles.tagText}>월세 분담</Text>
-        </View>
-        <View style={styles.tag}>
-          <Text style={styles.tagText}>관리비 분담</Text>
-        </View>
-        <View style={styles.tag}>
-          <Text style={styles.tagText}>공과금 분담</Text>
-        </View>
+        {tags.map((tag, idx) => (
+          <View style={styles.tag} key={idx}>
+            <Text style={styles.tagText}>{tag}</Text>
+          </View>
+        ))}
       </View>
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
