@@ -48,7 +48,7 @@ const ChatRequestList: React.FC<ChatRequestListProps> = ({ requests }) => {
           key={request.chatRoomId}
           onPress={() =>
             router.push({
-              pathname: `/room/${request.chatRoomId}` as any,
+              pathname: `/chat/room/${request.chatRoomId}` as any,
               params: {
                 senderName: request.senderName,
                 chatRoomStatus: request.chatRoomStatus, // 상태 전달

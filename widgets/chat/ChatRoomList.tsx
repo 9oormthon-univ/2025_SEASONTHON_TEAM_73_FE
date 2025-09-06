@@ -3,11 +3,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
 import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import ChatListItem from "./ChatListItem";
 
@@ -49,7 +49,7 @@ const ChatRoomList: React.FC<ChatRoomListProps> = ({ rooms }) => {
           key={room.chatRoomId}
           onPress={() =>
             router.push({
-              pathname: `/room/${room.chatRoomId}` as any,
+              pathname: `/chat/room/${room.chatRoomId}` as any,
               params: { senderName: room.senderName }, // key 주의!
             })
           }
