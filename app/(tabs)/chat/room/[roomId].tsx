@@ -84,16 +84,10 @@ const ChatScreen: React.FC = () => {
 
     const fetchMessages = async () => {
       try {
-        const res = await api.get(
-          `/chatrooms/${roomId}/messages`,
-          {
-            params: { page: 0, size: 50 },
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-
-        console.log("📨 기존 메시지 API 응답:", res.data);
-        console.log("📨 받은 메시지 개수:", res.data.data?.length || 0);
+        const res = await api.get(`/chatrooms/${roomId}/messages`, {
+          params: { page: 0, size: 50 }, // 필요에 따라 pagination
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         const messages: Message[] = res.data.data.map((msg: any) => {
           const date = new Date(msg.createdAt);
@@ -101,19 +95,13 @@ const ChatScreen: React.FC = () => {
             id: msg.messageId.toString(),
             text: msg.content,
             isOwn: msg.senderId.toString() === userId,
-            time: date.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            }),
-            date: date.toLocaleDateString("ko-KR", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            }),
+            time: date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            date: date.toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" }),
             senderName: msg.senderName,
           };
         });
 
+        // 날짜별 그룹화
         const grouped: DateGroup[] = [];
         messages.forEach((message) => {
           const existingGroup = grouped.find((g) => g.date === message.date);
@@ -124,17 +112,22 @@ const ChatScreen: React.FC = () => {
           }
         });
 
-        console.log("📨 처리된 메시지 데이터:", messages);
-        console.log("📨 날짜별 그룹화된 데이터:", grouped);
-
         setChatData(grouped);
       } catch (err) {
         console.error("메시지 가져오기 실패", err);
       }
     };
 
+    // 처음 로드
     fetchMessages();
+
+    // 일정 간격마다 반복
+    const intervalId = setInterval(fetchMessages, 1000); // 1초마다
+
+    // cleanup
+    return () => clearInterval(intervalId);
   }, [roomId, token, userId]);
+
 
   // WebSocket 연결 (ACTIVE 상태일 때만)
   useEffect(() => {
