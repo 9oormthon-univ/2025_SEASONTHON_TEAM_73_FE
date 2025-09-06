@@ -1,8 +1,9 @@
-import { Button } from "@/shared/components";
+import { Button, Input } from "@/shared/components";
+import { COLORS, SPACING } from "@/shared/styles";
 import { useSubmitLogin } from "@/widgets/login/api";
 import type { LoginFormData } from "@/widgets/login/types";
 import { Controller, useForm } from "react-hook-form";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 export default function LoginScreen() {
   const { control, handleSubmit, watch } = useForm<LoginFormData>({
@@ -15,7 +16,7 @@ export default function LoginScreen() {
   const { username, password } = watch();
   const isFormValid = username.trim() !== "" && password.trim() !== "";
 
-  const { mutate: submitLogin } = useSubmitLogin();
+  const { mutate: submitLogin, isPending } = useSubmitLogin();
 
   const onSubmit = (data: LoginFormData) => {
     console.log(data);
@@ -23,47 +24,49 @@ export default function LoginScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>임시 로그인</Text>
+    <>
+      <View style={styles.container}>
+        <Controller
+          control={control}
+          name="username"
+          rules={{ required: "아이디를 입력해주세요." }}
+          render={({ field: { onChange, value } }) => (
+            <Input
+              title="아이디"
+              placeholder="아이디"
+              value={value}
+              onChangeText={onChange}
+              autoCapitalize="none"
+            />
+          )}
+        />
 
-      <Controller
-        control={control}
-        name="username"
-        rules={{ required: "아이디를 입력해주세요." }}
-        render={({ field: { onChange, value } }) => (
-          <TextInput
-            style={styles.input}
-            placeholder="아이디"
-            value={username}
-            onChangeText={onChange}
-            autoCapitalize="none"
-          />
-        )}
-      />
-
-      <Controller
-        control={control}
-        name="password"
-        rules={{ required: "비밀번호를 입력해주세요." }}
-        render={({ field: { onChange, value } }) => (
-          <TextInput
-            style={styles.input}
-            placeholder="비밀번호"
-            value={password}
-            onChangeText={onChange}
-            autoCapitalize="none"
-            secureTextEntry
-          />
-        )}
-      />
-
-      <Button
-        text="로그인"
-        variant={isFormValid ? "primary" : "disabled"}
-        disabled={!isFormValid}
-        onPress={handleSubmit(onSubmit)}
-      />
-    </View>
+        <Controller
+          control={control}
+          name="password"
+          rules={{ required: "비밀번호를 입력해주세요." }}
+          render={({ field: { onChange, value } }) => (
+            <Input
+              title="비밀번호"
+              placeholder="비밀번호"
+              value={password}
+              onChangeText={onChange}
+              autoCapitalize="none"
+              secureTextEntry
+            />
+          )}
+        />
+      </View>
+      <View style={styles.buttonContainer}>
+        <Button
+          size="lg"
+          text="로그인"
+          variant={!isFormValid || isPending ? "disabled" : "primary"}
+          disabled={!isFormValid || isPending}
+          onPress={handleSubmit(onSubmit)}
+        />
+      </View>
+    </>
   );
 }
 
@@ -72,19 +75,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: COLORS.white,
+    gap: 20,
   },
-  title: {
-    fontSize: 22,
-    marginBottom: 20,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    padding: 10,
-    marginBottom: 15,
-    borderRadius: 8,
+  buttonContainer: {
+    padding: SPACING.normal,
+    backgroundColor: COLORS.white,
   },
 });
