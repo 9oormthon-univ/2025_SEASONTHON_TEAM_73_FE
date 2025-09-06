@@ -37,13 +37,17 @@ export const MyPageScreen: React.FC = () => {
                 // 성별 표시
                 data.gender = data.gender === "MALE" ? "남성" : "여성";
 
-                // workDays 변환: ["월","화","수","목","금"] -> [true,true,true,true,true,false,false]
+               // workDays 변환
                 const weekDays = ['월', '화', '수', '목', '금', '토', '일'];
-                const apiDays = data.lifeHabit?.workDays || [];
-                const workDaysBool = weekDays.map(day => apiDays.includes(day));
+                let apiDays: string[] = [];
 
-                // 변환된 boolean 배열을 lifeHabit에 추가
+                if (Array.isArray(data.lifeHabit?.workDays) && data.lifeHabit.workDays.length > 0) {
+                apiDays = data.lifeHabit.workDays[0].split(','); 
+                }
+
+                const workDaysBool = weekDays.map(day => apiDays.includes(day));
                 data.lifeHabit.workDaysBool = workDaysBool;
+
 
                 setUser(data);
             }
