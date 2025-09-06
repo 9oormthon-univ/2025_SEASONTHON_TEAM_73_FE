@@ -1,86 +1,51 @@
-import { COLORS, FONT_SIZE, FONTS, SPACING } from "@/shared/styles";
-import { Ionicons } from "@expo/vector-icons";
-import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
-import { Tabs, usePathname } from "expo-router";
-import { TouchableOpacity } from "react-native";
+import { ROUTES, TabsUI, type TabsArray } from "@/widgets/menu";
+import { Tabs, router, type Href } from "expo-router";
+
+const tabs: TabsArray = [
+  {
+    name: "My",
+    route: ROUTES.E,
+    action: () => router.push(ROUTES.E as Href),
+  },
+  {
+    name: "채팅",
+    route: ROUTES.B,
+    action: () => router.push(ROUTES.B as Href),
+  },
+  {
+    name: "센터",
+    route: ROUTES.C,
+    action: () => router.push(ROUTES.C as Href),
+  },
+  {
+    name: "지도",
+    route: ROUTES.D,
+    action: () => router.push(ROUTES.D as Href),
+  },
+  {
+    name: "홈",
+    route: ROUTES.A,
+    action: () => router.push(ROUTES.A as Href),
+  },
+];
 
 export default function HomeLayout() {
-  const pathname = usePathname();
-  const isDetailScreen = pathname.includes("/detail");
-  const isFilterScreen = pathname.includes("/filter");
-  const isRegionScreen = pathname.includes("/region");
-  const isPostCreateScreen = pathname.includes("/post-create");
-  const isChatScreen = pathname.includes("/room");
-
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: COLORS.primary[90],
-        tabBarInactiveTintColor: COLORS.gray[30],
-        tabBarStyle:
-          isDetailScreen ||
-          isFilterScreen ||
-          isRegionScreen ||
-          isPostCreateScreen ||
-          isChatScreen
-            ? { display: "none" }
-            : {
-                boxShadow: `0 -2px 4px 0 rgba(0, 0, 0, 0.05)`,
-                height: 80,
-                paddingHorizontal: SPACING.normal,
-              },
-        tabBarItemStyle: { paddingTop: 10 },
-        tabBarLabelStyle: {
-          marginTop: SPACING.xxs,
-          fontSize: FONT_SIZE.c1,
-          fontFamily: FONTS.medium,
-          includeFontPadding: false,
-        },
-        tabBarVisibilityAnimationConfig: {
-          hide: { animation: "timing", config: { duration: 0 } },
-        },
-        tabBarButton: (props: BottomTabBarButtonProps) => (
-          <TouchableOpacity {...(props as any)} activeOpacity={0.5} />
-        ),
-      }}
-    >
-      <Tabs.Screen
-        name="(home)"
-        options={{
-          title: "홈",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="home" color={color} size={24} />
-          ),
+    <>
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarStyle: { display: "none" },
         }}
-      />
-      <Tabs.Screen
-        name="(chat)"
-        options={{
-          title: "채팅",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="chatbubble" color={color} size={24} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="map"
-        options={{
-          title: "지도",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="location" color={color} size={24} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="(user)"
-        options={{
-          title: "My",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="person" color={color} size={24} />
-          ),
-        }}
-      />
-    </Tabs>
+      >
+        <Tabs.Screen name="(home)" />
+        <Tabs.Screen name="(chat)" />
+        <Tabs.Screen name="map" />
+        <Tabs.Screen name="user" />
+      </Tabs>
+
+      {/* 커스텀 탭바 */}
+      <TabsUI tabs={tabs} />
+    </>
   );
 }
