@@ -1,6 +1,7 @@
-import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
-import { UserActionButton } from './UserActionButton';
+import { COLORS } from "@/shared/styles";
+import React from "react";
+import { Image, StyleSheet, Text, View } from "react-native";
+import { UserActionButton } from "./UserActionButton";
 
 interface UserProfileSectionProps {
   name: string;
@@ -27,7 +28,7 @@ export const UserProfileSection: React.FC<UserProfileSectionProps> = ({
         <View style={styles.profileContent}>
           <View style={styles.userInfoRow}>
             <Image
-              source={require('../../assets/icons/friendIcon.png')}
+              source={require("../../assets/icons/friendIcon.png")}
               style={styles.avatar}
             />
             <View style={styles.userDetails}>
@@ -35,7 +36,9 @@ export const UserProfileSection: React.FC<UserProfileSectionProps> = ({
                 <Text style={styles.name}>{name}</Text>
               </View>
               <View style={styles.genderAgeContainer}>
-                <Text style={styles.genderAge}>{gender}・{age}세</Text>
+                <Text style={styles.genderAge}>
+                  {gender}・{age}세
+                </Text>
               </View>
             </View>
           </View>
@@ -54,29 +57,29 @@ export const UserProfileSection: React.FC<UserProfileSectionProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    borderBottomWidth: 3,
-    borderBottomColor: '#F2F2F2',
-    width: '100%',
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.gray[5],
+    width: "100%",
   },
   profileContainer: {
-    width: '100%',
+    width: "100%",
     paddingVertical: 16,
     paddingHorizontal: 18,
   },
   profileContent: {
-    width: '100%',
+    width: "100%",
   },
   userInfoRow: {
-    flexDirection: 'row',
-    width: '100%',
-    alignItems: 'center',
+    flexDirection: "row",
+    width: "100%",
+    alignItems: "center",
     gap: 20,
   },
   avatar: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#F2F2F2',
+    backgroundColor: "#F2F2F2",
   },
   userDetails: {
     width: 115,
@@ -85,32 +88,32 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   name: {
-    color: '#17171B',
+    color: "#17171B",
     fontSize: 16,
-    fontWeight: '700',
-    fontFamily: 'SUIT Variable, -apple-system, Roboto, Helvetica, sans-serif',
+    fontWeight: "700",
+    fontFamily: "SUIT Variable, -apple-system, Roboto, Helvetica, sans-serif",
   },
   genderAgeContainer: {},
   genderAge: {
-    color: '#878789',
+    color: "#878789",
     fontSize: 12,
-    fontWeight: '400',
-    fontFamily: 'SUIT Variable, -apple-system, Roboto, Helvetica, sans-serif',
+    fontWeight: "400",
+    fontFamily: "SUIT Variable, -apple-system, Roboto, Helvetica, sans-serif",
   },
   descriptionContainer: {
     marginTop: 10,
   },
   description: {
-    color: '#17171B',
+    color: "#17171B",
     fontSize: 14,
-    fontWeight: '400',
+    fontWeight: "400",
     lineHeight: 21,
-    fontFamily: 'SUIT Variable, -apple-system, Roboto, Helvetica, sans-serif',
+    fontFamily: "SUIT Variable, -apple-system, Roboto, Helvetica, sans-serif",
   },
   buttonContainer: {
-    flexDirection: 'row',
-    width: '100%',
-    alignItems: 'center',
+    flexDirection: "row",
+    width: "100%",
+    alignItems: "center",
     gap: 16,
     paddingHorizontal: 18,
     paddingBottom: 16,

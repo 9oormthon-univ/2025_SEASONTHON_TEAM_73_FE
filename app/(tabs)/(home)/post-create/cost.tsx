@@ -5,9 +5,10 @@ import {
   PostCreateProgressBar,
 } from "@/widgets/post-create/components";
 import { COST_DEFAULT_VALUES } from "@/widgets/post-create/constants";
+import { usePostCreate } from "@/widgets/post-create/contexts";
 import { useCostValidation } from "@/widgets/post-create/hooks";
 import { CostFormData } from "@/widgets/post-create/types/post";
-import { router, useLocalSearchParams } from "expo-router";
+import { router } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import {
   Dimensions,
@@ -21,11 +22,7 @@ export default function CostScreen() {
   const { width } = Dimensions.get("screen");
   const halfInputWidth = (width - 18 * 2 - 20) / 2;
   const thirdInputWidth = (width - 18 * 2 - 10 * 2) / 3;
-
-  const params = useLocalSearchParams();
-  const roomInfo = params.roomInfo
-    ? JSON.parse(params.roomInfo as string)
-    : null;
+  const { setCost } = usePostCreate();
 
   const {
     control,
@@ -41,13 +38,8 @@ export default function CostScreen() {
   const { isFormValid } = useCostValidation(formData);
 
   const onSubmit = (data: CostFormData) => {
-    router.push({
-      pathname: "/post-create/description",
-      params: {
-        roomInfo: JSON.stringify(roomInfo),
-        cost: JSON.stringify(data),
-      },
-    });
+    setCost(data);
+    router.push("/post-create/description");
   };
 
   return (

@@ -17,6 +17,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Message {
   id: string;
@@ -131,6 +132,8 @@ const ChatScreen: React.FC = () => {
   }, [roomId, token, userId]);
 
   // WebSocket 연결
+
+  // WebSocket 연결 (ACTIVE 상태일 때만)
   useEffect(() => {
     if (!roomId || isPending) return;
 
@@ -251,55 +254,55 @@ const ChatScreen: React.FC = () => {
   }, []);
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={80}
-    >
-      <ScrollView
-        ref={scrollViewRef}
-        style={styles.messagesContainer}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={80}
       >
-        <View style={styles.messagesContent}>
-          {chatData.map((dateGroup, dateIndex) => (
-            <View key={dateIndex} style={styles.dateGroup}>
-              <DateSeparator date={dateGroup.date} />
-              <View style={styles.messagesGroup}>
-                {dateGroup.messages.map((message) => (
-                  <ChatMessage
-                    key={message.id}
-                    text={message.text}
-                    isOwn={message.isOwn}
-                    time={message.time}
-                    senderId={message.senderId}
-                    senderName={message.senderName}
-                  />
-                ))}
+        <ScrollView
+          ref={scrollViewRef}
+          style={styles.messagesContainer}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.messagesContent}>
+            {chatData.map((dateGroup, dateIndex) => (
+              <View key={dateIndex} style={styles.dateGroup}>
+                <DateSeparator date={dateGroup.date} />
+                <View style={styles.messagesGroup}>
+                  {dateGroup.messages.map((message) => (
+                    <ChatMessage
+                      key={message.id}
+                      text={message.text}
+                      isOwn={message.isOwn}
+                      time={message.time}
+                    />
+                  ))}
+                </View>
               </View>
-            </View>
-          ))}
-        </View>
-      </ScrollView>
+            ))}
+          </View>
+        </ScrollView>
 
-      {isPending && (
-        <View style={styles.containerPendig}>
-          <MessageRequestDialog
-            userName={senderName as string}
-            onAccept={handleAccept}
-            onReject={handleReject}
+        {isPending && (
+          <View style={styles.containerPendig}>
+            <MessageRequestDialog
+              userName={senderName as string}
+              onAccept={handleAccept}
+              onReject={handleReject}
+            />
+          </View>
+        )}
+
+        {!isPending && (
+          <ChatInput
+            onSendMessage={handleSendMessage}
+            onPhotoPress={handlePhotoPress}
           />
-        </View>
-      )}
-
-      {!isPending && (
-        <ChatInput
-          onSendMessage={handleSendMessage}
-          onPhotoPress={handlePhotoPress}
-        />
-      )}
-    </KeyboardAvoidingView>
+        )}
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
