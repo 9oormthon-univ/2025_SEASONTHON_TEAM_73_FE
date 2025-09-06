@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   overlay: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 },
   infoBox: {
     flexDirection: "row",
-    top: 650,
+    top: 580,
     padding: 10,
     margin: 18,
     gap: 20,
