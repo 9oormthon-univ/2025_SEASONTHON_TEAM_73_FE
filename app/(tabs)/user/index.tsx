@@ -41,7 +41,7 @@ export const MyPageScreen: React.FC = () => {
     };
 
     const handleTwoFactorAuth = () => {
-        router.push("/(tabs)/(user)/verify")
+        router.push("/(tabs)/user/verify")
     };
 
     const handleDeleteAccount = () => {

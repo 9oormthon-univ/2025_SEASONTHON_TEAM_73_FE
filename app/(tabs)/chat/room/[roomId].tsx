@@ -53,10 +53,10 @@ const ChatScreen: React.FC = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       Alert.alert("✅ 채팅 신청 수락 완료");
-      // 상태를 ACTIVE로 변경 후 새로고침
-      router.replace(
-        `/room/${roomId}?chatRoomStatus=ACTIVE&senderName=${senderName}`
-      );
+      router.replace({
+            pathname: `/room/${roomId}` as any,
+            params: { senderName: senderName },
+          });
     } catch (err) {
       console.error("채팅 신청 수락 실패", err);
       Alert.alert("❌ 채팅 신청 수락 실패");
