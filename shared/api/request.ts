@@ -4,4 +4,7 @@ export const REQUEST = {
   LOGOUT: "/auth/logout",
   POST_LIST: "/posts",
   POST_SEARCH: "/posts/search",
+  POST_CREATE: "/posts",
+  CERTIFICATE_UPLOAD: "/certificate/upload",
+  USER_VERIFY: "/certificate/upload",
 };

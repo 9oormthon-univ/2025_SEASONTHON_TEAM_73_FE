@@ -209,24 +209,23 @@ function DatePicker({
           {title} {required && <Text style={styles.required}>*</Text>}
         </Text>
       )}
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.dateInput}
-          placeholder={placeholder}
-          placeholderTextColor={COLORS.gray[40]}
-          value={value ? formatDate(value) : ""}
-          editable={false}
-        />
-        <TouchableOpacity
-          style={styles.calendarButton}
-          onPress={() => setShowPicker(true)}
+      <TouchableOpacity
+        style={styles.inputContainer}
+        onPress={() => setShowPicker(true)}
+      >
+        <Text
+          style={[
+            styles.dateInput,
+            value ? styles.dateText : styles.placeholderText,
+          ]}
         >
-          <Image
-            source={require("@/assets/icons/icon-calendar.png")}
-            style={styles.calendarIcon}
-          />
-        </TouchableOpacity>
-      </View>
+          {value ? formatDate(value) : placeholder}
+        </Text>
+        <Image
+          source={require("@/assets/icons/icon-calendar.png")}
+          style={styles.calendarIcon}
+        />
+      </TouchableOpacity>
       {description && <Text style={styles.description}>{description}</Text>}
 
       {showPicker && (
@@ -393,7 +392,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary[10],
   },
   radioItemNormal: {
-    borderColor: COLORS.gray[40],
+    borderColor: COLORS.gray[20],
     backgroundColor: COLORS.white,
   },
   radioText: {
@@ -405,7 +404,7 @@ const styles = StyleSheet.create({
     color: COLORS.primary[90],
   },
   radioTextNormal: {
-    color: COLORS.gray[60],
+    color: COLORS.gray[20],
   },
   multiRadioContainer: {
     flexDirection: "row",
@@ -424,7 +423,7 @@ const styles = StyleSheet.create({
   },
   multiRadioItemSelected: {
     borderColor: COLORS.primary[90],
-    backgroundColor: COLORS.primary[10],
+    backgroundColor: COLORS.primary[90],
   },
   multiRadioText: {
     fontSize: FONT_SIZE.b2,
@@ -432,7 +431,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   multiRadioTextSelected: {
-    color: COLORS.primary[90],
+    color: COLORS.white,
   },
   multiRadioTextNormal: {
     color: COLORS.gray[60],
@@ -449,6 +448,13 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: FONT_SIZE.b2,
     fontFamily: FONTS.regular,
+    paddingVertical: 10,
+  },
+  dateText: {
+    color: COLORS.gray[80],
+  },
+  placeholderText: {
+    color: COLORS.gray[40],
   },
   calendarButton: {
     paddingHorizontal: 5,
@@ -516,6 +522,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: RADIUS.xs,
+    paddingVertical: 10,
     borderWidth: 1,
     borderColor: COLORS.gray[40],
     borderStyle: "dashed",
