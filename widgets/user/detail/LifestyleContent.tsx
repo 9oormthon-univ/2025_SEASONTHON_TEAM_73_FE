@@ -13,7 +13,7 @@ export const LifestyleContent: React.FC<LifestyleContentProps> = ({ lifeHabit })
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <WorkScheduleSection activeDays={[true, true, true, true, true, false, false]} />
+        <WorkScheduleSection activeDays={lifeHabit?.workDaysBool} />
         <InfoSection
           title="기상 시간, 출근 시간"
           value={`${lifeHabit.wakeUpTimeWorkday} 기상, ${lifeHabit.goWorkTime} 출근`}

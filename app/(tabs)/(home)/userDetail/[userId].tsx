@@ -9,13 +9,13 @@ import { NoiseSensitivityContent } from '@/widgets/user/detail/noise/NoiseSensit
 import { OtherHabitsContent } from '@/widgets/user/detail/other/OtherHabitsContent';
 import { TabNavigation } from '@/widgets/user/detail/TabNavigation';
 import { UserDetailProfileSection } from '@/widgets/user/detail/UserDetailProfileSection';
+import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 
 export const MyPageScreen: React.FC = () => {
     const [user, setUser] = useState<any>([]);
-    //const { userId } = useLocalSearchParams();
-    const userId = 2;
+    const { userId } = useLocalSearchParams();
     const accessToken = useAuthStore.getState().accessToken;
     const [activeTab, setActiveTab] = useState(0);
 
@@ -26,26 +26,36 @@ export const MyPageScreen: React.FC = () => {
     useEffect(() => {
         const getUser = async () => {
             try {
-                const res = await api.get(`/profile/${userId}`, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                });
-                if (res.data.success) {
-                    if(res.data.data.gender === "MALE") {
-                        res.data.data.gender = "남성"
-                    } else {
-                        res.data.data.gender = "여성"
-                    }
-                    setUser(res.data.data);
-                }
+            const res = await api.get(`/profile/${userId}`, {
+                headers: {
+                Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if (res.data.success) {
+                const data = res.data.data;
+
+                // 성별 표시
+                data.gender = data.gender === "MALE" ? "남성" : "여성";
+
+                // workDays 변환: ["월","화","수","목","금"] -> [true,true,true,true,true,false,false]
+                const weekDays = ['월', '화', '수', '목', '금', '토', '일'];
+                const apiDays = data.lifeHabit?.workDays || [];
+                const workDaysBool = weekDays.map(day => apiDays.includes(day));
+
+                // 변환된 boolean 배열을 lifeHabit에 추가
+                data.lifeHabit.workDaysBool = workDaysBool;
+
+                setUser(data);
+            }
             } catch (error) {
-                console.error("프로필 가져오는데 문제가 발생했습니다", error)
+            console.error("프로필 가져오는데 문제가 발생했습니다", error)
             }
         }
 
         getUser();
-    },[])
+    }, [])
+
+
     //console.log(user);
 
     const handleEditProfile = () => {
