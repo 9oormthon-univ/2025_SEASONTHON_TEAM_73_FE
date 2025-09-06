@@ -1,16 +1,19 @@
-import api from '@/shared/api/axios';
-import { COLORS, FONT_SIZE } from '@/shared/styles';
-import KakaoMap from '@/widgets/detail/KakaoMap';
-import { router, useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import api from "@/shared/api/axios";
+import { COLORS, FONT_SIZE } from "@/shared/styles";
+import KakaoMap from "@/widgets/detail/KakaoMap";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function MapFullScreen() {
-  const params = useLocalSearchParams<{ latitude?: string; longitude?: string }>();
+  const params = useLocalSearchParams<{
+    latitude?: string;
+    longitude?: string;
+  }>();
   const lat = Number(params.latitude);
   const lng = Number(params.longitude);
   const latitude = Number.isFinite(lat) ? lat : 37.5665;
-  const longitude = Number.isFinite(lng) ? lng : 126.9780;
+  const longitude = Number.isFinite(lng) ? lng : 126.978;
 
   const [info, setInfo] = useState<any | null>(null);
   const [markers, setMarkers] = useState<any[]>([]);
@@ -59,7 +62,9 @@ export default function MapFullScreen() {
           image: "https://via.placeholder.com/100", // TODO: 실제 이미지 필드 있으면 교체
           price: `${detail.deposit}/${detail.monthlyRent}`, // 보증금/월세
           description: `${detail.region}・${detail.roomType}, 화장실 ${detail.washroomCount}개`,
-          etc: `${detail.userGender}${detail.smoking ? `・${detail.smoking}` : "・비흡연"}`,
+          etc: `${detail.userGender}${
+            detail.smoking ? `・${detail.smoking}` : "・비흡연"
+          }`,
           schedule: detail.workDays ?? "미작성",
         });
       }
@@ -67,7 +72,6 @@ export default function MapFullScreen() {
       console.error("상세 데이터 불러오기 실패:", error);
     }
   };
-
 
   // const markers = [
   //   { id: 0, latitude: latitude, longitude: longitude, info: { image: "https://via.placeholder.com/100", price: "450/35", description: "카카오", etc: "남여 상관없음", schedule: "상시" } },
@@ -92,7 +96,12 @@ export default function MapFullScreen() {
           style={styles.overlay}
           onPress={() => setInfo(null)} // overlay 클릭 시 info null
         >
-          <Pressable style={styles.infoBox} onPress={() => {router.push(`/(tabs)/(home)/detail/${info.id}`)}}>
+          <Pressable
+            style={styles.infoBox}
+            onPress={() => {
+              router.push(`/(tabs)/(home)/detail/${info.id}`);
+            }}
+          >
             <Image source={{ uri: info.image }} style={styles.image} />
             <View style={styles.textBox}>
               <Text style={styles.price}>{info.price}</Text>
@@ -108,10 +117,26 @@ export default function MapFullScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 1, paddingBottom: 80, backgroundColor: COLORS.white },
   overlay: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 },
-  infoBox: { flexDirection: "row", top:600, padding: 10, margin: 18, gap: 20, borderWidth: 1, borderColor: "#ddd", backgroundColor: "#fff", borderRadius: 8 },
-  image: { width: 90, height: 90, borderRadius: 8, aspectRatio: 1, paddingRight: 10 },
+  infoBox: {
+    flexDirection: "row",
+    top: 650,
+    padding: 10,
+    margin: 18,
+    gap: 20,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    backgroundColor: "#fff",
+    borderRadius: 8,
+  },
+  image: {
+    width: 90,
+    height: 90,
+    borderRadius: 8,
+    aspectRatio: 1,
+    paddingRight: 10,
+  },
   textBox: { flex: 1, flexShrink: 1 },
   price: { fontWeight: "bold", fontSize: FONT_SIZE.b1, marginBottom: 4 },
   desc: { color: COLORS.black, fontSize: FONT_SIZE.c1, marginBottom: 4 },

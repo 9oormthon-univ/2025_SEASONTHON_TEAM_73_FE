@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.regular,
   },
   logo: {
-    width: 30,
+    width: 44,
     height: 30,
   },
 });
