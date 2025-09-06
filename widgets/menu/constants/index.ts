@@ -5,11 +5,11 @@ export const SIZES = {
 };
 
 export const ROUTES = {
-  A: "/(tabs)/(home)",
+  A: "/",
   B: "/chat",
-  C: "/(tabs)/(home)/post-create",
-  D: "/(tabs)/map",
-  E: "/(tabs)/user",
+  C: "/post-create",
+  D: "/map",
+  E: "/user",
 };
 
 export const NAVIGATION_TAB_PROP_TYPE = PropTypes.arrayOf(
