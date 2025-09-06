@@ -16,6 +16,7 @@ const fetchPostList = async ({ pageParam = 0 }) => {
 
 export const useFetchPostList = () => {
   return useInfiniteQuery({
+    retry: 3,
     queryKey: ["postListInfinite"],
     queryFn: fetchPostList,
     getNextPageParam: (lastPage) => {
