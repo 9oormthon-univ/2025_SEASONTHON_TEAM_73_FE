@@ -17,4 +17,14 @@ export type DefaultFilter = SearchFilter &
 
 export type SearchFilter = { keyword: string };
 
-export type RegionFilter = { dongs: string[] };
+export interface SelectedRegion {
+  id: string;
+  name: string;
+  districtId: string;
+  districtName: string;
+}
+
+export type RegionFilter = {
+  dongs: string[];
+  selectedRegions: SelectedRegion[];
+};

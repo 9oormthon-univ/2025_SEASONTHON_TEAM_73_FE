@@ -23,6 +23,7 @@ export const FILTER_DEFAULT = {
   preferredGender: [],
   keyword: "",
   dongs: [],
+  selectedRegions: [],
 };
 
 export const ROOM_TYPE = {

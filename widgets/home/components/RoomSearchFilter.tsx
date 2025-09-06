@@ -1,41 +1,45 @@
-import { Button } from "@/shared/components";
 import { GENDER, Gender } from "@/shared/constants";
 import { COLORS, FONTS, FONT_SIZE, SPACING } from "@/shared/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { memo } from "react";
+import React, { memo, useState } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
-import { ROOM_TYPE } from "../constants";
+import { FILTER_DEFAULT, ROOM_TYPE } from "../constants";
 import { useDefaultFilter } from "../contexts";
 
 const DepositFilterButton = memo(
   ({
     minDeposit,
     maxDeposit,
-    applied,
     onReset,
   }: {
     minDeposit: number;
     maxDeposit: number;
-    applied: boolean;
     onReset: (e?: any) => void;
   }) => {
+    const [buttonWidth, setButtonWidth] = useState(200);
+    const applied =
+      minDeposit !== FILTER_DEFAULT.minDeposit ||
+      maxDeposit !== FILTER_DEFAULT.maxDeposit;
+
     const handlePress = (event: any) => {
       if (applied) {
         const { locationX } = event.nativeEvent;
-        const buttonWidth = event.currentTarget.clientWidth || 200; // fallback width
-        const resetButtonArea = 30; // 리셋 버튼 영역 (오른쪽 30px)
+        const resetButtonArea = 150;
 
         if (locationX > buttonWidth - resetButtonArea) {
-          // 리셋 버튼 영역 클릭
           onReset();
         } else {
-          // 메인 버튼 영역 클릭
           router.push("/filter");
         }
       } else {
         router.push("/filter");
       }
+    };
+
+    const handleLayout = (event: any) => {
+      const { width } = event.nativeEvent.layout;
+      setButtonWidth(width);
     };
 
     return (
@@ -45,6 +49,7 @@ const DepositFilterButton = memo(
           applied ? styles.customButtonActive : styles.customButtonInactive,
         ]}
         onPress={handlePress}
+        onLayout={handleLayout}
         activeOpacity={0.8}
       >
         <Text
@@ -81,19 +86,21 @@ const RentFilterButton = memo(
   ({
     minMonthlyCost,
     maxMonthlyCost,
-    applied,
     onReset,
   }: {
     minMonthlyCost: number;
     maxMonthlyCost: number;
-    applied: boolean;
     onReset: (e?: any) => void;
   }) => {
+    const [buttonWidth, setButtonWidth] = useState(200);
+    const applied =
+      minMonthlyCost !== FILTER_DEFAULT.minMonthlyCost ||
+      maxMonthlyCost !== FILTER_DEFAULT.maxMonthlyCost;
+
     const handlePress = (event: any) => {
       if (applied) {
         const { locationX } = event.nativeEvent;
-        const buttonWidth = event.currentTarget.clientWidth || 200;
-        const resetButtonArea = 30;
+        const resetButtonArea = 150;
 
         if (locationX > buttonWidth - resetButtonArea) {
           onReset();
@@ -105,6 +112,11 @@ const RentFilterButton = memo(
       }
     };
 
+    const handleLayout = (event: any) => {
+      const { width } = event.nativeEvent.layout;
+      setButtonWidth(width);
+    };
+
     return (
       <TouchableOpacity
         style={[
@@ -112,6 +124,7 @@ const RentFilterButton = memo(
           applied ? styles.customButtonActive : styles.customButtonInactive,
         ]}
         onPress={handlePress}
+        onLayout={handleLayout}
         activeOpacity={0.8}
       >
         <Text
@@ -144,25 +157,83 @@ const RentFilterButton = memo(
   }
 );
 
-/**
- * 나중에 백엔드 보고 타입 정의 및 기능 구현
- */
-const RegionFilterButton = memo(() => (
-  <Button
-    text="지역"
-    size="sm"
-    variant="outline"
-    onPress={() => router.push("/region")}
-    icon={
-      <Ionicons
-        name="chevron-down"
-        style={styles.filterButtonIcon}
-        size={18}
-        color={COLORS.gray[40]}
-      />
-    }
-  />
-));
+const RegionFilterButton = memo(
+  ({ dongs, onReset }: { dongs: string[]; onReset: (e?: any) => void }) => {
+    const [buttonWidth, setButtonWidth] = useState(200);
+    const applied = dongs && dongs.length > 0;
+
+    const getDisplayText = () => {
+      if (!dongs || dongs.length === 0) {
+        return "지역";
+      }
+
+      if (dongs.length === 1) {
+        return dongs[0];
+      }
+
+      const additionalCount = dongs.length - 1;
+      return `${dongs[0]} 외 ${additionalCount}개`;
+    };
+
+    const handlePress = (event: any) => {
+      if (applied) {
+        const { locationX } = event.nativeEvent;
+        const resetButtonArea = 150;
+
+        if (locationX > buttonWidth - resetButtonArea) {
+          onReset();
+        } else {
+          router.push("/region");
+        }
+      } else {
+        router.push("/region");
+      }
+    };
+
+    const handleLayout = (event: any) => {
+      const { width } = event.nativeEvent.layout;
+      setButtonWidth(width);
+    };
+
+    return (
+      <TouchableOpacity
+        style={[
+          styles.customButton,
+          applied ? styles.customButtonActive : styles.customButtonInactive,
+        ]}
+        onPress={handlePress}
+        onLayout={handleLayout}
+        activeOpacity={0.8}
+      >
+        <Text
+          style={[
+            styles.customButtonText,
+            applied
+              ? styles.customButtonTextActive
+              : styles.customButtonTextInactive,
+          ]}
+        >
+          {getDisplayText()}
+        </Text>
+        {applied ? (
+          <Ionicons
+            name="close-circle"
+            size={18}
+            color={COLORS.primary[90]}
+            style={styles.resetIcon}
+          />
+        ) : (
+          <Ionicons
+            name="chevron-down"
+            style={styles.filterButtonIcon}
+            size={18}
+            color={COLORS.gray[40]}
+          />
+        )}
+      </TouchableOpacity>
+    );
+  }
+);
 
 const RoomTypeFilterButton = memo(
   ({
@@ -172,6 +243,7 @@ const RoomTypeFilterButton = memo(
     roomTypes: string[] | null;
     onReset: (e?: any) => void;
   }) => {
+    const [buttonWidth, setButtonWidth] = useState(200);
     const applied = roomTypes && roomTypes.length > 0 ? true : false;
     const getDisplayText = () => {
       if (!roomTypes || roomTypes.length === 0) {
@@ -191,8 +263,7 @@ const RoomTypeFilterButton = memo(
     const handlePress = (event: any) => {
       if (applied) {
         const { locationX } = event.nativeEvent;
-        const buttonWidth = event.currentTarget.clientWidth || 200;
-        const resetButtonArea = 30;
+        const resetButtonArea = 150;
 
         if (locationX > buttonWidth - resetButtonArea) {
           onReset();
@@ -204,6 +275,11 @@ const RoomTypeFilterButton = memo(
       }
     };
 
+    const handleLayout = (event: any) => {
+      const { width } = event.nativeEvent.layout;
+      setButtonWidth(width);
+    };
+
     return (
       <TouchableOpacity
         style={[
@@ -211,6 +287,7 @@ const RoomTypeFilterButton = memo(
           applied ? styles.customButtonActive : styles.customButtonInactive,
         ]}
         onPress={handlePress}
+        onLayout={handleLayout}
         activeOpacity={0.8}
       >
         <Text
@@ -251,6 +328,7 @@ const GenderFilterButton = memo(
     preferredGender: Gender[];
     onReset: (e?: any) => void;
   }) => {
+    const [buttonWidth, setButtonWidth] = useState(200);
     const applied = preferredGender.length > 0;
     const buttonText =
       preferredGender.length === 1
@@ -262,8 +340,7 @@ const GenderFilterButton = memo(
     const handlePress = (event: any) => {
       if (applied) {
         const { locationX } = event.nativeEvent;
-        const buttonWidth = event.currentTarget.clientWidth || 200;
-        const resetButtonArea = 30;
+        const resetButtonArea = 150;
 
         if (locationX > buttonWidth - resetButtonArea) {
           onReset();
@@ -275,6 +352,11 @@ const GenderFilterButton = memo(
       }
     };
 
+    const handleLayout = (event: any) => {
+      const { width } = event.nativeEvent.layout;
+      setButtonWidth(width);
+    };
+
     return (
       <TouchableOpacity
         style={[
@@ -282,6 +364,7 @@ const GenderFilterButton = memo(
           applied ? styles.customButtonActive : styles.customButtonInactive,
         ]}
         onPress={handlePress}
+        onLayout={handleLayout}
         activeOpacity={0.8}
       >
         <Text
@@ -322,17 +405,18 @@ GenderFilterButton.displayName = "GenderFilterButton";
 
 export default function RoomSearchFilter() {
   const {
-    applied,
     minDeposit,
     maxDeposit,
     minMonthlyCost,
     maxMonthlyCost,
     roomTypes,
     preferredGender,
+    dongs,
     resetDepositRange,
     resetRentRange,
     resetRoomTypes,
     resetGender,
+    resetDongs,
   } = useDefaultFilter();
 
   return (
@@ -345,16 +429,14 @@ export default function RoomSearchFilter() {
       <DepositFilterButton
         minDeposit={minDeposit}
         maxDeposit={maxDeposit}
-        applied={applied}
         onReset={resetDepositRange}
       />
       <RentFilterButton
         minMonthlyCost={minMonthlyCost}
         maxMonthlyCost={maxMonthlyCost}
-        applied={applied}
         onReset={resetRentRange}
       />
-      <RegionFilterButton />
+      <RegionFilterButton dongs={dongs} onReset={resetDongs} />
       <RoomTypeFilterButton roomTypes={roomTypes} onReset={resetRoomTypes} />
       <GenderFilterButton
         preferredGender={preferredGender}
