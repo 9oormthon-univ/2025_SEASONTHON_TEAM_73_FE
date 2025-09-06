@@ -24,7 +24,10 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   return (
     <TouchableOpacity style={styles.container} onPress={handleNavigateToProfile} activeOpacity={0.8}>
       <View style={styles.profileContent}>
-        <Image source={{ uri: profileImageUrl }} style={styles.profileImage} />
+        <Image
+          source={require('../../assets/icons/friendIcon.png')}
+          style={styles.profileImage}
+        />
         {/* 닉네임 + 뱃지를 감싸는 컨테이너 */}
         <View style={styles.nameBadgeWrapper}>
           <Text style={styles.nickname}>{nickname}</Text>
