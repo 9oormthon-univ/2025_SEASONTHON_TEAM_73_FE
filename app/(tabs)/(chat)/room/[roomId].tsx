@@ -1,10 +1,11 @@
+import api from "@/shared/api/axios";
 import { useAuthStore } from "@/shared/store";
 import { COLORS } from "@/shared/styles";
 import { ChatInput } from "@/widgets/chat/room/ChatInput";
 import { ChatMessage } from "@/widgets/chat/room/ChatMessage";
 import { DateSeparator } from "@/widgets/chat/room/DateSeparator";
 import MessageRequestDialog from "@/widgets/chat/room/MessageRequestDialog";
-import axios from "axios";
+import Constants, { NativeConstants } from "expo-constants";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -38,14 +39,16 @@ const ChatScreen: React.FC = () => {
   const scrollViewRef = useRef<ScrollView>(null);
   const token = useAuthStore.getState().accessToken;
   const userId = useAuthStore.getState().userId;
+  const config = Constants as NativeConstants;
+  const { WS_BASE_URL } = config.expoConfig!.extra!;
 
   const isPending = chatRoomStatus === "PENDING";
 
   // 채팅 신청 수락
   const handleAccept = async () => {
     try {
-      await axios.post(
-        `https://livingmate.store/chatrooms/accept/${roomId}`,
+      await api.post(
+        `/chatrooms/accept/${roomId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -63,8 +66,8 @@ const ChatScreen: React.FC = () => {
   // 채팅 신청 거절
   const handleReject = async () => {
     try {
-      await axios.delete(
-        `https://livingmate.store/chatrooms/reject/${roomId}`,
+      await api.delete(
+        `/chatrooms/reject/${roomId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       Alert.alert("채팅 신청 거절 완료");
@@ -81,8 +84,8 @@ const ChatScreen: React.FC = () => {
 
     const fetchMessages = async () => {
       try {
-        const res = await axios.get(
-          `https://livingmate.store/chatrooms/${roomId}/messages`,
+        const res = await api.get(
+          `/chatrooms/${roomId}/messages`,
           {
             params: { page: 0, size: 50 },
             headers: { Authorization: `Bearer ${token}` },
@@ -138,7 +141,7 @@ const ChatScreen: React.FC = () => {
     if (!roomId || isPending) return;
 
     const ws = new WebSocket(
-      `wss://livingmate.store/ws-chat?token=${encodeURIComponent(token)}`
+      `${WS_BASE_URL}?token=${encodeURIComponent(token)}`
     );
     socketRef.current = ws;
 
