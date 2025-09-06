@@ -6,26 +6,31 @@ type Props = {
   description?: string;
 };
 
+const genderMap: Record<string, string> = {
+  MALE: "남성",
+  FEMALE: "여성",
+  ANY: "성별 무관",
+};
+
 const DescriptionSection: React.FC<Props> = ({ preferredGender = [], description = "" }) => {
+  const displayGender =
+    preferredGender.length === 0
+      ? "-"
+      : preferredGender.includes("ANY")
+        ? "성별 무관"
+        : preferredGender.map((g) => genderMap[g] || g).join(", ");
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>부가설명</Text>
       <View style={styles.genderRow}>
         <Text style={styles.genderLabel}>모집 성별</Text>
-        <Text style={styles.genderValue}>
-          {preferredGender.length === 0
-            ? "-"
-            : preferredGender.includes("ANY")
-              ? "성별 무관"
-              : preferredGender.join(", ")}
-        </Text>
+        <Text style={styles.genderValue}>{displayGender}</Text>
       </View>
       <Text style={styles.description}>{description || "-"}</Text>
     </View>
   );
 };
-
-
 
 const styles = StyleSheet.create({
   container: {
