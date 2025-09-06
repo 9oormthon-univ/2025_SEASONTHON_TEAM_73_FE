@@ -1,11 +1,13 @@
-import { FONT_SIZE, FONTS } from '@/shared/styles';
-import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { AreaChip } from './AreaChip';
+import { FONT_SIZE, FONTS } from "@/shared/styles";
+import React from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { AreaChip } from "./AreaChip";
 
 interface SelectedArea {
   id: string;
   name: string;
+  districtId: string;
+  districtName: string;
 }
 
 interface SelectedAreasSectionProps {
@@ -15,7 +17,7 @@ interface SelectedAreasSectionProps {
 
 export const SelectedAreasSection: React.FC<SelectedAreasSectionProps> = ({
   selectedAreas,
-  onRemoveArea
+  onRemoveArea,
 }) => {
   return (
     <View style={styles.container}>
@@ -30,7 +32,7 @@ export const SelectedAreasSection: React.FC<SelectedAreasSectionProps> = ({
         {selectedAreas.map((area) => (
           <AreaChip
             key={area.id}
-            text={area.name}
+            text={`${area.districtName} ${area.name}`}
             onRemove={() => onRemoveArea(area.id)}
           />
         ))}
@@ -43,23 +45,23 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 18,
     paddingVertical: 20,
-    backgroundColor: '#F2F2F2',
+    backgroundColor: "#F2F2F2",
     gap: 10,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   title: {
-    color: '#2E2E31',
+    color: "#2E2E31",
     fontSize: FONT_SIZE.b1,
     fontFamily: FONTS.bold,
     lineHeight: 21,
   },
   chipContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
 });

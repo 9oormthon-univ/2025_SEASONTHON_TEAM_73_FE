@@ -1,39 +1,63 @@
 import { Button } from "@/shared/components";
+import { GENDER, Gender } from "@/shared/constants";
 import { COLORS, FONT_SIZE, FONTS, SPACING } from "@/shared/styles";
 import { RangeSlider } from "@/widgets/home/components";
-import { ROOM_TYPE } from "@/widgets/home/constants";
+import {
+  DEPOSIT_STEP,
+  MAX_DEPOSIT,
+  MAX_RENT,
+  RENT_STEP,
+  ROOM_TYPE,
+} from "@/widgets/home/constants";
 import { useDefaultFilter } from "@/widgets/home/contexts";
 import { PostCreateField } from "@/widgets/post-create/components";
 import { router } from "expo-router";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function FilterScreen() {
   const {
-    deposit,
-    rent,
-    roomType,
-    setRoomType,
-    gender,
-    setGender,
+    minDeposit,
+    maxDeposit,
+    minMonthlyCost,
+    maxMonthlyCost,
+    roomTypes,
+    setRoomTypes,
+    preferredGender,
+    setGenders,
     setDepositRange,
     setRentRange,
-    setApplied,
   } = useDefaultFilter();
+
+  const [localDeposit, setLocalDeposit] = useState<[number, number]>([
+    minDeposit,
+    maxDeposit,
+  ]);
+  const [localRent, setLocalRent] = useState<[number, number]>([
+    minMonthlyCost,
+    maxMonthlyCost,
+  ]);
+  const [localRoomTypes, setLocalRoomTypes] = useState<string[]>(roomTypes);
+  const [localGender, setLocalGender] = useState<string[]>(preferredGender);
+
+  const handleApply = () => {
+    setDepositRange(localDeposit[0], localDeposit[1]);
+    setRentRange(localRent[0], localRent[1]);
+    setRoomTypes(localRoomTypes);
+    setGenders(localGender as Gender[]);
+    router.back();
+  };
 
   const handleDepositChange = useCallback(
     (depositMin: number, depositMax: number) => {
-      setDepositRange(depositMin, depositMax);
+      setLocalDeposit([depositMin, depositMax]);
     },
-    [setDepositRange]
+    []
   );
 
-  const handleRentChange = useCallback(
-    (rentMin: number, rentMax: number) => {
-      setRentRange(rentMin, rentMax);
-    },
-    [setRentRange]
-  );
+  const handleRentChange = useCallback((rentMin: number, rentMax: number) => {
+    setLocalRent([rentMin, rentMax]);
+  }, []);
 
   return (
     <>
@@ -42,76 +66,89 @@ export default function FilterScreen() {
           <View style={styles.headerWrapper}>
             <Text style={styles.title}>보증금</Text>
             <Text style={styles.description}>
-              {`${deposit.min}~${deposit.max}만원`}
+              {`${localDeposit[0]}~${localDeposit[1]}만원`}
             </Text>
           </View>
           <RangeSlider
             onValueChanged={handleDepositChange}
             min={0}
-            max={100}
-            low={deposit.min}
-            high={deposit.max}
-            step={1}
+            max={MAX_DEPOSIT}
+            low={localDeposit[0]}
+            high={localDeposit[1]}
+            step={DEPOSIT_STEP}
           />
         </View>
+
         <View style={styles.selectContainer}>
           <View style={styles.headerWrapper}>
             <Text style={styles.title}>월세</Text>
-            <Text
-              style={styles.description}
-            >{`${rent.min}~${rent.max}만원`}</Text>
+            <Text style={styles.description}>
+              {`${localRent[0]}~${localRent[1]}만원`}
+            </Text>
           </View>
           <RangeSlider
             onValueChanged={handleRentChange}
             min={0}
-            max={100}
-            low={rent.min}
-            high={rent.max}
-            step={1}
+            max={MAX_RENT}
+            low={localRent[0]}
+            high={localRent[1]}
+            step={RENT_STEP}
           />
         </View>
+
         <View style={styles.selectContainer}>
           <View style={styles.headerWrapper}>
             <Text style={styles.title}>방 형태</Text>
             <Text style={styles.description}>
-              {roomType && roomType.length > 0
-                ? roomType.map((val) => ROOM_TYPE[val]).join(", ")
+              {localRoomTypes && localRoomTypes.length > 0
+                ? localRoomTypes
+                    .map((val) => ROOM_TYPE[val as keyof typeof ROOM_TYPE])
+                    .join(", ")
                 : "선택안함"}
             </Text>
           </View>
           <PostCreateField.MultiRadio
-            items={ROOM_TYPE}
-            selected={roomType ?? []}
-            setSelected={(selected) => setRoomType(selected)}
+            items={Object.values(ROOM_TYPE)}
+            selected={
+              localRoomTypes
+                ?.map((type) => Object.keys(ROOM_TYPE).indexOf(type))
+                .filter((index) => index !== -1) ?? []
+            }
+            setSelected={(selected) => {
+              const keys = Object.keys(ROOM_TYPE);
+              setLocalRoomTypes(selected.map((index) => keys[index]));
+            }}
             isMultiSelect
           />
         </View>
+
         <View style={styles.selectContainer}>
           <View style={styles.headerWrapper}>
             <Text style={styles.title}>성별</Text>
             <Text style={styles.description}>
-              {gender && gender.length > 0
-                ? gender.map((val) => ["남성", "여성"][val]).join(", ")
+              {localGender && localGender.length > 0
+                ? localGender
+                    .map((val) => GENDER[val as keyof typeof GENDER])
+                    .join(", ")
                 : "선택안함"}
             </Text>
           </View>
           <PostCreateField.Radio
-            items={["남성", "여성"]}
-            selected={gender ?? []}
-            setSelected={setGender}
+            items={Object.values(GENDER)}
+            selected={localGender.map((val) =>
+              Object.keys(GENDER).indexOf(val)
+            )}
+            setSelected={(selected) => {
+              const keys = Object.keys(GENDER);
+              setLocalGender(selected.map((index) => keys[index]));
+            }}
             isMultiSelect
           />
         </View>
       </View>
+
       <View style={styles.buttonWrapper}>
-        <Button
-          size="lg"
-          text="적용"
-          onPress={() => {
-            setApplied(true);
-            router.back();
-          }}
-        />
+        <Button size="lg" text="적용" onPress={handleApply} />
       </View>
     </>
   );

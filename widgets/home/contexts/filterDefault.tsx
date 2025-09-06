@@ -5,18 +5,27 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { Gender } from "../../../shared/constants";
 import { FILTER_DEFAULT } from "../constants";
-import { DefaultFilter } from "../types";
+import { DefaultFilter, SelectedRegion } from "../types";
 
 interface FilterDefaultContextProps extends DefaultFilter {
   defaultFilter: DefaultFilter;
   setDepositRange: (min: number, max: number) => void;
   setRentRange: (min: number, max: number) => void;
-  setRoomType: (value: number[]) => void;
-  setGender: (value: number[]) => void;
+  setRoomTypes: (value: string[]) => void;
+  setGender: (value: Gender) => void;
+  setGenders: (value: Gender[]) => void;
+  setKeyword: (value: string) => void;
+  setDongs: (value: string[]) => void;
+  setSelectedRegions: (value: SelectedRegion[]) => void;
   resetFilter: () => void;
-  applied: boolean;
-  setApplied: (value: boolean) => void;
+  resetDepositRange: () => void;
+  resetRentRange: () => void;
+  resetRoomTypes: () => void;
+  resetGender: () => void;
+  resetKeyword: () => void;
+  resetDongs: () => void;
 }
 
 const FilterDefaultContext = createContext<FilterDefaultContextProps | null>(
@@ -28,58 +37,160 @@ export const FilterDefaultProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const [applied, setApplied] = useState(false);
   const [defaultFilter, setDefaultFilter] =
     useState<DefaultFilter>(FILTER_DEFAULT);
 
-  const { deposit, rent, roomType, gender } = defaultFilter;
+  const {
+    minDeposit,
+    maxDeposit,
+    minMonthlyCost,
+    maxMonthlyCost,
+    roomTypes,
+    preferredGender,
+    keyword,
+    dongs,
+    selectedRegions,
+  } = defaultFilter;
 
-  const setRoomType = useCallback(
-    (value: number[]) =>
-      setDefaultFilter((prev) => ({ ...prev, roomType: value })),
+  const setRoomTypes = useCallback(
+    (value: string[]) =>
+      setDefaultFilter((prev) => ({ ...prev, roomTypes: value })),
     []
   );
 
   const setGender = useCallback(
-    (value: number[]) =>
-      setDefaultFilter((prev) => ({ ...prev, gender: value })),
+    (value: Gender) =>
+      setDefaultFilter((prev) => {
+        const currentGenders = prev.preferredGender;
+        const isAlreadySelected = currentGenders.includes(value);
+
+        return {
+          ...prev,
+          preferredGender: isAlreadySelected
+            ? currentGenders.filter((gender) => gender !== value)
+            : [...currentGenders, value],
+        };
+      }),
+    []
+  );
+
+  const setGenders = useCallback(
+    (value: Gender[]) =>
+      setDefaultFilter((prev) => ({ ...prev, preferredGender: value })),
+    []
+  );
+
+  const setKeyword = useCallback(
+    (value: string) =>
+      setDefaultFilter((prev) => ({ ...prev, keyword: value })),
+    []
+  );
+
+  const setDongs = useCallback(
+    (value: string[]) =>
+      setDefaultFilter((prev) => ({ ...prev, dongs: value })),
+    []
+  );
+
+  const setSelectedRegions = useCallback(
+    (value: SelectedRegion[]) =>
+      setDefaultFilter((prev) => ({ ...prev, selectedRegions: value })),
     []
   );
 
   const setDepositRange = useCallback((min: number, max: number) => {
     setDefaultFilter((prev) => ({
       ...prev,
-      deposit: { min, max },
+      minDeposit: min,
+      maxDeposit: max,
     }));
   }, []);
 
   const setRentRange = useCallback((min: number, max: number) => {
     setDefaultFilter((prev) => ({
       ...prev,
-      rent: { min, max },
+      minMonthlyCost: min,
+      maxMonthlyCost: max,
     }));
   }, []);
 
   const resetFilter = useCallback(() => {
     setDefaultFilter(FILTER_DEFAULT);
-    setApplied(false);
+  }, []);
+
+  const resetDepositRange = useCallback(() => {
+    setDefaultFilter((prev) => ({
+      ...prev,
+      minDeposit: FILTER_DEFAULT.minDeposit,
+      maxDeposit: FILTER_DEFAULT.maxDeposit,
+    }));
+  }, []);
+
+  const resetRentRange = useCallback(() => {
+    setDefaultFilter((prev) => ({
+      ...prev,
+      minMonthlyCost: FILTER_DEFAULT.minMonthlyCost,
+      maxMonthlyCost: FILTER_DEFAULT.maxMonthlyCost,
+    }));
+  }, []);
+
+  const resetRoomTypes = useCallback(() => {
+    setDefaultFilter((prev) => ({
+      ...prev,
+      roomTypes: FILTER_DEFAULT.roomTypes,
+    }));
+  }, []);
+
+  const resetGender = useCallback(() => {
+    setDefaultFilter((prev) => ({
+      ...prev,
+      preferredGender: FILTER_DEFAULT.preferredGender,
+    }));
+  }, []);
+
+  const resetKeyword = useCallback(() => {
+    setDefaultFilter((prev) => ({
+      ...prev,
+      keyword: FILTER_DEFAULT.keyword,
+    }));
+  }, []);
+
+  const resetDongs = useCallback(() => {
+    setDefaultFilter((prev) => ({
+      ...prev,
+      dongs: FILTER_DEFAULT.dongs,
+      selectedRegions: FILTER_DEFAULT.selectedRegions,
+    }));
   }, []);
 
   return (
     <FilterDefaultContext.Provider
       value={{
         defaultFilter,
-        deposit,
-        rent,
-        roomType,
-        gender,
+        minDeposit,
+        maxDeposit,
+        minMonthlyCost,
+        maxMonthlyCost,
+        roomTypes,
+        preferredGender,
+        keyword,
+        dongs,
+        selectedRegions,
         setDepositRange,
         setRentRange,
-        setRoomType,
+        setRoomTypes,
         setGender,
+        setGenders,
+        setKeyword,
+        setDongs,
+        setSelectedRegions,
         resetFilter,
-        applied,
-        setApplied,
+        resetDepositRange,
+        resetRentRange,
+        resetRoomTypes,
+        resetGender,
+        resetKeyword,
+        resetDongs,
       }}
     >
       {children}
