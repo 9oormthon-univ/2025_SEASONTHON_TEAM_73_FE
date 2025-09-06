@@ -56,7 +56,9 @@ export default function KakaoMap({
     <style>
       body, html { margin:0; padding:0; height:100%; width:100%; touch-action:none; }
       #map { width:100%; height:100%; touch-action:none; }
-      ${showExpandIcon ? `
+      ${
+        showExpandIcon
+          ? `
         #expandIcon {
           position: absolute;
           top: 10px;
@@ -65,12 +67,18 @@ export default function KakaoMap({
           height: 40px;
           z-index: 1000;
           cursor: pointer;
-        }` : ''}
+        }`
+          : ""
+      }
     </style>
     </head>
     <body>
     <div id="map"></div>
-    ${showExpandIcon ? `<img id="expandIcon" src="https://api.builder.io/api/v1/image/assets/TEMP/eefd1a42aa23ad80d6f3b2a985346280e684d9da?placeholderIfAbsent=true&apiKey=7adddd5587f24b91884c2915be4df62c" />` : ''}
+    ${
+      showExpandIcon
+        ? `<img id="expandIcon" src="https://api.builder.io/api/v1/image/assets/TEMP/eefd1a42aa23ad80d6f3b2a985346280e684d9da?placeholderIfAbsent=true&apiKey=7adddd5587f24b91884c2915be4df62c" />`
+        : ""
+    }
     <script>
       let map;
       let kakaoMarkers = [];
@@ -83,10 +91,14 @@ export default function KakaoMap({
 
         const blueIcon = new kakao.maps.MarkerImage(
           "https://api.builder.io/api/v1/image/assets/TEMP/f5b4673581cf7cf2b93b1b57c2dcdbf1fdf37fed?placeholderIfAbsent=true&apiKey=7adddd5587f24b91884c2915be4df62c",
-          new kakao.maps.Size(36,36)
+          new kakao.maps.Size(45,45)
         );
 
-        const markerData = ${JSON.stringify(markers.length > 0 ? markers : [{ id: 1, latitude, longitude, info: {} }])};
+        const markerData = ${JSON.stringify(
+          markers.length > 0
+            ? markers
+            : [{ id: 1, latitude, longitude, info: {} }]
+        )};
 
         markerData.forEach(item => {
           const position = new kakao.maps.LatLng(item.latitude, item.longitude);
@@ -103,8 +115,8 @@ export default function KakaoMap({
                 position: marker.getPosition(),
                 content: \`
                   <div style="
-                    width: 60px; 
-                    height: 60px; 
+                    width: 70px; 
+                    height: 70px; 
                     background: rgba(59,130,246,0.2); 
                     border-radius: 50%;
                     transform: translate(1%, -30%);
@@ -139,18 +151,26 @@ export default function KakaoMap({
       window.onload = function() {
         initMap();
 
-        ${showExpandIcon ? `
+        ${
+          showExpandIcon
+            ? `
           const icon = document.getElementById('expandIcon');
           icon.addEventListener('click', function() {
             window.ReactNativeWebView.postMessage(JSON.stringify({
               type: 'expand',
               data: {
                 postId: ${markers.length > 0 ? markers[0].id : 0}, 
-                latitude: ${markers.length > 0 ? markers[0].latitude : latitude},   
-                longitude: ${markers.length > 0 ? markers[0].longitude : longitude}
+                latitude: ${
+                  markers.length > 0 ? markers[0].latitude : latitude
+                },   
+                longitude: ${
+                  markers.length > 0 ? markers[0].longitude : longitude
+                }
               }
             }));
-          });` : ''}
+          });`
+            : ""
+        }
 
         window.addEventListener('resize', function() {
           if (kakaoMarkers.length > 0) {
@@ -164,10 +184,10 @@ export default function KakaoMap({
   `;
 
   return (
-    <View style={[styles.container, height ? { height } : { height: '100%' }]}>
+    <View style={[styles.container, height ? { height } : { height: "100%" }]}>
       <WebView
         ref={webRef}
-        originWhitelist={['*']}
+        originWhitelist={["*"]}
         source={{ html: htmlContent }}
         javaScriptEnabled
         domStorageEnabled
@@ -177,13 +197,13 @@ export default function KakaoMap({
           const data = event.nativeEvent.data;
           try {
             const msg = JSON.parse(data);
-            if (msg.type === 'markerClick') {
+            if (msg.type === "markerClick") {
               onMarkerClick?.(msg.data);
               return;
             }
-            if (msg.type === 'expand') {
+            if (msg.type === "expand") {
               router.push({
-                pathname: '/map',
+                pathname: "/map",
                 params: {
                   postId: String(msg.data.postId),
                   latitude: String(msg.data.latitude),

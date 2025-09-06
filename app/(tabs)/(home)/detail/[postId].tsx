@@ -12,6 +12,7 @@ import PropertyTitle from "@/widgets/detail/PropertyTitle";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const PropertyDetailView: React.FC = () => {
   const { postId } = useLocalSearchParams();
@@ -23,100 +24,114 @@ const PropertyDetailView: React.FC = () => {
   useEffect(() => {
     const getPostData = async () => {
       try {
-        const res = await api.get(`/posts/${postId}`, 
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      if(res.data.data.isCertified === true) {
-        setBadge("대학생 인증");
-      } else {
-        return;
-      }
-      setPostData(res.data.data);
-      console.log(res.data.data);
+        const res = await api.get(`/posts/${postId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        if (res.data.data.isCertified === true) {
+          setBadge("대학생 인증");
+        } else {
+          return;
+        }
+        setPostData(res.data.data);
+        console.log(res.data.data);
       } catch (error) {
         console.error("post 데이터 오류 발생", error);
       }
     };
 
     getPostData();
-  },[]);
+  }, []);
 
   const handleCreateChatRoom = async () => {
     try {
-      const res = await api.post(`/chatrooms/${postId}`, 
-      {},  // body는 빈 객체
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-      
-    const chatRoom = res.data.data;
+      const res = await api.post(
+        `/chatrooms/${postId}`,
+        {}, // body는 빈 객체
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
 
-    // 채팅방 화면으로 이동 (chatRoomId 전달)
-    router.push({
-      pathname: `/chat/room/${chatRoom.chatRoomId}` as any,
-      params: { senderName: chatRoom.receiverName },
-    });
-    console.log("채팅방 생성 및 이동:", chatRoom);
+      const chatRoom = res.data.data;
+
+      // 채팅방 화면으로 이동 (chatRoomId 전달)
+      router.push({
+        pathname: `/chat/room/${chatRoom.chatRoomId}` as any,
+        params: { senderName: chatRoom.receiverName },
+      });
+      console.log("채팅방 생성 및 이동:", chatRoom);
     } catch (err) {
       console.error("채팅방 생성 실패:", err);
     }
   };
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <PropertyHeader images={postData.imageUrl ? postData.imageUrl : ""} />
+    <SafeAreaView style={styles.container}>
+      {" "}
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        <PropertyHeader images={postData.imageUrl ? postData.imageUrl : ""} />
 
-      <ProfileSection
-        userId={postData.userId} 
-        nickname={postData.userName}
-        badgeText={badge}
-        profileImageUrl="https://api.builder.io/api/v1/image/assets/TEMP/6bbcfd6c72685e98e894256a944ad514466dd509?placeholderIfAbsent=true&apiKey=7adddd5587f24b91884c2915be4df62c"
-      />
-      <PropertyTitle
-        title={postData.title}
-        deposit={postData.deposit}
-        monthlyRent={postData.monthlyRent}
-        maintenanceFee={postData.maintenanceFee}
-        location={postData.location}
-      />
-      <MapSection
-        postId={typeof postId === "string" ? Number(postId) : Array.isArray(postId) ? Number(postId[0]) : 0}
-      />
-      <PriceSection
-        deposit={postData.deposit}
-        monthlyRent={postData.monthlyRent}
-        maintenanceFee={postData.maintenanceFee}
-        depositShare={postData.depositShare}
-        rentShare={postData.rentShare}
-        maintenanceShare={postData.maintenanceShare}
-        utilitiesShare={postData.utilitiesShare}
-      />
-      <PropertyInfo
-        roomType={postData.roomType}
-        areaSize={postData.areaSize}
-        floor={postData.floor}
-        buildingFloor={postData.buildingFloor}
-        roomCount={postData.roomCount}
-        washroomCount={postData.washroomCount}
-        hasElevator={postData.hasElevator}
-        availableDate={postData.availableDate}
-        minStayMonths={postData.minStayMonths}
-        maxStayMonths={postData.maxStayMonths}
-      />
-      <DescriptionSection
-        preferredGender={postData.preferredGender}
-        description={postData.content}
-      />
+        <ProfileSection
+          userId={postData.userId}
+          nickname={postData.userName}
+          badgeText={badge}
+          profileImageUrl="https://api.builder.io/api/v1/image/assets/TEMP/6bbcfd6c72685e98e894256a944ad514466dd509?placeholderIfAbsent=true&apiKey=7adddd5587f24b91884c2915be4df62c"
+        />
+        <PropertyTitle
+          title={postData.title}
+          deposit={postData.deposit}
+          monthlyRent={postData.monthlyRent}
+          maintenanceFee={postData.maintenanceFee}
+          location={postData.location}
+        />
+        <MapSection
+          postId={
+            typeof postId === "string"
+              ? Number(postId)
+              : Array.isArray(postId)
+              ? Number(postId[0])
+              : 0
+          }
+        />
+        <PriceSection
+          deposit={postData.deposit}
+          monthlyRent={postData.monthlyRent}
+          maintenanceFee={postData.maintenanceFee}
+          depositShare={postData.depositShare}
+          rentShare={postData.rentShare}
+          maintenanceShare={postData.maintenanceShare}
+          utilitiesShare={postData.utilitiesShare}
+        />
+        <PropertyInfo
+          roomType={postData.roomType}
+          areaSize={postData.areaSize}
+          floor={postData.floor}
+          buildingFloor={postData.buildingFloor}
+          roomCount={postData.roomCount}
+          washroomCount={postData.washroomCount}
+          hasElevator={postData.hasElevator}
+          availableDate={postData.availableDate}
+          minStayMonths={postData.minStayMonths}
+          maxStayMonths={postData.maxStayMonths}
+        />
+        <DescriptionSection
+          preferredGender={postData.preferredGender}
+          description={postData.content}
+        />
+      </ScrollView>
       <View style={{ padding: SPACING.normal }}>
-        <Button size="lg" text="채팅하기" onPress={handleCreateChatRoom} disabled={false} />
+        <Button
+          size="lg"
+          text="채팅하기"
+          onPress={handleCreateChatRoom}
+          disabled={false}
+        />
       </View>
-    </ScrollView>
+    </SafeAreaView>
   );
 };
 
