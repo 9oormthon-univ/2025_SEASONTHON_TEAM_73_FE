@@ -25,6 +25,7 @@ interface Message {
   time: string;
   date: string;
   senderName?: string;
+  senderId?: string;
 }
 
 interface DateGroup {
@@ -53,7 +54,6 @@ const ChatScreen: React.FC = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       Alert.alert("✅ 채팅 신청 수락 완료");
-      // 상태를 ACTIVE로 변경 후 새로고침
       router.replace(
         `/chat/room/${roomId}?chatRoomStatus=ACTIVE&senderName=${senderName}`
       );
@@ -66,26 +66,25 @@ const ChatScreen: React.FC = () => {
   // 채팅 신청 거절
   const handleReject = async () => {
     try {
-      await api.delete(
-        `/chatrooms/reject/${roomId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.delete(`/chatrooms/reject/${roomId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       Alert.alert("채팅 신청 거절 완료");
-      router.push(`/`); // 홈 화면으로 돌아가기
+      router.push(`/`);
     } catch (err) {
       console.error("채팅 신청 거절 실패", err);
       Alert.alert("❌ 채팅 신청 거절 실패");
     }
   };
 
-  // 기존 메시지 가져오기 (ACTIVE 상태일 때만)
+  // 기존 메시지 가져오기
   useEffect(() => {
     if (!roomId) return;
 
     const fetchMessages = async () => {
       try {
         const res = await api.get(`/chatrooms/${roomId}/messages`, {
-          params: { page: 0, size: 50 }, // 필요에 따라 pagination
+          params: { page: 0, size: 50 },
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -95,13 +94,20 @@ const ChatScreen: React.FC = () => {
             id: msg.messageId.toString(),
             text: msg.content,
             isOwn: msg.senderId.toString() === userId,
-            time: date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-            date: date.toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" }),
+            time: date.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+            date: date.toLocaleDateString("ko-KR", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            }),
             senderName: msg.senderName,
+            senderId: msg.senderId?.toString(),
           };
         });
 
-        // 날짜별 그룹화
         const grouped: DateGroup[] = [];
         messages.forEach((message) => {
           const existingGroup = grouped.find((g) => g.date === message.date);
@@ -118,18 +124,13 @@ const ChatScreen: React.FC = () => {
       }
     };
 
-    // 처음 로드
     fetchMessages();
+    const intervalId = setInterval(fetchMessages, 1000);
 
-    // 일정 간격마다 반복
-    const intervalId = setInterval(fetchMessages, 1000); // 1초마다
-
-    // cleanup
     return () => clearInterval(intervalId);
   }, [roomId, token, userId]);
 
-
-  // WebSocket 연결 (ACTIVE 상태일 때만)
+  // WebSocket 연결
   useEffect(() => {
     if (!roomId || isPending) return;
 
@@ -141,10 +142,9 @@ const ChatScreen: React.FC = () => {
     ws.onopen = () => console.log("✅ WebSocket connected");
 
     ws.onmessage = (event) => {
-      const raw = event.data;
       let msg: any;
       try {
-        msg = JSON.parse(raw);
+        msg = JSON.parse(event.data);
       } catch {
         return;
       }
@@ -165,6 +165,7 @@ const ChatScreen: React.FC = () => {
           day: "numeric",
         }),
         senderName: msg.senderName,
+        senderId: msg.senderId?.toString(),
       };
 
       setChatData((prev) => {
@@ -209,6 +210,7 @@ const ChatScreen: React.FC = () => {
           month: "long",
           day: "numeric",
         }),
+        senderId: userId,
       };
 
       setChatData((prev) => {
@@ -230,12 +232,10 @@ const ChatScreen: React.FC = () => {
 
   const handlePhotoPress = () => console.log("📷 Photo pressed");
 
-  // 새 메시지 오면 자동 스크롤
   useEffect(() => {
     if (!isPending) scrollViewRef.current?.scrollToEnd({ animated: true });
   }, [chatData, isPending]);
 
-  // 키보드 이벤트 처리
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -245,7 +245,6 @@ const ChatScreen: React.FC = () => {
         }, 100);
       }
     );
-
     return () => {
       keyboardDidShowListener?.remove();
     };
@@ -274,6 +273,8 @@ const ChatScreen: React.FC = () => {
                     text={message.text}
                     isOwn={message.isOwn}
                     time={message.time}
+                    senderId={message.senderId}
+                    senderName={message.senderName}
                   />
                 ))}
               </View>
