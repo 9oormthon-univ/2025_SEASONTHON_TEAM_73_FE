@@ -52,20 +52,13 @@ export default function MapFullScreen() {
       if (res.data.success) {
         const detail = res.data.data;
         if (!detail) return;
-        if (detail.userGender == "male") {
-          detail.userGender = "남성";
-        } else {
-          detail.userGender = "여성";
-        }
         setInfo({
           id: detail.id,
           image: detail.imageUrl, // TODO: 실제 이미지 필드 있으면 교체
           price: `${detail.deposit}/${detail.monthlyRent}`, // 보증금/월세
-          description: `${detail.region}・${detail.roomType}, 화장실 ${detail.washroomCount}개`,
-          etc: `${detail.userGender}${
-            detail.smoking ? `・${detail.smoking}` : "・비흡연"
-          }`,
-          schedule: detail.workDays ?? "미작성",
+          description: `${detail.region} 부근・${detail.roomType}, 화장실 ${detail.washroomCount}개`,
+          etc: `${detail.userGender}성 거주 중・${detail.smoking}`,
+          schedule: `${detail.workDays} 출근, ${detail.goWorkTime}`,
         });
       }
     } catch (error) {
