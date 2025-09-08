@@ -60,7 +60,7 @@ export const MyPageScreen: React.FC = () => {
     }, [])
 
 
-    //console.log(user);
+    console.log(user);
 
     const handleEditProfile = () => {
         console.log('Edit profile pressed');
@@ -76,7 +76,7 @@ export const MyPageScreen: React.FC = () => {
             gender={user.gender}
             age={user.age}
             description={user.introduce}
-            avatarUri="https://api.builder.io/api/v1/image/assets/TEMP/6bbcfd6c72685e98e894256a944ad514466dd509?placeholderIfAbsent=true&apiKey=7adddd5587f24b91884c2915be4df62c"
+            avatarUri={user.imageUrl}
             onEditProfile={handleEditProfile}
             onMyPersonality={handleMyPersonality}
             smoking={user.smoking}
