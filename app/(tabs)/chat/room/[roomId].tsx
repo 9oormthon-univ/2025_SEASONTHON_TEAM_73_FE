@@ -24,7 +24,7 @@ interface Message {
   text: string;
   isOwn: boolean;
   time: string;
-  date: string;
+  date: string; // YYYY-MM-DD
   senderName?: string;
   senderId?: string;
 }
@@ -33,6 +33,48 @@ interface DateGroup {
   date: string;
   messages: Message[];
 }
+
+// 날짜 포맷 고정
+const formatDate = (date: Date) => date.toISOString().split("T")[0];
+
+// 메시지 변환
+const mapMessage = (msg: any, userId: string): Message => {
+  const date = new Date(msg.createdAt);
+  return {
+    id: msg.messageId.toString(),
+    text: msg.content,
+    isOwn: msg.senderId?.toString() === userId,
+    time: date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    date: formatDate(date),
+    senderName: msg.senderName,
+    senderId: msg.senderId?.toString(),
+  };
+};
+
+// 메시지 합치기 + 중복 제거 + 날짜 그룹
+const mergeMessages = (prev: DateGroup[], newMessages: Message[]): DateGroup[] => {
+  const all = [...prev.flatMap(g => g.messages), ...newMessages];
+
+  const unique = Array.from(new Map(all.map(m => [m.id, m])).values());
+
+  const grouped: DateGroup[] = [];
+  unique.forEach(message => {
+    const g = grouped.find(x => x.date === message.date);
+    if (g) g.messages.push(message);
+    else grouped.push({ date: message.date, messages: [message] });
+  });
+
+  grouped.sort((a, b) => (a.date > b.date ? 1 : -1));
+  grouped.forEach(g =>
+    g.messages.sort((a, b) => {
+      const aTime = new Date(`${a.date}T${a.time}`);
+      const bTime = new Date(`${b.date}T${b.time}`);
+      return aTime.getTime() - bTime.getTime();
+    })
+  );
+
+  return grouped;
+};
 
 const ChatScreen: React.FC = () => {
   const { roomId, chatRoomStatus, senderName } = useLocalSearchParams();
@@ -55,9 +97,7 @@ const ChatScreen: React.FC = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       Alert.alert("✅ 채팅 신청 수락 완료");
-      router.replace(
-        `/chat/room/${roomId}?chatRoomStatus=ACTIVE&senderName=${senderName}`
-      );
+      router.replace(`/chat/room/${roomId}?senderName=${senderName}`);
     } catch (err) {
       console.error("채팅 신청 수락 실패", err);
       Alert.alert("❌ 채팅 신청 수락 실패");
@@ -78,62 +118,32 @@ const ChatScreen: React.FC = () => {
     }
   };
 
-  // 기존 메시지 가져오기
-  useEffect(() => {
+  // 서버에서 메시지 가져오기 (채팅방 입장 시)
+  const fetchMessages = async () => {
     if (!roomId) return;
+    try {
+      const res = await api.get(`/chatrooms/${roomId}/messages`, {
+        params: { page: 0, size: 2000000000 },
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    const fetchMessages = async () => {
-      try {
-        const res = await api.get(`/chatrooms/${roomId}/messages`, {
-          params: { page: 0, size: 50 },
-          headers: { Authorization: `Bearer ${token}` },
-        });
+      const messages: Message[] = res.data.data.map((msg: any) =>
+        mapMessage(msg, userId)
+      );
 
-        const messages: Message[] = res.data.data.map((msg: any) => {
-          const date = new Date(msg.createdAt);
-          return {
-            id: msg.messageId.toString(),
-            text: msg.content,
-            isOwn: msg.senderId.toString() === userId,
-            time: date.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            }),
-            date: date.toLocaleDateString("ko-KR", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            }),
-            senderName: msg.senderName,
-            senderId: msg.senderId?.toString(),
-          };
-        });
+      // 기존 상태와 merge
+      setChatData(prev => mergeMessages(prev, messages));
+    } catch (err) {
+      console.error("메시지 가져오기 실패", err);
+    }
+  };
 
-        const grouped: DateGroup[] = [];
-        messages.forEach((message) => {
-          const existingGroup = grouped.find((g) => g.date === message.date);
-          if (existingGroup) {
-            existingGroup.messages.push(message);
-          } else {
-            grouped.push({ date: message.date, messages: [message] });
-          }
-        });
-
-        setChatData(grouped);
-      } catch (err) {
-        console.error("메시지 가져오기 실패", err);
-      }
-    };
-
+  // 컴포넌트 마운트 시 + roomId 변경 시 메시지 fetch
+  useEffect(() => {
     fetchMessages();
-    const intervalId = setInterval(fetchMessages, 1000);
-
-    return () => clearInterval(intervalId);
-  }, [roomId, token, userId]);
+  }, [roomId]);
 
   // WebSocket 연결
-
-  // WebSocket 연결 (ACTIVE 상태일 때만)
   useEffect(() => {
     if (!roomId || isPending) return;
 
@@ -142,7 +152,13 @@ const ChatScreen: React.FC = () => {
     );
     socketRef.current = ws;
 
-    ws.onopen = () => console.log("✅ WebSocket connected");
+    ws.onopen = () => {
+      console.log("✅ WebSocket connected");
+      ws.send(JSON.stringify({
+        websocket: "JOIN",
+        chatRoomId: Number(roomId)
+      }));
+    };
 
     ws.onmessage = (event) => {
       let msg: any;
@@ -151,44 +167,26 @@ const ChatScreen: React.FC = () => {
       } catch {
         return;
       }
-      if (!msg.messageId || !msg.content) return;
 
-      const date = new Date(msg.createdAt);
-      const message: Message = {
-        id: msg.messageId.toString(),
-        text: msg.content,
-        isOwn: msg.senderId?.toString() === userId,
-        time: date.toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        date: date.toLocaleDateString("ko-KR", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        }),
-        senderName: msg.senderName,
-        senderId: msg.senderId?.toString(),
-      };
+      // 모든 메시지 처리
+      if (msg.messageId && msg.content) {
+        const message = mapMessage({
+          messageId: msg.messageId,
+          content: msg.content,
+          senderId: msg.sender ?? msg.senderId,
+          createdAt: msg.createdAt ?? new Date().toISOString()
+        }, userId);
 
-      setChatData((prev) => {
-        const existingGroup = prev.find((group) => group.date === message.date);
-        if (existingGroup) {
-          return prev.map((group) =>
-            group.date === message.date
-              ? { ...group, messages: [...group.messages, message] }
-              : group
-          );
-        } else {
-          return [...prev, { date: message.date, messages: [message] }];
-        }
-      });
+        setChatData(prev => mergeMessages(prev, [message]));
+      }
     };
 
     ws.onclose = () => console.log("❌ WebSocket closed");
+
     return () => ws.close();
   }, [roomId, token, userId, isPending]);
 
+  // 메시지 전송
   const handleSendMessage = (text: string) => {
     if (socketRef.current && text.trim()) {
       const msg = {
@@ -204,53 +202,31 @@ const ChatScreen: React.FC = () => {
         id: Date.now().toString(),
         text,
         isOwn: true,
-        time: now.toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        date: now.toLocaleDateString("ko-KR", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        }),
+        time: now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        date: formatDate(now),
         senderId: userId,
       };
 
-      setChatData((prev) => {
-        const existingGroup = prev.find(
-          (group) => group.date === myMessage.date
-        );
-        if (existingGroup) {
-          return prev.map((group) =>
-            group.date === myMessage.date
-              ? { ...group, messages: [...group.messages, myMessage] }
-              : group
-          );
-        } else {
-          return [...prev, { date: myMessage.date, messages: [myMessage] }];
-        }
-      });
+      setChatData(prev => mergeMessages(prev, [myMessage]));
     }
   };
 
   const handlePhotoPress = () => console.log("📷 Photo pressed");
 
+  // 자동 스크롤
   useEffect(() => {
-    if (!isPending) scrollViewRef.current?.scrollToEnd({ animated: true });
+    if (chatData.length > 0 && !isPending) {
+      setTimeout(() => {
+        scrollViewRef.current?.scrollToEnd({ animated: true });
+      }, 100);
+    }
   }, [chatData, isPending]);
 
   useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      () => {
-        setTimeout(() => {
-          scrollViewRef.current?.scrollToEnd({ animated: true });
-        }, 100);
-      }
-    );
-    return () => {
-      keyboardDidShowListener?.remove();
-    };
+    const listener = Keyboard.addListener("keyboardDidShow", () => {
+      setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);
+    });
+    return () => listener.remove();
   }, []);
 
   return (
@@ -311,21 +287,9 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.white },
   messagesContainer: { flex: 1 },
   messagesContent: { paddingVertical: 20, gap: 20, alignSelf: "stretch" },
-  dateGroup: {
-    flexDirection: "column",
-    alignItems: "center",
-    gap: 10,
-    flex: 1,
-    alignSelf: "stretch",
-  },
+  dateGroup: { flexDirection: "column", alignItems: "center", gap: 10, flex: 1, alignSelf: "stretch" },
   messagesGroup: { flexDirection: "column", gap: 10, alignSelf: "stretch" },
-  containerPendig: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    alignItems: "center",
-  },
+  containerPendig: { position: "absolute", bottom: 0, left: 0, right: 0, alignItems: "center" },
 });
 
 export default ChatScreen;
