@@ -49,6 +49,7 @@ const MapSection: React.FC<MapSectionProps> = ({ postId }) => {
       <View style={styles.mapContainer}>
         {marker && (
           <KakaoMap
+            postId={postId}
             latitude={marker.latitude}
             longitude={marker.longitude}
             height={200}
