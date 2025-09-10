@@ -20,8 +20,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
 }) => {
   const handleProfilePress = () => {
     if (!senderId) return;
-        router.push(`/(tabs)/(home)/userDetail/${senderId}`);
-
+    router.push(`/chat/room/user-detail?userId=${senderId}`);
   };
 
   return (

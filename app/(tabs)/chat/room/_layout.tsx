@@ -12,17 +12,18 @@ export default function RoomLayout() {
           contentStyle: { backgroundColor: COLORS.white },
         }}
       >
-        <Stack.Screen 
+        <Stack.Screen
           name="[roomId]"
           options={({
             route,
           }: {
-            route: { params?: { senderName?: string } }
+            route: { params?: { senderName?: string } };
           }) => ({
             headerTitle: route.params?.senderName ?? "Unknown Sender",
             headerBackVisible: true,
           })}
         />
+        <Stack.Screen name="user-detail" options={{ title: "프로필" }} />
       </Stack>
     </FilterDefaultProvider>
   );
