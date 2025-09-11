@@ -6,6 +6,7 @@ import { ChatMessage } from "@/widgets/chat/room/ChatMessage";
 import { DateSeparator } from "@/widgets/chat/room/DateSeparator";
 import MessageRequestDialog from "@/widgets/chat/room/MessageRequestDialog";
 import Constants, { NativeConstants } from "expo-constants";
+import * as DocumentPicker from "expo-document-picker";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -85,6 +86,9 @@ const ChatScreen: React.FC = () => {
   const userId = useAuthStore.getState().userId;
   const config = Constants as NativeConstants;
   const { WS_BASE_URL } = config.expoConfig!.extra!;
+  const [isUploading, setIsUploading] = useState(false);
+  const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<any>(null);
 
   const isPending = chatRoomStatus === "PENDING";
 
@@ -211,7 +215,65 @@ const ChatScreen: React.FC = () => {
     }
   };
 
-  const handlePhotoPress = () => console.log("📷 Photo pressed");
+  const handlePhotoPress = async () => {
+     console.log("📷 Photo pressed");
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: ["application/pdf", "image/*"],
+        copyToCacheDirectory: true,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const file = result.assets[0];
+        setSelectedFileName(file.name);
+        setUploadedFile(file);
+
+        Alert.alert(
+          "파일 선택 완료",
+          "파일이 선택되었습니다. 제출 버튼을 눌러 요청을 보내세요."
+        );
+      }
+    } catch (error) {
+      console.error("파일 업로드 오류:", error);
+      Alert.alert("오류", "파일 업로드 중 오류가 발생했습니다.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!uploadedFile) {
+      Alert.alert("오류", "먼저 파일을 선택해주세요.");
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      console.log("제출 버튼 클릭됨");
+
+      // FormData 생성
+      const formData = new FormData();
+      formData.append("file", {
+        uri: uploadedFile.uri,
+        name: uploadedFile.name,
+        type: uploadedFile.mimeType || "application/octet-stream",
+      } as any);
+
+      console.log("FormData 생성 완료");
+
+      // API 호출
+      //await submitUser(formData);
+
+      // 상태 초기화
+      setSelectedFileName(null);
+      setUploadedFile(null);
+    } catch (error) {
+      console.error("제출 오류:", error);
+      Alert.alert("실패", "서류 제출 중 오류가 발생했습니다.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   // 자동 스크롤
   useEffect(() => {

@@ -22,6 +22,15 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onPhotoPres
 
   return (
     <View style={styles.container}>
+
+      <TouchableOpacity onPress={onPhotoPress}> 
+        <Svg width="41" height="41" viewBox="0 0 41 41" fill="none"> 
+          <Rect x="0.5" y="0.5" width="40" height="40" rx="7.5" fill="#FCFCFC" /> 
+          <Rect x="0.5" y="0.5" width="40" height="40" rx="7.5" stroke="#9D9D9F" /> 
+          <Path d="M29.5 27.5V13.5C29.5 12.4 28.6 11.5 27.5 11.5H13.5C12.4 11.5 11.5 12.4 11.5 13.5V27.5C11.5 28.6 12.4 29.5 13.5 29.5H27.5C28.6 29.5 29.5 28.6 29.5 27.5ZM17 22L19.5 25.01L23 20.5L27.5 26.5H13.5L17 22Z" fill="#5B5B5E" /> 
+        </Svg> 
+      </TouchableOpacity>
+      
       {/* 입력창 */}
       <View style={styles.inputField}>
         <TextInput
@@ -69,7 +78,8 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     paddingHorizontal: 12,
     paddingVertical: 8,
-    marginRight: 8, // 버튼과 간격
+    marginRight: 10, // 버튼과 간격
+    marginLeft: 10, // 버튼과 간격
   },
   textInput: {
     fontSize: FONT_SIZE.b2,
@@ -78,8 +88,8 @@ const styles = StyleSheet.create({
     height: 24,
   },
   sendButton: {
-    width: 48,
-    height: 48,
+    width: 41,
+    height: 41,
     justifyContent: 'center',
     alignItems: 'center',
   },

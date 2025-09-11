@@ -28,15 +28,15 @@ export const UserDetailProfileSection: React.FC<UserProfileSectionProps> = ({
         <View style={styles.profileContent}>
           <View style={styles.userInfoRow}>
             <Image
-                      source={require('@/assets/icons/friendIcon.png')}
-                      style={styles.avatar}
-                    />
+              source={{ uri: avatarUri }}
+              style={styles.avatar}
+            />
             <View style={styles.userDetails}>
               <View style={styles.nameContainer}>
                 <Text style={styles.name}>{name}</Text>
               </View>
               <View style={styles.genderAgeContainer}>
-                <Text style={styles.genderAge}>{gender}・{age}세・{smoking ? "흡연" : "비흡연"}</Text>
+                <Text style={styles.genderAge}>{gender}성・{age}세・{smoking ? "흡연" : "비흡연"}</Text>
               </View>
             </View>
           </View>
