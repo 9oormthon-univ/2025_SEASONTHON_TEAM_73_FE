@@ -34,9 +34,6 @@ export const MyPageScreen: React.FC = () => {
             if (res.data.success) {
                 const data = res.data.data;
 
-                // 성별 표시
-                data.gender = data.gender === "MALE" ? "남성" : "여성";
-
                // workDays 변환
                 const weekDays = ['월', '화', '수', '목', '금', '토', '일'];
                 let apiDays: string[] = [];

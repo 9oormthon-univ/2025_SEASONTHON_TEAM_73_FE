@@ -3,7 +3,9 @@ import { COLORS, FONT_SIZE } from "@/shared/styles";
 import KakaoMap from "@/widgets/detail/KakaoMap";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Dimensions, Image, Pressable, StyleSheet, Text, View } from "react-native";
+
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 export default function MapFullScreen() {
   const params = useLocalSearchParams<{ latitude?: string; longitude?: string; }>();
@@ -92,7 +94,7 @@ export default function MapFullScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingBottom: 80, backgroundColor: COLORS.white },
-  overlay: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 },
+  overlay: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, },
   infoBox: { flexDirection: "row", top: 580, padding: 10, margin: 18, gap: 20, borderWidth: 1, borderColor: "#ddd", backgroundColor: "#fff", borderRadius: 8 },
   image: { width: 90, height: 90, borderRadius: 8, aspectRatio: 1, paddingRight: 10 },
   textBox: { flex: 1, flexShrink: 1 },
