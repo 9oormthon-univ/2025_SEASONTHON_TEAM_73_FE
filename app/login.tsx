@@ -2,6 +2,7 @@ import { Button, Input } from "@/shared/components";
 import { COLORS, SPACING } from "@/shared/styles";
 import { useSubmitLogin } from "@/widgets/login/api";
 import type { LoginFormData } from "@/widgets/login/types";
+import { WelcomeHeader } from "@/widgets/login/WelcomeHeader";
 import { Controller, useForm } from "react-hook-form";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -26,7 +27,8 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{ gap: 20 }}>
+      <WelcomeHeader />
+      <View style={{ gap: 20, marginBottom: 221 }}>
         <Controller
           control={control}
           name="username"
@@ -34,7 +36,7 @@ export default function LoginScreen() {
           render={({ field: { onChange, value } }) => (
             <Input
               title="아이디"
-              placeholder="아이디"
+              placeholder="아이디를 입력하세요"
               value={value}
               onChangeText={onChange}
               autoCapitalize="none"
@@ -49,7 +51,7 @@ export default function LoginScreen() {
           render={({ field: { onChange, value } }) => (
             <Input
               title="비밀번호"
-              placeholder="비밀번호"
+              placeholder="비밀번호룰 입력하세요"
               value={password}
               onChangeText={onChange}
               autoCapitalize="none"
@@ -74,7 +76,6 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     padding: 20,
     backgroundColor: COLORS.white,
     gap: 20,

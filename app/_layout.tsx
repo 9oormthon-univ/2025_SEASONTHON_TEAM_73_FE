@@ -31,7 +31,7 @@ export default function RootLayout() {
       if (fontsLoaded) {
         await SplashScreen.hideAsync(); // 스플래시 숨기기
         // 여기에서 초기 데이터 fetch, 토큰 검증 등 할 수 있음
-        await new Promise(resolve => setTimeout(resolve, 10000)); // 테스트용 지연
+        await new Promise(resolve => setTimeout(resolve, 1000)); // 테스트용 지연
         setAppReady(true);
       }
     };
@@ -53,6 +53,9 @@ export default function RootLayout() {
           headerShown: false,
         }}
       >
+        <Stack.Protected guard={!isLoggedIn}>
+          <Stack.Screen name="onboarding" />
+        </Stack.Protected>
         <Stack.Protected guard={!isLoggedIn}>
           <Stack.Screen name="login" />
         </Stack.Protected>
