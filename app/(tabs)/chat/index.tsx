@@ -4,7 +4,6 @@ import { SPACING } from "@/shared/styles";
 import ChatRequestList from "@/widgets/chat/ChatRequestList";
 import ChatRoomList from "@/widgets/chat/ChatRoomList";
 import { TabBar } from "@/widgets/chat/TabBar";
-import { SIZES } from "@/widgets/menu/constants";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 
@@ -73,14 +72,12 @@ export default function ChatList() {
   );
 }
 
-const { NAVIGATION_BOTTOM_TABS_HEIGHT } = SIZES;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   contentContainer: {
     flex: 1,
-    paddingBottom: NAVIGATION_BOTTOM_TABS_HEIGHT + SPACING.md,
+    paddingBottom: SPACING.md,
   },
 });
