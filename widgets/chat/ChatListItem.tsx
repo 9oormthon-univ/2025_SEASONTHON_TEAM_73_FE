@@ -23,7 +23,7 @@ const ChatListItem: React.FC<ChatListItemProps> = ({ chat }) => {
         style={styles.avatar}
       />
       <View style={styles.textContainer}>
-        <Text style={styles.title}>{chat.postTitle}</Text>
+        <Text style={styles.title}>{chat.senderName}</Text>
         <Text   style={styles.message}
                 numberOfLines={1}       // 한 줄만 보여주고
                 ellipsizeMode="tail"    // 끝에 ... 표시
