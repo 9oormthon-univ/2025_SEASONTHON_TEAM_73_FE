@@ -1,4 +1,5 @@
 import api from "@/shared/api/axios";
+import { Alert } from "react-native";
 import { create } from "zustand";
 
 interface LikeState {
@@ -26,7 +27,12 @@ export const useLikeStore = create<LikeState>((set, get) => ({
         }));
       }
     } catch (err) {
-      console.error("좋아요 요청 실패", err);
+      //console.error("좋아요 요청 실패", err);
+      if (typeof err === "object" && err !== null && "response" in err && (err as any).response?.status === 400) {
+        Alert.alert("자신에게는 좋아요를 누를 수 없습니다.");
+      } else {
+        Alert.alert("알 수 없는 오류가 발생했습니다.");
+      }
     }
   },
 }));
