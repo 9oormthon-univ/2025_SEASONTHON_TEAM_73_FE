@@ -1,4 +1,5 @@
 import api from '@/shared/api/axios';
+import { PropertyCard } from '@/shared/components/propertycard/PropertyCard';
 import { useAuthStore } from '@/shared/store';
 import { COLORS } from '@/shared/styles';
 import { CleaningHabitContent } from '@/widgets/user/detail/clean/CleaningHabitContent';
@@ -9,6 +10,7 @@ import { NoiseSensitivityContent } from '@/widgets/user/detail/noise/NoiseSensit
 import { OtherHabitsContent } from '@/widgets/user/detail/other/OtherHabitsContent';
 import { TabNavigation } from '@/widgets/user/detail/TabNavigation';
 import { UserDetailProfileSection } from '@/widgets/user/detail/UserDetailProfileSection';
+import { HorizontalPropertyCarousel } from '@/widgets/user/HorizontalPropertyCarousel';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
@@ -33,6 +35,7 @@ export const MyPageScreen: React.FC = () => {
             });
             if (res.data.success) {
                 const data = res.data.data;
+                console.log(data);
 
                // workDays 변환
                 const weekDays = ['월', '화', '수', '목', '금', '토', '일'];
@@ -45,7 +48,6 @@ export const MyPageScreen: React.FC = () => {
                 const workDaysBool = weekDays.map(day => apiDays.includes(day));
                 data.lifeHabit.workDaysBool = workDaysBool;
 
-
                 setUser(data);
             }
             } catch (error) {
@@ -56,16 +58,8 @@ export const MyPageScreen: React.FC = () => {
         getUser();
     }, [])
 
+    //console.log(user);
 
-    console.log(user);
-
-    const handleEditProfile = () => {
-        console.log('Edit profile pressed');
-    };
-
-    const handleMyPersonality = () => {
-        console.log('My personality pressed');
-    };
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <UserDetailProfileSection
@@ -74,10 +68,17 @@ export const MyPageScreen: React.FC = () => {
             age={user.age}
             description={user.introduce}
             avatarUri={user.imageUrl}
-            onEditProfile={handleEditProfile}
-            onMyPersonality={handleMyPersonality}
             smoking={user.smoking}
+            userId={user.userId}
         />
+
+        {/* 유저가 작성한 글이 없을 때 */}
+        {user.posts?.length > 0 ? (
+        <HorizontalPropertyCarousel posts={user.posts} nickname={user.nickname} />
+        ) : (
+        <PropertyCard name="작성한 글이 없습니다." />
+        )}
+
         <TabNavigation activeTab={activeTab} onTabPress={handleTabPress} />
         {activeTab === 0 && <LifestyleContent lifeHabit={user.lifeHabit} />}
         {activeTab === 1 && <MealPreferenceContent mealHabit={user.mealHabit} />}
