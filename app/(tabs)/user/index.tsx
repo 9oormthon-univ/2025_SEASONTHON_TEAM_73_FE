@@ -1,6 +1,8 @@
 import api from "@/shared/api/axios";
+import { PropertyCard } from "@/shared/components/propertycard/PropertyCard";
 import { useAuthStore } from "@/shared/store";
 import { COLORS } from "@/shared/styles";
+import { HorizontalPropertyCarousel } from "@/widgets/user/HorizontalPropertyCarousel";
 import { MenuListItem } from "@/widgets/user/MenuListItem";
 import { UserProfileSection } from "@/widgets/user/UserProfileSection";
 import { router } from "expo-router";
@@ -69,6 +71,13 @@ export const MyPageScreen: React.FC = () => {
         onEditProfile={handleEditProfile}
         onMyPersonality={handleMyPersonality}
       />
+
+      {/* 유저가 작성한 글이 없을 때 */}
+      {user.posts?.length > 0 ? (
+      <HorizontalPropertyCarousel posts={user.posts} nickname={user.nickname} />
+      ) : (
+        <PropertyCard name="작성한 글이 없습니다." />
+      )}
 
       <MenuListItem title="2단계 인증" onPress={handleTwoFactorAuth} />
       <MenuListItem title="로그아웃" onPress={() => logout()} />
