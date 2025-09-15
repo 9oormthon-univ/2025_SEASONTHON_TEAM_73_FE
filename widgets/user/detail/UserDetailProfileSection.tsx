@@ -1,45 +1,58 @@
-import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { useLikeStore } from "@/shared/store/likeStore";
+import { COLORS } from "@/shared/styles";
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface UserProfileSectionProps {
+  userId: number;
   name: string;
   gender: string;
   age: number;
   description: string;
   avatarUri: string;
-  onEditProfile?: () => void;
-  onMyPersonality?: () => void;
   smoking?: boolean;
 }
 
 export const UserDetailProfileSection: React.FC<UserProfileSectionProps> = ({
+  userId,
   name,
   gender,
   age,
   description,
   avatarUri,
-  onEditProfile,
-  onMyPersonality,
-  smoking
+  smoking,
 }) => {
+  const { likedUsers, toggleLike } = useLikeStore();
+  const isLiked = likedUsers[userId] ?? false;
+
   return (
     <View style={styles.container}>
       <View style={styles.profileContainer}>
         <View style={styles.profileContent}>
           <View style={styles.userInfoRow}>
-            <Image
-              source={{ uri: avatarUri }}
-              style={styles.avatar}
-            />
+            <Image source={{ uri: avatarUri }} style={styles.avatar} />
+
             <View style={styles.userDetails}>
-              <View style={styles.nameContainer}>
-                <Text style={styles.name}>{name}</Text>
-              </View>
-              <View style={styles.genderAgeContainer}>
-                <Text style={styles.genderAge}>{gender}성・{age}세・{smoking ? "흡연" : "비흡연"}</Text>
-              </View>
+              <Text style={styles.name}>{name}</Text>
+              <Text style={styles.genderAge}>
+                {gender}성・{age}세・{smoking ? "흡연" : "비흡연"}
+              </Text>
             </View>
+
+            {/* 좋아요 버튼 */}
+            <TouchableOpacity
+              style={styles.likeButton}
+              onPress={() => toggleLike(userId)}
+            >
+              <Ionicons
+                name={isLiked ? "heart" : "heart-outline"}
+                size={28}
+                color={isLiked ? COLORS.primary[100] : "#878789"}
+              />
+            </TouchableOpacity>
           </View>
+
           <View style={styles.descriptionContainer}>
             <Text style={styles.description}>{description}</Text>
           </View>
@@ -52,64 +65,51 @@ export const UserDetailProfileSection: React.FC<UserProfileSectionProps> = ({
 const styles = StyleSheet.create({
   container: {
     borderBottomWidth: 3,
-    borderBottomColor: '#F2F2F2',
-    width: '100%',
+    borderBottomColor: "#F2F2F2",
+    width: "100%",
   },
   profileContainer: {
-    width: '100%',
+    width: "100%",
     paddingVertical: 16,
     paddingHorizontal: 18,
   },
   profileContent: {
-    width: '100%',
+    width: "100%",
   },
   userInfoRow: {
-    flexDirection: 'row',
-    width: '100%',
-    alignItems: 'center',
-    gap: 20,
+    flexDirection: "row",
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   avatar: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#F2F2F2',
+    backgroundColor: "#F2F2F2",
   },
   userDetails: {
-    width: 115,
+    flex: 1,
+    marginLeft: 12,
   },
-  nameContainer: {
-    marginBottom: 4,
+  likeButton: {
+    padding: 6,
   },
   name: {
-    color: '#17171B',
+    color: "#17171B",
     fontSize: 16,
-    fontWeight: '700',
-    fontFamily: 'SUIT Variable, -apple-system, Roboto, Helvetica, sans-serif',
+    fontWeight: "700",
   },
-  genderAgeContainer: {},
   genderAge: {
-    color: '#878789',
+    color: "#878789",
     fontSize: 12,
-    fontWeight: '400',
-    fontFamily: 'SUIT Variable, -apple-system, Roboto, Helvetica, sans-serif',
   },
   descriptionContainer: {
     marginTop: 10,
   },
   description: {
-    color: '#17171B',
+    color: "#17171B",
     fontSize: 14,
-    fontWeight: '400',
     lineHeight: 21,
-    fontFamily: 'SUIT Variable, -apple-system, Roboto, Helvetica, sans-serif',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    width: '100%',
-    alignItems: 'center',
-    gap: 16,
-    paddingHorizontal: 18,
-    paddingBottom: 16,
   },
 });
