@@ -2,9 +2,9 @@ import { Button } from '@/shared/components/Button/Button';
 import { OnboardingTitle } from '@/widgets/onboarding/OnboardingTitle';
 import { router } from 'expo-router';
 import React from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, View } from 'react-native';
 
-export const onboardingScreen: React.FC = () => {
+export const OnboardingScreen: React.FC = () => {
   const handleLogin = () => {
     router.push('/login');
   };
@@ -14,7 +14,10 @@ export const onboardingScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView 
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+    >
       <View style={styles.contentWrapper}>
         <View style={styles.headerSection}>
           {/* <ProgressIndicator /> */}
@@ -43,42 +46,34 @@ export const onboardingScreen: React.FC = () => {
         size='lg'
         style={styles.signUpButton}
       />
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    display: 'flex',
-    flexDirection: 'column',
-    overflow: 'hidden',
-    alignItems: 'center',
-    paddingTop: 68,
-    paddingRight: 18,
-    paddingBottom: 68,
-    paddingLeft: 18,
-    backgroundColor: "#FFFFFF",
     flex: 1,
+    backgroundColor: "#FFFFFF",
+  },
+  contentContainer: {
+    flexGrow: 1, // ✅ ScrollView 내부 전체 공간 사용
+    justifyContent: 'center', // 세로 가운데 정렬
+    alignItems: 'center', // 가로 가운데 정렬
+    paddingVertical: 68,
+    paddingHorizontal: 18,
   },
   contentWrapper: {
-    display: 'flex',
     width: 300,
-    maxWidth: '100%',
-    flexDirection: 'column',
     alignItems: 'center',
   },
   headerSection: {
-    display: 'flex',
-    width: '100%',
-    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
   },
   illustration: {
     aspectRatio: 0.73,
-    width: 222,
+    width: 268,
     marginTop: 36,
-    maxWidth: '100%',
   },
   loginButton: {
     marginTop: 103,
@@ -89,5 +84,4 @@ const styles = StyleSheet.create({
   },
 });
 
-
-export default onboardingScreen;
+export default OnboardingScreen;
