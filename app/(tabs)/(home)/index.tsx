@@ -1,278 +1,328 @@
-import { COLORS, FONTS, SPACING } from "@/shared/styles";
-import { useFetchPostList, useSubmitPostSearch } from "@/widgets/home/api";
-import { RoomListItem, RoomSearchFilter } from "@/widgets/home/components";
-import { useDefaultFilter } from "@/widgets/home/contexts";
-import { Room } from "@/widgets/home/types";
-import { SIZES } from "@/widgets/menu/constants";
+import { COLORS, FONT_SIZE, FONTS, RADIUS, SPACING } from "@/shared/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  FlatList,
   Image,
-  ListRenderItem,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function HomeScreen() {
-  const { defaultFilter } = useDefaultFilter();
-  const [searchResults, setSearchResults] = useState<Room[]>([]);
-  const [isFirstRender, setIsFirstRender] = useState(true);
-
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    isError,
-  } = useFetchPostList();
-
-  const { mutate: submitPostSearch, isPending: isSearchLoading } =
-    useSubmitPostSearch();
-
-  useEffect(() => {
-    if (!isFirstRender) {
-      submitPostSearch(defaultFilter, {
-        onSuccess: (data) => {
-          setSearchResults(data.content);
-        },
-      });
-    }
-  }, [defaultFilter, submitPostSearch, isFirstRender]);
-
-  useEffect(() => {
-    if (isFirstRender) {
-      setIsFirstRender(false);
-    }
-  }, [isFirstRender]);
-
-  const onCreatePress = () => {
-    router.push("/post-create");
-  };
-
-  const allRooms = isFirstRender
-    ? data?.pages.flatMap((page) => page.content) ?? []
-    : searchResults;
-
-  const handleLoadMore = () => {
-    if (isFirstRender && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  };
-
-  const renderItem: ListRenderItem<Room> = ({ item }) => (
-    <RoomListItem room={item} />
-  );
-
-  const renderFooter = () => {
-    if (isFirstRender && isFetchingNextPage) {
-      return (
-        <View style={styles.footerLoader}>
-          <ActivityIndicator size="small" color={COLORS.black} />
-        </View>
-      );
-    }
-
-    if (!isFirstRender && isSearchLoading) {
-      return (
-        <View style={styles.footerLoader}>
-          <ActivityIndicator size="small" color={COLORS.black} />
-        </View>
-      );
-    }
-
-    return null;
-  };
-
-  const renderEmptyComponent = () => {
-    // 로딩 중이면 empty component를 표시하지 않음
-    if (isLoading || isSearchLoading) {
-      return null;
-    }
-
-    return (
-      <View style={styles.emptyContainer}>
-        <Ionicons
-          name="home-outline"
-          size={48}
-          color={COLORS.gray[30]}
-          style={styles.emptyIcon}
-        />
-        <Text style={styles.emptyText}>방이 없어요</Text>
-        <Text style={styles.emptySubText}>
-          조건에 맞는 방을 찾을 수 없습니다
-        </Text>
-      </View>
-    );
-  };
-
-  const keyExtractor = (item: Room) => item.id.toString();
-
-  if (
-    isLoading ||
-    (!isFirstRender && isSearchLoading && searchResults.length === 0)
-  ) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.searchContainer}>
-          <TouchableOpacity>
-            <Ionicons name="search" size={24} color={COLORS.black} />
-          </TouchableOpacity>
-        </View>
-        <RoomSearchFilter />
-        <View
-          style={[
-            styles.loadingContainer,
-            { paddingBottom: NAVIGATION_BOTTOM_TABS_HEIGHT + SPACING.md },
-          ]}
-        >
-          <RoomListItem.Skeleton />
-          <RoomListItem.Skeleton />
-          <RoomListItem.Skeleton />
-          <RoomListItem.Skeleton />
-        </View>
-      </SafeAreaView>
-    );
-  }
-
-  if (isError) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.searchContainer}>
-          <TouchableOpacity>
-            <Ionicons name="search" size={24} color={COLORS.black} />
-          </TouchableOpacity>
-        </View>
-        <RoomSearchFilter />
-        <View style={styles.errorContainer}>
-          <Ionicons
-            name="alert-circle-outline"
-            size={48}
-            color={COLORS.gray[30]}
-            style={styles.errorIcon}
-          />
-          <Text style={styles.errorText}>에러가 발생했어요</Text>
-          <Text style={styles.errorSubText}>
-            방들을 받아오던 중 문제가 발생했습니다
-          </Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
-
+function Header() {
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.searchContainer}>
-        <Image
-          source={require("@/assets/icons/logo.png")}
-          style={styles.logo}
-        />
+    <View style={styles.header}>
+      <Image source={require("@/assets/icons/logo.png")} style={styles.logo} />
+      <View style={styles.headerActions}>
+        <TouchableOpacity>
+          <Ionicons name="add-outline" size={30} color={COLORS.black} />
+        </TouchableOpacity>
         <TouchableOpacity>
           <Ionicons name="search" size={24} color={COLORS.black} />
         </TouchableOpacity>
       </View>
-      <RoomSearchFilter />
-      <FlatList
-        data={allRooms}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.1}
-        ListFooterComponent={renderFooter}
-        ListEmptyComponent={renderEmptyComponent}
-        showsVerticalScrollIndicator={false}
-        style={styles.roomList}
-        contentContainerStyle={{
-          paddingBottom: NAVIGATION_BOTTOM_TABS_HEIGHT + SPACING.md,
-        }}
-      />
-    </SafeAreaView>
+    </View>
   );
 }
 
-const { NAVIGATION_BOTTOM_TABS_HEIGHT } = SIZES;
+function WelcomeSection() {
+  return (
+    <View style={styles.welcomeContainer}>
+      <Text style={styles.welcomeTitle}>
+        🧍 함께 살 룸메이트를 찾고 있나요?{"\n"}당신의 공간을 나눠보세요.
+      </Text>
+      <View style={styles.actionCards}>
+        <ActionCard
+          image={require("@/assets/images/home-home.png")}
+          title={`Sharer의${"\n"}집 보러가기`}
+        />
+        <ActionCard
+          image={require("@/assets/images/home-people.png")}
+          title={`Joiner의${"\n"}프로필 보러가기`}
+        />
+      </View>
+    </View>
+  );
+}
+
+function ActionCard({ image, title }: { image: any; title: string }) {
+  return (
+    <TouchableOpacity style={styles.actionCard}>
+      <Image source={image} style={styles.actionCardImage} />
+      <Text style={styles.actionCardText}>{title}</Text>
+    </TouchableOpacity>
+  );
+}
+
+// 성향조사 알림 컴포넌트
+function SurveyNotification() {
+  return (
+    <View style={styles.surveyContainer}>
+      <Text style={styles.surveyTitle}>아직 성향조사를 하지 않으셨네요.</Text>
+      <View style={styles.surveyContent}>
+        <Text style={styles.surveyDescription}>
+          성향조사를 완료해야 룸메이트 매칭을 할 수 있어요.
+        </Text>
+        <TouchableOpacity style={styles.surveyButton}>
+          <Text style={styles.surveyButtonText}>성향조사 바로가기</Text>
+          <Ionicons name="arrow-forward" size={12} color={COLORS.primary[90]} />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
+
+function FavoriteUsersSection() {
+  return (
+    <View>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>내가 찜한 사용자</Text>
+        <TouchableOpacity
+          style={styles.moreButton}
+          onPress={() => router.push("/users")}
+        >
+          <Text style={styles.moreButtonText}>더보기</Text>
+          <Ionicons
+            name="chevron-forward"
+            size={12}
+            color={COLORS.gray[40]}
+            style={styles.moreButtonIcon}
+          />
+        </TouchableOpacity>
+      </View>
+      <View>
+        <UserListItem name="이재민" like info="남성,25세,흡연" />
+        <UserListItem name="이재민" info="남성,25세,흡연" />
+        <UserListItem name="이재민" like info="남성,25세,흡연" />
+        <UserListItem name="이재민" info="남성,25세,흡연" />
+      </View>
+    </View>
+  );
+}
+
+function UserListItem({
+  name,
+  info,
+  like = false,
+}: {
+  name: string;
+  info: string;
+  like?: boolean;
+}) {
+  return (
+    <View
+      style={{
+        paddingHorizontal: SPACING.normal,
+        paddingVertical: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: COLORS.gray[10],
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 20,
+      }}
+    >
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
+        <Image
+          style={{ width: 48, height: 48 }}
+          source={require("@/assets/images/profile-default.png")}
+        />
+        <View style={{ height: 44, justifyContent: "space-between" }}>
+          <Text
+            style={{
+              fontSize: FONT_SIZE.b1,
+              lineHeight: 24,
+              fontFamily: FONTS.bold,
+              color: COLORS.black,
+            }}
+          >
+            {name}
+          </Text>
+          <View style={{ flexDirection: "row", gap: 6 }}>
+            {info.split(",").map((item, index) => (
+              <>
+                <Text
+                  key={index}
+                  style={{
+                    fontSize: FONT_SIZE.c1,
+                    fontFamily: FONTS.regular,
+                    color: COLORS.gray[50],
+                  }}
+                >
+                  {item}
+                </Text>
+                {index !== info.split(",").length - 1 && (
+                  <View style={{ justifyContent: "center" }}>
+                    <View
+                      style={{
+                        width: 3,
+                        height: 3,
+                        backgroundColor: COLORS.gray[50],
+                        borderRadius: 100,
+                      }}
+                    />
+                  </View>
+                )}
+              </>
+            ))}
+          </View>
+        </View>
+      </View>
+      <Ionicons
+        name={like ? "heart" : "heart-outline"}
+        size={24}
+        color={COLORS.primary[90]}
+      />
+    </View>
+  );
+}
+
+export default function HomeScreen() {
+  return (
+    <>
+      <Header />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={styles.scrollView}
+      >
+        <WelcomeSection />
+        <SurveyNotification />
+        <FavoriteUsersSection />
+      </ScrollView>
+    </>
+  );
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  searchContainer: {
+  header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
-  },
-  roomList: {
-    flex: 1,
-  },
-  createButton: {
-    position: "absolute",
-    right: SPACING.normal,
-    bottom: NAVIGATION_BOTTOM_TABS_HEIGHT + SPACING.md,
-    zIndex: 1000,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "flex-start",
-  },
-  errorContainer: {
-    height: 500,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  footerLoader: {
-    paddingVertical: SPACING.md,
-    alignItems: "center",
-  },
-  emptyContainer: {
-    height: 500,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  emptyIcon: {
-    marginBottom: SPACING.xs,
-  },
-  emptyText: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: COLORS.gray[70],
-    textAlign: "center",
-    marginBottom: SPACING.xs,
-    fontFamily: FONTS.medium,
-  },
-  emptySubText: {
-    fontSize: 14,
-    color: COLORS.gray[50],
-    textAlign: "center",
-    fontFamily: FONTS.regular,
-  },
-  errorIcon: {
-    marginBottom: SPACING.xs,
-  },
-  errorText: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: COLORS.gray[70],
-    textAlign: "center",
-    marginBottom: SPACING.xs,
-    fontFamily: FONTS.medium,
-  },
-  errorSubText: {
-    fontSize: 14,
-    color: COLORS.gray[50],
-    textAlign: "center",
-    fontFamily: FONTS.regular,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.gray[10],
   },
   logo: {
     width: 44,
     height: 30,
+  },
+  headerActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: SPACING.sm,
+  },
+
+  scrollView: {
+    flex: 1,
+  },
+
+  welcomeContainer: {
+    paddingHorizontal: SPACING.normal,
+    paddingTop: SPACING.lg,
+  },
+  welcomeTitle: {
+    fontSize: 20,
+    lineHeight: 30,
+    fontFamily: FONTS.semiBold,
+    color: "#17171b",
+    textAlign: "left",
+    marginBottom: SPACING.lg,
+  },
+  actionCards: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 20,
+    marginBottom: 20,
+  },
+  actionCard: {
+    flex: 1,
+    borderColor: COLORS.gray[40],
+    borderWidth: 1,
+    borderRadius: RADIUS.sm,
+    height: 170,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  actionCardImage: {
+    width: 81,
+    height: 70,
+  },
+  actionCardText: {
+    fontSize: 14,
+    lineHeight: 21,
+    fontFamily: FONTS.bold,
+    color: COLORS.black,
+    textAlign: "center",
+    marginTop: SPACING.xs,
+  },
+
+  // 성향조사 알림 스타일
+  surveyContainer: {
+    paddingVertical: 10,
+    paddingHorizontal: SPACING.normal,
+    backgroundColor: COLORS.primary[10],
+    marginBottom: 20,
+  },
+  surveyTitle: {
+    width: "100%",
+    fontSize: 16,
+    lineHeight: 24,
+    fontFamily: FONTS.bold,
+    color: COLORS.black,
+    textAlign: "left",
+  },
+  surveyContent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  surveyDescription: {
+    fontSize: 12,
+    lineHeight: 18,
+    fontFamily: "SUIT Variable",
+    color: "#5b5b5e",
+    textAlign: "left",
+  },
+  surveyButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  surveyButtonText: {
+    fontSize: 12,
+    lineHeight: 18,
+    fontFamily: FONTS.bold,
+    color: COLORS.primary[90],
+  },
+
+  // 찜한 사용자 섹션 스타일
+  favoriteContainer: {
+    paddingHorizontal: SPACING.normal,
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: SPACING.normal,
+  },
+  sectionTitle: {
+    fontSize: FONT_SIZE.b1,
+    lineHeight: 24,
+    fontFamily: FONTS.bold,
+    color: "#17171b",
+    textAlign: "left",
+  },
+  moreButton: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  moreButtonText: {
+    fontSize: 12,
+    lineHeight: 18,
+    fontFamily: FONTS.medium,
+    color: COLORS.gray[40],
+  },
+  moreButtonIcon: {
+    marginTop: 2,
   },
 });

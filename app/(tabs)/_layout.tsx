@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeLayout() {
   const isUserScreen = usePathname().includes("/users");
+  const isRoomScreen = usePathname().includes("/rooms");
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -14,7 +15,7 @@ export default function HomeLayout() {
           tabBarActiveTintColor: COLORS.primary[90],
           tabBarInactiveTintColor: COLORS.gray[30],
           tabBarStyle: {
-            display: isUserScreen ? "none" : "flex",
+            display: isUserScreen || isRoomScreen ? "none" : "flex",
             borderTopWidth: 1,
             height: 68,
             paddingTop: 4,
