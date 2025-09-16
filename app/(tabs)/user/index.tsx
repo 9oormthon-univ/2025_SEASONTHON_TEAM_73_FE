@@ -79,7 +79,10 @@ export const MyPageScreen: React.FC = () => {
       )}
 
       <MenuListItem title="2단계 인증" onPress={handleTwoFactorAuth} />
-      <MenuListItem title="로그아웃" onPress={() => logout()} />
+      <MenuListItem title="로그아웃" onPress={() => {
+        logout();
+        router.replace({ pathname: "/onboarding" as any });
+        }}/>
       <MenuListItem title="탈퇴하기" onPress={handleDeleteAccount} />
       <MenuListItem title="고객 지원" onPress={handleCustomerSupport} />
       <MenuListItem title="이용 약관" onPress={handleTermsOfService} />
