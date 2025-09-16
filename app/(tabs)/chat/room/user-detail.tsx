@@ -60,13 +60,6 @@ export const MyPageScreen: React.FC = () => {
 
     //console.log(user);
 
-    const handleEditProfile = () => {
-        console.log('Edit profile pressed');
-    };
-
-    const handleMyPersonality = () => {
-        console.log('My personality pressed');
-    };
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <UserDetailProfileSection
@@ -74,10 +67,9 @@ export const MyPageScreen: React.FC = () => {
             gender={user.gender}
             age={user.age}
             description={user.introduce}
-            avatarUri={user.imageUrl}
-            onEditProfile={handleEditProfile}
-            onMyPersonality={handleMyPersonality}
+            avatarUri={user.userProfileImage}
             smoking={user.smoking}
+            userId={user.userId}
         />
 
         {/* 유저가 작성한 글이 없을 때 */}
