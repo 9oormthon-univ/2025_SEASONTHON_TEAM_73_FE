@@ -1,12 +1,23 @@
 import { COLORS, FONT_SIZE, FONTS } from '@/shared/styles';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ProfileImage } from './ProfileImage';
 
-export const ProfileHeader: React.FC = () => {
+interface ProfileHeaderProps {
+  profileImage?: string;
+  onPressImage?: () => void;
+}
+
+export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profileImage, onPressImage }) => {
   return (
     <View style={styles.container}>
-      <ProfileImage showEdit={true} size={81}/>
+      <TouchableOpacity onPress={onPressImage}>
+        <ProfileImage
+          source={profileImage ? { uri: profileImage } : undefined}
+          showEdit={true}
+          size={80}
+        />
+      </TouchableOpacity>
       <Text style={styles.description}>
         책상, 침대 같은 생활 성향이 드러나는 사진으로 올리면 매칭에 도움이 돼요.
       </Text>
@@ -16,7 +27,7 @@ export const ProfileHeader: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
+    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     gap: 16,

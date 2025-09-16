@@ -1,29 +1,62 @@
-import React from 'react';
+import { Button } from '@/shared/components';
+import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { FormField } from './FormField';
-import { GenderSelector } from './GenderSelector';
 
-export const ProfileForm: React.FC = () => {
+interface ProfileFormProps {
+  user: {
+    nickname: string;
+    age: number;
+    gender: string;
+    introduce: string;
+  };
+  onSubmit: (form: { nickname: string; age: string; introduce: string }) => void;
+}
+
+export const ProfileForm: React.FC<ProfileFormProps> = ({ user, onSubmit }) => {
+  const [form, setForm] = useState({
+    nickname: user.nickname || '',
+    age: user.age.toString() || '',
+    introduce: user.introduce || '',
+  });
+
+  const handleChange = (key: string, value: string) => {
+    setForm(prev => ({ ...prev, [key]: value }));
+  };
+
   return (
     <View style={styles.container}>
-      <FormField label="이름" value="이재민" />
-      <FormField label="나이" value="25" />
-      <GenderSelector />
+      <FormField
+        label="닉네임"
+        value={form.nickname}
+        onChangeText={text => handleChange('nickname', text)}
+      />
+      <FormField
+        label="나이"
+        value={form.age}
+        onChangeText={text => handleChange('age', text)}
+      />
       <FormField
         label="자기소개"
-        value="안녕하세요, 20살 대학생입니다. IT쪽 진로 희망하고 있습니다. 희망 진로 비슷한 분 혹은 현업자분하고 같이 살면 좋을 것 같네요."
+        value={form.introduce}
+        onChangeText={text => handleChange('introduce', text)}
         multiline
       />
+      <View style={styles.buttonWrapper}>
+        <Button text="저장" onPress={() => onSubmit(form)} style={{ width: '100%' }} />
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: 393,
+    width: '100%',
     flexDirection: 'column',
-    alignItems: 'flex-start',
-    gap: 20,
-    height: 303,
+    paddingVertical: 20,
+  },
+  buttonWrapper: {
+    width: '100%',
+    marginTop: 20,
   },
 });
