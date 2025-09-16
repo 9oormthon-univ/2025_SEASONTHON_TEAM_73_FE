@@ -1,40 +1,36 @@
 import api from "@/shared/api/axios";
 import { PropertyCard } from "@/shared/components/propertycard/PropertyCard";
 import { useAuthStore } from "@/shared/store";
-import { useProfileStore } from "@/shared/store/profileStore";
 import { COLORS } from "@/shared/styles";
 import { HorizontalPropertyCarousel } from "@/widgets/user/HorizontalPropertyCarousel";
 import { MenuListItem } from "@/widgets/user/MenuListItem";
 import { UserProfileSection } from "@/widgets/user/UserProfileSection";
-import { router } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import React, { useCallback, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 
 export const MyPageScreen: React.FC = () => {
   const { logout } = useAuthStore();
   const [user, setUser] = useState<any>([]);
-  const { profile } = useProfileStore();
-  console.log(profile);
 
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        const res = await api.get("/profile/me");
-        if (res.data.success) {
-          if (res.data.data.gender === "남") {
-            res.data.data.gender = "남성";
-          } else {
-            res.data.data.gender = "여성";
-          }
-          setUser(res.data.data);
-        }
-      } catch (error) {
-        console.error("프로필 가져오는데 문제가 발생했습니다", error);
+  const fetchUser = async () => {
+    try {
+      const res = await api.get("/profile/me");
+      if (res.data.success) {
+        if (res.data.data.gender === "남") res.data.data.gender = "남성";
+        else res.data.data.gender = "여성";
+        setUser(res.data.data);
       }
-    };
+    } catch (error) {
+      console.error("프로필 가져오는데 문제가 발생했습니다", error);
+    }
+  };
 
-    getUser();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchUser();
+    }, [])
+  );
   console.log(user);
 
   const handleEditProfile = () => {
@@ -65,13 +61,12 @@ export const MyPageScreen: React.FC = () => {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-
       <UserProfileSection
-        name={profile?.nickname ?? ""}
-        gender={profile?.gender ?? ""}
-        age={profile?.age ?? 0}
-        description={profile?.introduce ?? ""}
-        avatarUri={profile?.profileImage ?? ""}
+        name={user.nickname}
+        gender={user.gender}
+        age={user.age}
+        description={user.introduce}
+        avatarUri={user.userProfileImage}
         onEditProfile={handleEditProfile}
         onMyPersonality={handleMyPersonality}
       />

@@ -1,6 +1,5 @@
 import { useAuthStore } from "@/shared/store";
 import { useLikeStore } from "@/shared/store/likeStore";
-import { useProfileStore } from "@/shared/store/profileStore";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -14,7 +13,6 @@ export default function RootLayout() {
   const { isLoggedIn } = useAuthStore();
   const [appReady, setAppReady] = useState(false);
   const fetchLikes = useLikeStore((state) => state.fetchLikes);
-  const fetchProfile = useProfileStore((state) => state.fetchProfile);
 
   // 1️⃣ 폰트 로드
   const [fontsLoaded] = useFonts({
@@ -42,7 +40,6 @@ export default function RootLayout() {
 
     prepareApp();
     fetchLikes();
-    fetchProfile();
   }, [fontsLoaded]);
 
   if (!appReady) {
