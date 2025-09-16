@@ -1,21 +1,26 @@
+import { useAuthStore } from "@/shared/store";
 import { COLORS, FONTS, SPACING } from "@/shared/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
 import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import ChatListItem from "./ChatListItem";
 
 type ChatRoom = {
   chatRoomId: number;
   postTitle: string;
+  senderId: number;
   senderName: string;
+  senderProfile: any;
+  receiverId: number;
   receiverName: string;
+  receiverProfile: any;
   unreadCount: number;
   lastMessage: { content: string | null; createdAt: string } | null;
   chatRoomStatus: "PENDING" | "ACCEPTED";
@@ -26,6 +31,10 @@ interface ChatRoomListProps {
 }
 
 const ChatRoomList: React.FC<ChatRoomListProps> = ({ rooms }) => {
+  const myUserId = useAuthStore.getState().userId;
+  const otherName = (room: ChatRoom) =>
+    room.senderId === Number(myUserId) ? room.receiverName : room.senderName;
+
   // 빈 상태 렌더링
   if (rooms.length === 0) {
     return (
@@ -50,7 +59,7 @@ const ChatRoomList: React.FC<ChatRoomListProps> = ({ rooms }) => {
           onPress={() =>
             router.push({
               pathname: `/chat/room/${room.chatRoomId}` as any,
-              params: { senderName: room.senderName }, // key 주의!
+              params: { senderName: otherName(room) }, // key 주의!
             })
           }
         >

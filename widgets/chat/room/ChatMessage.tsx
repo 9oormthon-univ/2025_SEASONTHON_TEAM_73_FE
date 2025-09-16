@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/shared/store";
 import { router } from "expo-router";
 import React from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
@@ -5,22 +6,36 @@ import { MessageBubble } from "./MessageBubble";
 
 interface ChatMessageProps {
   text: string;
-  isOwn: boolean;
   time: string;
-  senderId?: string;
-  senderName?: string;
+  isOwn: boolean;
+  senderId: number;
+  senderName: string;
+  senderProfile: string;
+  receiverId: number;
+  receiverName: string;
+  receiverProfile: string;
 }
 
 export const ChatMessage: React.FC<ChatMessageProps> = ({
   text,
-  isOwn,
   time,
+  isOwn,
   senderId,
   senderName,
+  senderProfile,
+  receiverId,
+  receiverName,
+  receiverProfile,
 }) => {
+  const myUserId = Number(useAuthStore().userId);
+
+  // ✅ 항상 "상대방" 프로필만 보여주기
+  const otherProfile = myUserId === senderId ? receiverProfile : senderProfile;
+  const otherId = myUserId === senderId ? receiverId : senderId;
+
   const handleProfilePress = () => {
-    if (!senderId) return;
-    router.push(`/chat/room/user-detail?userId=${senderId}`);
+    if (!otherId) return;
+    router.push(`/chat/room/user-detail?userId=${otherId}`);
   };
 
   return (
@@ -30,10 +45,16 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
         isOwn ? styles.ownContainer : styles.otherContainer,
       ]}
     >
+      {/* 내가 보낸 메시지일 때는 아바타 안 보이고, 
+          상대방 메시지일 때는 상대방 프로필만 보이게 */}
       {!isOwn && (
         <TouchableOpacity onPress={handleProfilePress}>
           <Image
-            source={require("@/assets/icons/friendIcon.png")}
+            source={
+              otherProfile
+                ? { uri: otherProfile }
+                : require("@/assets/icons/friendIcon.png")
+            }
             style={styles.avatar}
           />
         </TouchableOpacity>
@@ -51,10 +72,10 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   ownContainer: {
-    justifyContent: "flex-end", // 오른쪽 정렬
+    justifyContent: "flex-end",
   },
   otherContainer: {
-    justifyContent: "flex-start", // 왼쪽 정렬
+    justifyContent: "flex-start",
   },
   avatar: {
     width: 36,

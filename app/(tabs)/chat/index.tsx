@@ -12,6 +12,10 @@ type ChatRoom = {
   chatRoomId: number;
   postTitle: string;
   senderName: string;
+  senderId: number;
+  senderProfile: any;
+  receiverId: number;
+  receiverProfile: any;
   receiverName: string;
   unreadCount: number;
   lastMessage: {
@@ -33,9 +37,6 @@ export default function ChatList() {
         const res = await api.get("/chatrooms/lists", {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
-
-        // 서버에서 data.data에 PENDING, ACCEPTED 같이 내려준다고 가정
-        const allRooms: ChatRoom[] = res.data?.data ?? [];
 
         // 상태별로 분리
         const pending = res.data?.data?.PENDING ?? [];

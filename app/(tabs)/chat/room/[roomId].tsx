@@ -28,6 +28,7 @@ interface Message {
   date: string;
   senderName?: string;
   senderId?: string;
+  senderProfile?: string;
 }
 
 interface DateGroup {
@@ -36,7 +37,6 @@ interface DateGroup {
 }
 
 const formatDate = (date: Date) => date.toISOString().split("T")[0];
-
 const mapMessage = (msg: any, userId: string): Message => {
   const date = new Date(msg.createdAt);
   return {
@@ -47,8 +47,10 @@ const mapMessage = (msg: any, userId: string): Message => {
     date: formatDate(date),
     senderName: msg.senderName,
     senderId: msg.senderId?.toString(),
+    senderProfile: msg.senderProfile,
   };
 };
+
 
 const mergeMessages = (prev: DateGroup[], newMessages: Message[]): DateGroup[] => {
   const all = [...prev.flatMap(g => g.messages), ...newMessages];
@@ -84,6 +86,14 @@ const ChatScreen: React.FC = () => {
   const { WS_BASE_URL } = config.expoConfig!.extra!;
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<any>(null);
+  const [roomInfo, setRoomInfo] = useState<{
+    receiverId: number;
+    receiverName: string;
+    receiverProfile: string;
+    senderId: number;
+    senderName: string;
+    senderProfile: string;
+  } | null>(null);
 
   const isPending = chatRoomStatus === "PENDING";
 
@@ -116,12 +126,28 @@ const ChatScreen: React.FC = () => {
         params: { page: 0, size: 2000000000 },
         headers: { Authorization: `Bearer ${token}` },
       });
-      const messages: Message[] = res.data.data.map((msg: any) => mapMessage(msg, userId));
-      setChatData(prev => mergeMessages(prev, messages));
+
+      // ✅ 메시지랑 같이 room 정보 세팅
+      if (res.data.roomInfo) {
+        setRoomInfo({
+          receiverId: res.data.roomInfo.receiverId,
+          receiverName: res.data.roomInfo.receiverName,
+          receiverProfile: res.data.roomInfo.receiverProfile,
+          senderId: res.data.roomInfo.senderId,
+          senderName: res.data.roomInfo.senderName,
+          senderProfile: res.data.roomInfo.senderProfile,
+        });
+      }
+
+      const messages: Message[] = res.data.data.map((msg: any) =>
+        mapMessage(msg, userId)
+      );
+      setChatData((prev) => mergeMessages(prev, messages));
     } catch (err) {
       console.error("메시지 가져오기 실패", err);
     }
   };
+
 
   useEffect(() => { fetchMessages(); }, [roomId]);
 
@@ -156,6 +182,7 @@ const ChatScreen: React.FC = () => {
               content: msg.content,
               senderId: msg.sender ?? msg.senderId,
               senderName: msg.senderName,
+              senderProfile: msg.senderProfile,
               createdAt: msg.createdAt ?? new Date().toISOString(),
             }, userId);
             setChatData(prev => mergeMessages(prev, [message]));
@@ -230,7 +257,18 @@ const ChatScreen: React.FC = () => {
                 <DateSeparator date={dateGroup.date} />
                 <View style={styles.messagesGroup}>
                   {dateGroup.messages.map(message => (
-                    <ChatMessage key={message.id} text={message.text} isOwn={message.isOwn} time={message.time} senderId={message.senderId} />
+                    <ChatMessage
+                      key={message.id}
+                      text={message.text}
+                      time={message.time}
+                      isOwn={message.isOwn}
+                      senderId={Number(message.senderId)}
+                      senderName={message.senderName ?? ""}
+                      senderProfile={message.senderProfile ?? ""}
+                      receiverId={roomInfo?.receiverId ?? 0}
+                      receiverName={roomInfo?.receiverName ?? ""}
+                      receiverProfile={roomInfo?.receiverProfile ?? ""}
+                    />
                   ))}
                 </View>
               </View>
