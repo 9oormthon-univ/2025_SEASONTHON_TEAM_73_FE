@@ -10,7 +10,7 @@ export const OnboardingScreen: React.FC = () => {
   };
 
   const handleSignUp = () => {
-    //router.push('/signup');
+    router.push('/signUp' as any);
   };
 
   return (
