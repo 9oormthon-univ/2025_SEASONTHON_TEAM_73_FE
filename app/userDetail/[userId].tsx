@@ -67,7 +67,7 @@ export const MyPageScreen: React.FC = () => {
             gender={user.gender}
             age={user.age}
             description={user.introduce}
-            avatarUri={user.imageUrl}
+            avatarUri={user.userProfileImage}
             smoking={user.smoking}
             userId={user.userId}
         />

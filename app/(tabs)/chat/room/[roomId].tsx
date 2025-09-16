@@ -25,9 +25,10 @@ interface Message {
   text: string;
   isOwn: boolean;
   time: string;
-  date: string; // YYYY-MM-DD
+  date: string;
   senderName?: string;
   senderId?: string;
+  senderProfile?: string;
 }
 
 interface DateGroup {
@@ -35,10 +36,7 @@ interface DateGroup {
   messages: Message[];
 }
 
-// 날짜 포맷 고정
 const formatDate = (date: Date) => date.toISOString().split("T")[0];
-
-// 메시지 변환
 const mapMessage = (msg: any, userId: string): Message => {
   const date = new Date(msg.createdAt);
   return {
@@ -49,13 +47,13 @@ const mapMessage = (msg: any, userId: string): Message => {
     date: formatDate(date),
     senderName: msg.senderName,
     senderId: msg.senderId?.toString(),
+    senderProfile: msg.senderProfile,
   };
 };
 
-// 메시지 합치기 + 중복 제거 + 날짜 그룹
+
 const mergeMessages = (prev: DateGroup[], newMessages: Message[]): DateGroup[] => {
   const all = [...prev.flatMap(g => g.messages), ...newMessages];
-
   const unique = Array.from(new Map(all.map(m => [m.id, m])).values());
 
   const grouped: DateGroup[] = [];
@@ -87,42 +85,40 @@ const ChatScreen: React.FC = () => {
   const config = Constants as NativeConstants;
   const { WS_BASE_URL } = config.expoConfig!.extra!;
   const [isUploading, setIsUploading] = useState(false);
-  const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
   const [uploadedFile, setUploadedFile] = useState<any>(null);
+  const [roomInfo, setRoomInfo] = useState<{
+    receiverId: number;
+    receiverName: string;
+    receiverProfile: string;
+    senderId: number;
+    senderName: string;
+    senderProfile: string;
+  } | null>(null);
 
   const isPending = chatRoomStatus === "PENDING";
 
-  // 채팅 신청 수락
+  // 채팅 신청 수락/거절
   const handleAccept = async () => {
     try {
-      await api.post(
-        `/chatrooms/accept/${roomId}`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.post(`/chatrooms/accept/${roomId}`, {}, { headers: { Authorization: `Bearer ${token}` } });
       Alert.alert("✅ 채팅 신청 수락 완료");
       router.replace(`/chat/room/${roomId}?senderName=${senderName}`);
-    } catch (err) {
-      console.error("채팅 신청 수락 실패", err);
+    } catch {
       Alert.alert("❌ 채팅 신청 수락 실패");
     }
   };
 
-  // 채팅 신청 거절
   const handleReject = async () => {
     try {
-      await api.delete(`/chatrooms/reject/${roomId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.delete(`/chatrooms/reject/${roomId}`, { headers: { Authorization: `Bearer ${token}` } });
       Alert.alert("채팅 신청 거절 완료");
       router.push(`/`);
-    } catch (err) {
-      console.error("채팅 신청 거절 실패", err);
+    } catch {
       Alert.alert("❌ 채팅 신청 거절 실패");
     }
   };
 
-  // 서버에서 메시지 가져오기 (채팅방 입장 시)
+  // 메시지 불러오기
   const fetchMessages = async () => {
     if (!roomId) return;
     try {
@@ -131,75 +127,94 @@ const ChatScreen: React.FC = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
+      // ✅ 메시지랑 같이 room 정보 세팅
+      if (res.data.roomInfo) {
+        setRoomInfo({
+          receiverId: res.data.roomInfo.receiverId,
+          receiverName: res.data.roomInfo.receiverName,
+          receiverProfile: res.data.roomInfo.receiverProfile,
+          senderId: res.data.roomInfo.senderId,
+          senderName: res.data.roomInfo.senderName,
+          senderProfile: res.data.roomInfo.senderProfile,
+        });
+      }
+
       const messages: Message[] = res.data.data.map((msg: any) =>
         mapMessage(msg, userId)
       );
-
-      // 기존 상태와 merge
-      setChatData(prev => mergeMessages(prev, messages));
+      setChatData((prev) => mergeMessages(prev, messages));
     } catch (err) {
       console.error("메시지 가져오기 실패", err);
     }
   };
 
-  // 컴포넌트 마운트 시 + roomId 변경 시 메시지 fetch
-  useEffect(() => {
-    fetchMessages();
-  }, [roomId]);
 
-  // WebSocket 연결
+  useEffect(() => { fetchMessages(); }, [roomId]);
+
+  // WebSocket 이벤트 기반 처리
   useEffect(() => {
     if (!roomId || isPending) return;
 
-    const ws = new WebSocket(
-      `wss://livingmate.store/ws-chat?token=${encodeURIComponent(token)}`
-    );
+    const ws = new WebSocket(`${WS_BASE_URL}/ws-chat?token=${encodeURIComponent(token)}`);
     socketRef.current = ws;
 
     ws.onopen = () => {
       console.log("✅ WebSocket connected");
-      ws.send(JSON.stringify({
-        websocket: "JOIN",
-        chatRoomId: Number(roomId)
-      }));
+      ws.send(JSON.stringify({ websocket: "JOIN", chatRoomId: Number(roomId) }));
     };
 
     ws.onmessage = (event) => {
       let msg: any;
-      try {
-        msg = JSON.parse(event.data);
-      } catch {
-        return;
-      }
+      try { msg = JSON.parse(event.data); } catch { return; }
 
-      // 모든 메시지 처리
-      if (msg.messageId && msg.content) {
-        const message = mapMessage({
-          messageId: msg.messageId,
-          content: msg.content,
-          senderId: msg.sender ?? msg.senderId,
-          createdAt: msg.createdAt ?? new Date().toISOString()
-        }, userId);
-
-        setChatData(prev => mergeMessages(prev, [message]));
+      switch (msg.event) {
+        case "connect":
+          console.log("✅ WebSocket 연결 완료");
+          break;
+        case "joined":
+          console.log(`✅ 방 참여 완료: ${msg.roomId}`);
+          break;
+        case "send": // 본인 메시지
+        case "receive": // 다른 사람 메시지
+          if (msg.messageId && msg.content) {
+            const message = mapMessage({
+              messageId: msg.messageId,
+              content: msg.content,
+              senderId: msg.sender ?? msg.senderId,
+              senderName: msg.senderName,
+              senderProfile: msg.senderProfile,
+              createdAt: msg.createdAt ?? new Date().toISOString(),
+            }, userId);
+            setChatData(prev => mergeMessages(prev, [message]));
+          }
+          break;
+        case "read":
+          console.log(`👀 메시지 읽음 처리: readerId=${msg.readerId}`);
+          // 읽음 상태 UI 업데이트 가능
+          break;
+        case "error":
+          console.error("❌ 서버 에러:", msg.message);
+          Alert.alert("에러", msg.message);
+          break;
+        default:
+          console.warn("⚠️ 알 수 없는 이벤트:", msg);
       }
     };
 
-    ws.onclose = () => console.log("❌ WebSocket closed");
+    ws.onerror = (error) => console.error("WebSocket 오류 발생:", error);
+    ws.onclose = (event) => console.log(`❌ WebSocket closed (code=${event.code})`);
 
     return () => ws.close();
   }, [roomId, token, userId, isPending]);
 
-  // 메시지 전송
   const handleSendMessage = (text: string) => {
     if (socketRef.current && text.trim()) {
-      const msg = {
+      socketRef.current.send(JSON.stringify({
         type: "TEXT",
         websocket: "SEND",
         content: text,
         chatRoomId: Number(roomId),
-      };
-      socketRef.current.send(JSON.stringify(msg));
+      }));
 
       const now = new Date();
       const myMessage: Message = {
@@ -210,112 +225,49 @@ const ChatScreen: React.FC = () => {
         date: formatDate(now),
         senderId: userId,
       };
-
       setChatData(prev => mergeMessages(prev, [myMessage]));
     }
   };
 
   const handlePhotoPress = async () => {
-     console.log("📷 Photo pressed");
     try {
-      const result = await DocumentPicker.getDocumentAsync({
-        type: ["application/pdf", "image/*"],
-        copyToCacheDirectory: true,
-      });
-
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        const file = result.assets[0];
-        setSelectedFileName(file.name);
-        setUploadedFile(file);
-
-        Alert.alert(
-          "파일 선택 완료",
-          "파일이 선택되었습니다. 제출 버튼을 눌러 요청을 보내세요."
-        );
-      }
-    } catch (error) {
-      console.error("파일 업로드 오류:", error);
-      Alert.alert("오류", "파일 업로드 중 오류가 발생했습니다.");
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (!uploadedFile) {
-      Alert.alert("오류", "먼저 파일을 선택해주세요.");
-      return;
-    }
-
-    try {
-      setIsUploading(true);
-      console.log("제출 버튼 클릭됨");
-
-      // FormData 생성
-      const formData = new FormData();
-      formData.append("file", {
-        uri: uploadedFile.uri,
-        name: uploadedFile.name,
-        type: uploadedFile.mimeType || "application/octet-stream",
-      } as any);
-
-      console.log("FormData 생성 완료");
-
-      // API 호출
-      //await submitUser(formData);
-
-      // 상태 초기화
-      setSelectedFileName(null);
-      setUploadedFile(null);
-    } catch (error) {
-      console.error("제출 오류:", error);
-      Alert.alert("실패", "서류 제출 중 오류가 발생했습니다.");
-    } finally {
-      setIsUploading(false);
-    }
+      const result = await DocumentPicker.getDocumentAsync({ type: ["application/pdf", "image/*"], copyToCacheDirectory: true });
+      if (!result.canceled && result.assets && result.assets.length > 0) setUploadedFile(result.assets[0]);
+    } catch { Alert.alert("오류", "파일 업로드 중 오류가 발생했습니다."); }
+    finally { setIsUploading(false); }
   };
 
   // 자동 스크롤
   useEffect(() => {
-    if (chatData.length > 0 && !isPending) {
-      setTimeout(() => {
-        scrollViewRef.current?.scrollToEnd({ animated: true });
-      }, 100);
-    }
+    if (chatData.length > 0 && !isPending) setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);
   }, [chatData, isPending]);
 
   useEffect(() => {
-    const listener = Keyboard.addListener("keyboardDidShow", () => {
-      setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);
-    });
+    const listener = Keyboard.addListener("keyboardDidShow", () => setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100));
     return () => listener.remove();
   }, []);
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        style={styles.container}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={80}
-      >
-        <ScrollView
-          ref={scrollViewRef}
-          style={styles.messagesContainer}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
+      <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={80}>
+        <ScrollView ref={scrollViewRef} style={styles.messagesContainer} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
           <View style={styles.messagesContent}>
             {chatData.map((dateGroup, dateIndex) => (
               <View key={dateIndex} style={styles.dateGroup}>
                 <DateSeparator date={dateGroup.date} />
                 <View style={styles.messagesGroup}>
-                  {dateGroup.messages.map((message) => (
+                  {dateGroup.messages.map(message => (
                     <ChatMessage
                       key={message.id}
                       text={message.text}
-                      isOwn={message.isOwn}
                       time={message.time}
-                      senderId={message.senderId}
+                      isOwn={message.isOwn}
+                      senderId={Number(message.senderId)}
+                      senderName={message.senderName ?? ""}
+                      senderProfile={message.senderProfile ?? ""}
+                      receiverId={roomInfo?.receiverId ?? 0}
+                      receiverName={roomInfo?.receiverName ?? ""}
+                      receiverProfile={roomInfo?.receiverProfile ?? ""}
                     />
                   ))}
                 </View>
@@ -324,22 +276,8 @@ const ChatScreen: React.FC = () => {
           </View>
         </ScrollView>
 
-        {isPending && (
-          <View style={styles.containerPendig}>
-            <MessageRequestDialog
-              userName={senderName as string}
-              onAccept={handleAccept}
-              onReject={handleReject}
-            />
-          </View>
-        )}
-
-        {!isPending && (
-          <ChatInput
-            onSendMessage={handleSendMessage}
-            onPhotoPress={handlePhotoPress}
-          />
-        )}
+        {isPending && <View style={styles.containerPendig}><MessageRequestDialog userName={senderName as string} onAccept={handleAccept} onReject={handleReject} /></View>}
+        {!isPending && <ChatInput onSendMessage={handleSendMessage} onPhotoPress={handlePhotoPress} />}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

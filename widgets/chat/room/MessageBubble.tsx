@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   bubble: {
-    maxWidth: '70%',
+    maxWidth: '100%',
     paddingVertical: 10,
     paddingHorizontal: 20,
     alignItems: 'flex-start',

@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/shared/store";
 import { COLORS, FONTS, SPACING } from "@/shared/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -18,14 +19,21 @@ interface ChatRequestListProps {
 type ChatRoom = {
   chatRoomId: number;
   postTitle: string;
+  senderId: number;
   senderName: string;
+  senderProfile: any;
+  receiverId: number;
   receiverName: string;
+  receiverProfile: any;
   unreadCount: number;
   lastMessage: { content: string | null; createdAt: string } | null;
   chatRoomStatus: "PENDING" | "ACCEPTED";
 };
 
 const ChatRequestList: React.FC<ChatRequestListProps> = ({ requests }) => {
+
+const myUserId = useAuthStore.getState().userId;
+
   if (requests.length === 0) {
     return (
       <View style={styles.emptyContainer}>
@@ -43,22 +51,30 @@ const ChatRequestList: React.FC<ChatRequestListProps> = ({ requests }) => {
 
   return (
     <ScrollView>
-      {requests.map((request) => (
-        <TouchableOpacity
-          key={request.chatRoomId}
-          onPress={() =>
-            router.push({
-              pathname: `/chat/room/${request.chatRoomId}` as any,
-              params: {
-                senderName: request.senderName,
-                chatRoomStatus: request.chatRoomStatus, // 상태 전달
-              },
-            })
-          }
-        >
-          <ChatListItem chat={request} />
-        </TouchableOpacity>
-      ))}
+      {requests.map((request) => {
+        // 상대방 이름 계산
+        const otherName =
+          request.senderId === Number(myUserId)
+            ? request.receiverName
+            : request.senderName;
+
+        return (
+          <TouchableOpacity
+            key={request.chatRoomId}
+            onPress={() =>
+              router.push({
+                pathname: `/chat/room/${request.chatRoomId}` as any,
+                params: {
+                  senderName: otherName,
+                  chatRoomStatus: request.chatRoomStatus, // 상태 전달
+                },
+              })
+            }
+          >
+            <ChatListItem chat={request} />
+          </TouchableOpacity>
+        );
+      })}
     </ScrollView>
   );
 };
