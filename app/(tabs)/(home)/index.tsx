@@ -1,4 +1,8 @@
+import { Skeleton } from "@/shared/components";
+import { useAuthStore } from "@/shared/store";
 import { COLORS, FONT_SIZE, FONTS, RADIUS, SPACING } from "@/shared/styles";
+import { LikedUser, useFetchDashboard, User } from "@/widgets/home/api";
+import { getRoomText } from "@/widgets/home/constants";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import {
@@ -9,6 +13,40 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
+export default function HomeScreen() {
+  const { isRoom, isPersonalitySurveyCompleted, userName } = useAuthStore();
+  const { data: dashboard, isFetching } = useFetchDashboard(isRoom);
+
+  return (
+    <>
+      <Header />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={styles.scrollView}
+      >
+        <WelcomeSection isRoom={isRoom} />
+        {!isPersonalitySurveyCompleted && (
+          <>
+            <SurveyNotification />
+          </>
+        )}
+        {isPersonalitySurveyCompleted && (
+          <RecommendSection
+            isRoom={isRoom}
+            userName={userName}
+            recommendedUsers={dashboard?.recommendedUsers.users}
+            isFetching={isFetching}
+          />
+        )}
+        <FavoriteUsersSection
+          likedUsers={dashboard?.likedUsers.users}
+          isFetching={isFetching}
+        />
+      </ScrollView>
+    </>
+  );
+}
 
 function Header() {
   return (
@@ -26,12 +64,10 @@ function Header() {
   );
 }
 
-function WelcomeSection() {
+function WelcomeSection({ isRoom }: { isRoom: boolean }) {
   return (
     <View style={styles.welcomeContainer}>
-      <Text style={styles.welcomeTitle}>
-        🧍 함께 살 룸메이트를 찾고 있나요?{"\n"}당신의 공간을 나눠보세요.
-      </Text>
+      <Text style={styles.welcomeTitle}>{getRoomText(isRoom)}</Text>
       <View style={styles.actionCards}>
         <ActionCard
           image={require("@/assets/images/home-home.png")}
@@ -55,7 +91,6 @@ function ActionCard({ image, title }: { image: any; title: string }) {
   );
 }
 
-// 성향조사 알림 컴포넌트
 function SurveyNotification() {
   return (
     <View style={styles.surveyContainer}>
@@ -73,7 +108,13 @@ function SurveyNotification() {
   );
 }
 
-function FavoriteUsersSection() {
+function FavoriteUsersSection({
+  likedUsers,
+  isFetching,
+}: {
+  likedUsers?: LikedUser[];
+  isFetching: boolean;
+}) {
   return (
     <View>
       <View style={styles.sectionHeader}>
@@ -92,24 +133,171 @@ function FavoriteUsersSection() {
         </TouchableOpacity>
       </View>
       <View>
-        <UserListItem name="이재민" like info="남성,25세,흡연" />
-        <UserListItem name="이재민" info="남성,25세,흡연" />
-        <UserListItem name="이재민" like info="남성,25세,흡연" />
-        <UserListItem name="이재민" info="남성,25세,흡연" />
+        {isFetching ? (
+          <FavoriteUsersSkeleton />
+        ) : likedUsers && likedUsers.length > 0 ? (
+          likedUsers.map((user) => <UserListItem key={user.userId} {...user} />)
+        ) : (
+          <EmptyFavoriteUsersState />
+        )}
       </View>
     </View>
   );
 }
 
-function UserListItem({
-  name,
-  info,
-  like = false,
+function RecommendSection({
+  isRoom,
+  userName,
+  recommendedUsers,
+  isFetching,
 }: {
-  name: string;
-  info: string;
-  like?: boolean;
+  isRoom: boolean;
+  userName: string;
+  recommendedUsers?: User[];
+  isFetching: boolean;
 }) {
+  return (
+    <View>
+      <View style={styles.sectionHeader}>
+        <View>
+          <Text style={styles.sectionTitle}>
+            추천 {isRoom ? "Joiner" : "Sharer"}
+          </Text>
+          <Text style={styles.sectionDescription}>
+            {userName}님과 잘 맞을 것 같은 {isRoom ? "Joiner" : "Sharer"}를
+            찾아왔어요.
+          </Text>
+        </View>
+
+        <TouchableOpacity
+          style={styles.moreButton}
+          onPress={() => router.push("/users")}
+        >
+          <Text style={styles.moreButtonText}>더보기</Text>
+          <Ionicons
+            name="chevron-forward"
+            size={12}
+            color={COLORS.gray[40]}
+            style={styles.moreButtonIcon}
+          />
+        </TouchableOpacity>
+      </View>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={styles.userProfileCardWrapper}
+        contentContainerStyle={{ gap: 16 }}
+      >
+        {isFetching ? (
+          <RecommendUsersSkeleton />
+        ) : recommendedUsers && recommendedUsers.length > 0 ? (
+          recommendedUsers.map((user) => (
+            <UserProfileCard key={user.userId} {...user} />
+          ))
+        ) : (
+          <EmptyRecommendUsersState isRoom={isRoom} />
+        )}
+      </ScrollView>
+    </View>
+  );
+}
+
+function UserProfileCard({ nickname, profileImageUrl }: User) {
+  return (
+    <View style={styles.userProfileCard}>
+      <Image
+        source={{ uri: profileImageUrl }}
+        style={styles.userProfileCardImage}
+      />
+      <Text style={styles.userProfileCardName}>{nickname}</Text>
+    </View>
+  );
+}
+
+function FavoriteUsersSkeleton() {
+  return (
+    <View>
+      {[1, 2, 3].map((index) => (
+        <View
+          key={index}
+          style={{
+            paddingHorizontal: SPACING.normal,
+            paddingVertical: 16,
+            borderBottomWidth: 1,
+            borderBottomColor: COLORS.gray[10],
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 20,
+          }}
+        >
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
+            <Skeleton width={48} height={48} radius={24} />
+            <View
+              style={{ height: 44, justifyContent: "space-between", gap: 8 }}
+            >
+              <Skeleton width={80} height={16} />
+              <Skeleton width={120} height={12} />
+            </View>
+          </View>
+          <Skeleton width={24} height={24} radius={12} />
+        </View>
+      ))}
+    </View>
+  );
+}
+
+function RecommendUsersSkeleton() {
+  return (
+    <View style={styles.recommendSkeletonContainer}>
+      {[1, 2, 3].map((index) => (
+        <View key={index} style={styles.userProfileCard}>
+          <Skeleton width={80} height={80} radius={40} />
+          <Skeleton width={60} height={16} />
+        </View>
+      ))}
+    </View>
+  );
+}
+
+function EmptyRecommendUsersState({ isRoom }: { isRoom: boolean }) {
+  return (
+    <View style={styles.emptyRecommendContainer}>
+      <Ionicons name="people-outline" size={48} color={COLORS.gray[30]} />
+      <Text style={styles.emptyStateTitle}>
+        아직 추천 {isRoom ? "Joiner" : "Sharer"}가 없어요
+      </Text>
+      <Text style={styles.emptyStateDescription}>
+        성향조사를 완료하면 맞춤 추천을 받을 수 있어요
+      </Text>
+      <TouchableOpacity
+        style={styles.emptyStateButton}
+        onPress={() => router.push("/users")}
+      >
+        <Text style={styles.emptyStateButtonText}>전체 사용자 보기</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+function EmptyFavoriteUsersState() {
+  return (
+    <View style={styles.emptyStateContainer}>
+      <Ionicons name="heart-outline" size={48} color={COLORS.gray[30]} />
+      <Text style={styles.emptyStateTitle}>아직 찜한 사용자가 없어요</Text>
+      <Text style={styles.emptyStateDescription}>
+        마음에 드는 룸메이트를 찾아서 찜해보세요
+      </Text>
+      <TouchableOpacity
+        style={styles.emptyStateButton}
+        onPress={() => router.push("/users")}
+      >
+        <Text style={styles.emptyStateButtonText}>사용자 둘러보기</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+function UserListItem({ nickname, gender, age, smoking }: LikedUser) {
   return (
     <View
       style={{
@@ -137,10 +325,10 @@ function UserListItem({
               color: COLORS.black,
             }}
           >
-            {name}
+            {nickname}
           </Text>
           <View style={{ flexDirection: "row", gap: 6 }}>
-            {info.split(",").map((item, index) => (
+            {[gender, age, smoking].map((item, index) => (
               <>
                 <Text
                   key={index}
@@ -152,7 +340,7 @@ function UserListItem({
                 >
                   {item}
                 </Text>
-                {index !== info.split(",").length - 1 && (
+                {index !== [gender, age, smoking].length - 1 && (
                   <View style={{ justifyContent: "center" }}>
                     <View
                       style={{
@@ -169,28 +357,8 @@ function UserListItem({
           </View>
         </View>
       </View>
-      <Ionicons
-        name={like ? "heart" : "heart-outline"}
-        size={24}
-        color={COLORS.primary[90]}
-      />
+      <Ionicons name="heart" size={24} color={COLORS.primary[90]} />
     </View>
-  );
-}
-
-export default function HomeScreen() {
-  return (
-    <>
-      <Header />
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={styles.scrollView}
-      >
-        <WelcomeSection />
-        <SurveyNotification />
-        <FavoriteUsersSection />
-      </ScrollView>
-    </>
   );
 }
 
@@ -257,8 +425,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: SPACING.xs,
   },
-
-  // 성향조사 알림 스타일
   surveyContainer: {
     paddingVertical: 10,
     paddingHorizontal: SPACING.normal,
@@ -312,6 +478,12 @@ const styles = StyleSheet.create({
     color: "#17171b",
     textAlign: "left",
   },
+  sectionDescription: {
+    fontSize: 12,
+    lineHeight: 18,
+    fontFamily: FONTS.regular,
+    color: COLORS.gray[50],
+  },
   moreButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -324,5 +496,75 @@ const styles = StyleSheet.create({
   },
   moreButtonIcon: {
     marginTop: 2,
+  },
+  userProfileCardWrapper: {
+    paddingHorizontal: SPACING.normal,
+  },
+  userProfileCard: {
+    padding: 20,
+    borderRadius: RADIUS.xs,
+    backgroundColor: COLORS.gray[5],
+    gap: 17,
+  },
+  userProfileCardImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 100,
+  },
+  userProfileCardName: {
+    fontSize: FONT_SIZE.b1,
+    lineHeight: 24,
+    fontFamily: FONTS.regular,
+    color: COLORS.black,
+    textAlign: "center",
+  },
+
+  // 추천 사용자 스켈레톤 스타일
+  recommendSkeletonContainer: {
+    flexDirection: "row",
+    gap: SPACING.sm,
+    paddingHorizontal: SPACING.normal,
+  },
+
+  // 빈 상태 스타일
+  emptyStateContainer: {
+    alignItems: "center",
+    paddingVertical: SPACING.xl,
+    paddingHorizontal: SPACING.normal,
+  },
+  emptyRecommendContainer: {
+    alignItems: "center",
+    paddingVertical: SPACING.xl,
+    paddingHorizontal: SPACING.normal,
+  },
+  emptyStateTitle: {
+    fontSize: FONT_SIZE.b1,
+    lineHeight: 24,
+    fontFamily: FONTS.bold,
+    color: COLORS.black,
+    textAlign: "center",
+    marginTop: SPACING.sm,
+    marginBottom: SPACING.xs,
+  },
+  emptyStateDescription: {
+    fontSize: FONT_SIZE.c1,
+    lineHeight: 18,
+    fontFamily: FONTS.regular,
+    color: COLORS.gray[50],
+    textAlign: "center",
+    marginBottom: SPACING.lg,
+  },
+  emptyStateButton: {
+    backgroundColor: COLORS.primary[90],
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.sm,
+    borderRadius: RADIUS.sm,
+  },
+  emptyStateButtonText: {
+    fontSize: FONT_SIZE.c1,
+    lineHeight: 18,
+    fontFamily: FONTS.bold,
+    color: COLORS.white,
+    textAlign: "center",
   },
 });
