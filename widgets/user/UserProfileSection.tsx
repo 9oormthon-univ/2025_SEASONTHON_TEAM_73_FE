@@ -28,7 +28,7 @@ export const UserProfileSection: React.FC<UserProfileSectionProps> = ({
         <View style={styles.profileContent}>
           <View style={styles.userInfoRow}>
             <Image
-              source={require("../../assets/icons/friendIcon.png")}
+              source={ avatarUri ? { uri: avatarUri } : undefined }
               style={styles.avatar}
             />
             <View style={styles.userDetails}>
