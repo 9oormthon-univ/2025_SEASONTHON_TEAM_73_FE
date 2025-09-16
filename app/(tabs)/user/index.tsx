@@ -35,7 +35,7 @@ export const MyPageScreen: React.FC = () => {
   //console.log(user);
 
   const handleEditProfile = () => {
-    console.log("Edit profile pressed");
+    router.push("/profileEdit" as any);
   };
 
   const handleMyPersonality = () => {
