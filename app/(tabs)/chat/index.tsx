@@ -30,23 +30,16 @@ export default function ChatList() {
   useEffect(() => {
     const fetchChats = async () => {
       try {
-        // 병렬 처리
-        const [receiverRes, senderRes] = await Promise.all([
-          api.get("/chatrooms/receiver", {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          }),
-          api.get("/chatrooms/sender", {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          }),
-        ]);
+        const res = await api.get("/chatrooms/lists", {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
 
-        // receiver, sender 각각 데이터 안전하게 접근 + 기본값
-        const pending = receiverRes.data?.data?.PENDING ?? [];
-        const acceptedReceiver = receiverRes.data?.data?.ACCEPTED ?? [];
-        const acceptedSender = senderRes.data?.data?.ACCEPTED ?? [];
+        // 서버에서 data.data에 PENDING, ACCEPTED 같이 내려준다고 가정
+        const allRooms: ChatRoom[] = res.data?.data ?? [];
 
-        // 수신/발신 ACCEPTED 합치기
-        const accepted = [...acceptedReceiver, ...acceptedSender];
+        // 상태별로 분리
+        const pending = res.data?.data?.PENDING ?? [];
+        const accepted = res.data?.data?.ACCEPTED ?? [];
 
         setPendingRequests(pending);
         setAcceptedRooms(accepted);
@@ -56,7 +49,7 @@ export default function ChatList() {
     };
 
     fetchChats();
-  }, [activeTab]);
+  }, [activeTab, accessToken]);
 
   return (
     <View style={styles.container}>
