@@ -4,19 +4,19 @@ import { StyleSheet, Text, View } from 'react-native';
 import { ProfileImage } from './ProfileImage';
 
 interface ProfileHeaderProps {
-  profileImage: string | null; // 선택된 이미지 URL
-  onPressImage: () => void;    // 이미지 클릭 시 호출
+  profileImage?: string | null;
+  onPressImage: () => void;
 }
 
 export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profileImage, onPressImage }) => {
   return (
     <View style={styles.container}>
-      <ProfileImage
-        source={profileImage ? { uri: profileImage } : undefined}
-        size={80}
-        showEdit={true}
-        onPress={onPressImage} // 클릭 시 이벤트 전달
-      />
+        <ProfileImage
+          source={profileImage ? { uri: profileImage } : undefined}
+          size={80}
+          showEdit={true}
+          onPress={onPressImage}
+        />
       <Text style={styles.description}>
         책상, 침대 같은 생활 성향이 드러나는 사진으로 올리면 매칭에 도움이 돼요.
       </Text>
@@ -31,6 +31,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 16,
     height: 178,
+  },
+  image: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: COLORS.gray[20],
   },
   description: {
     color: COLORS.gray[40],
