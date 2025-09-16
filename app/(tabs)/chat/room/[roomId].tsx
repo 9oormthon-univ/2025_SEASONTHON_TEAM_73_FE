@@ -53,11 +53,15 @@ const mapMessage = (msg: any, userId: string): Message => {
 
 
 const mergeMessages = (prev: DateGroup[], newMessages: Message[]): DateGroup[] => {
-  const all = [...prev.flatMap(g => g.messages), ...newMessages];
-  const unique = Array.from(new Map(all.map(m => [m.id, m])).values());
+  const all = [...prev.flatMap(g => g.messages)];
+
+  newMessages.forEach(m => {
+    const exists = all.some(x => x.senderId === m.senderId && x.text === m.text && x.time === m.time);
+    if (!exists) all.push(m);
+  });
 
   const grouped: DateGroup[] = [];
-  unique.forEach(message => {
+  all.forEach(message => {
     const g = grouped.find(x => x.date === message.date);
     if (g) g.messages.push(message);
     else grouped.push({ date: message.date, messages: [message] });
@@ -74,6 +78,7 @@ const mergeMessages = (prev: DateGroup[], newMessages: Message[]): DateGroup[] =
 
   return grouped;
 };
+
 
 const ChatScreen: React.FC = () => {
   const { roomId, chatRoomStatus, senderName } = useLocalSearchParams();
@@ -177,6 +182,9 @@ const ChatScreen: React.FC = () => {
         case "send": // 본인 메시지
         case "receive": // 다른 사람 메시지
           if (msg.messageId && msg.content) {
+            // 이미 내 로컬에서 optimistic update 한 메시지라면 추가 X
+            if (msg.senderId?.toString() === userId) return;
+
             const message = mapMessage({
               messageId: msg.messageId,
               content: msg.content,
