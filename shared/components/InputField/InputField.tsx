@@ -9,7 +9,8 @@ interface InputFieldProps {
   value?: string;
   onChangeText?: (text: string) => void;
   secureTextEntry?: boolean;
-  errorMessage?: string; // 추가
+  errorMessage?: string;
+  textContentType?: any;   // ✅ 추가
 }
 
 export const InputField: React.FC<InputFieldProps> = ({
@@ -19,6 +20,7 @@ export const InputField: React.FC<InputFieldProps> = ({
   onChangeText,
   secureTextEntry = false,
   errorMessage,
+  textContentType,   // ✅ 구조분해 할당 추가
 }) => {
   return (
     <View style={styles.container}>
@@ -30,6 +32,7 @@ export const InputField: React.FC<InputFieldProps> = ({
         value={value}
         onChangeText={onChangeText}
         secureTextEntry={secureTextEntry}
+        textContentType={textContentType}  // ✅ 전달
       />
       {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
     </View>

@@ -85,11 +85,14 @@ export const RegistrationForm: React.FC = () => {
       api
         .post('/auth/signup', payload)
         .then(response => {
-          console.log('회원가입 성공:', response.data);
-          router.push('/signUp/messageVerify' as any);
+            console.log('회원가입 성공:', response.data);
+            router.push({
+                pathname: '/signUp/messageVerify',
+                params: { username: form.username ?? '' },
+            });
         })
         .catch(error => {
-          console.error('회원가입 실패:', error.response?.data || error.message);
+            console.error('회원가입 실패:', error.response?.data || error.message);
         });
     } else {
       console.log('유효성 오류 있음:', errors);
@@ -98,57 +101,63 @@ export const RegistrationForm: React.FC = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <InputField
-        label="아이디"
-        placeholder="아이디를 입력하세요."
-        value={form.username}
-        onChangeText={text => handleChange('username', text)}
-        errorMessage={errors.username}
-      />
-      <InputField
-        label="비밀번호"
-        placeholder="비밀번호를 입력하세요."
-        value={form.password}
-        onChangeText={text => handleChange('password', text)}
-        secureTextEntry
-        errorMessage={errors.password}
-      />
-      <InputField
-        label="비밀번호 확인"
-        placeholder="비밀번호를 다시 입력하세요."
-        value={form.passwordConfirm}
-        onChangeText={text => handleChange('passwordConfirm', text)}
-        secureTextEntry
-        errorMessage={errors.passwordConfirm}
-      />
-      <InputField
-        label="닉네임"
-        placeholder="닉네임을 입력하세요."
-        value={form.nickname}
-        onChangeText={text => handleChange('nickname', text)}
-        errorMessage={errors.nickname}
-      />
-      <InputField
-        label="나이"
-        placeholder="만 나이를 입력하세요."
-        value={form.age}
-        onChangeText={text => handleChange('age', text)}
-        errorMessage={errors.age}
-      />
+        <InputField
+            label="아이디"
+            placeholder="아이디를 입력하세요."
+            value={form.username}
+            onChangeText={text => handleChange('username', text)}
+            errorMessage={errors.username}
+        />
+        <InputField
+            label="비밀번호"
+            placeholder="비밀번호를 입력하세요."
+            value={form.password}
+            onChangeText={text => handleChange('password', text)}
+            secureTextEntry
+            textContentType="newPassword"   // ✅ iOS에 "새 비밀번호 입력" 필드라고 알려줌
+            errorMessage={errors.password}
+            />
 
-      <RadioButtonGroup
-        selectedValue={form.gender}
-        onValueChange={value => handleChange('gender', value)}
-      />
-      {errors.gender ? <Text style={styles.errorText}>{errors.gender}</Text> : null}
+        <InputField
+            label="비밀번호 확인"
+            placeholder="비밀번호를 다시 입력하세요."
+            value={form.passwordConfirm}
+            onChangeText={text => handleChange('passwordConfirm', text)}
+            secureTextEntry
+            textContentType="newPassword"
+            errorMessage={errors.passwordConfirm}
+        />
 
-      <ToggleSwitch
-        value={form.notifications}
-        onValueChange={value => handleChange('notifications', value)}
-      />
+        <InputField
+            label="닉네임"
+            placeholder="닉네임을 입력하세요."
+            value={form.nickname}
+            onChangeText={text => handleChange('nickname', text)}
+            textContentType="nickname"   // ✅ iOS에서 닉네임 입력 필드로 인식
+            errorMessage={errors.nickname}
+        />
 
-      <Button text="가입하기" size="lg" onPress={handleSubmit} />
-      <View style={{ height: 40 }} /> 
+        <InputField
+            label="나이"
+            placeholder="만 나이를 입력하세요."
+            value={form.age}
+            onChangeText={text => handleChange('age', text)}
+            errorMessage={errors.age}
+        />
+
+        <RadioButtonGroup
+            selectedValue={form.gender}
+            onValueChange={value => handleChange('gender', value)}
+        />
+        {errors.gender ? <Text style={styles.errorText}>{errors.gender}</Text> : null}
+
+        <ToggleSwitch
+            value={form.notifications}
+            onValueChange={value => handleChange('notifications', value)}
+        />
+
+        <Button text="가입하기" size="lg" onPress={handleSubmit} />
+        <View style={{ height: 40 }} /> 
     </ScrollView>
   );
 };
