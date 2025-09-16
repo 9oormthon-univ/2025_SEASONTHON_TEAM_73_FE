@@ -15,7 +15,7 @@ function Header() {
     <View style={styles.header}>
       <Image source={require("@/assets/icons/logo.png")} style={styles.logo} />
       <View style={styles.headerActions}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push("/post-create")}>
           <Ionicons name="add-outline" size={30} color={COLORS.black} />
         </TouchableOpacity>
         <TouchableOpacity>
