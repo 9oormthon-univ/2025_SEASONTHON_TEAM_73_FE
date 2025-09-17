@@ -35,7 +35,7 @@ export const UserDetailScreen: React.FC = () => {
             });
             if (res.data.success) {
                 const data = res.data.data;
-                console.log(data.soundSensitivity.sleepHabit);
+                //console.log(data.soundSensitivity.sleepHabit);
 
                 // sleepHabit 처리
                 if (Array.isArray(data.soundSensitivity.sleepHabit)) {
@@ -73,7 +73,7 @@ export const UserDetailScreen: React.FC = () => {
         getUser();
     }, [])
 
-    console.log(user);
+    //console.log(user);
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>

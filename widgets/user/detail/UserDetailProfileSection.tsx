@@ -23,8 +23,15 @@ export const UserDetailProfileSection: React.FC<UserProfileSectionProps> = ({
   avatarUri,
   smoking,
 }) => {
-  const { likedUsers, toggleLike } = useLikeStore();
-  const isLiked = likedUsers[userId] ?? false;
+  const { toggleLike } = useLikeStore();
+
+  // 해당 userId의 좋아요 상태를 zustand에서 구독
+  const liked = useLikeStore((state) => state.likedUsers[userId] ?? false);
+
+
+  console.log("userId =", userId, "liked =", liked);
+
+  //console.log(isLiked);
 
   return (
     <View style={styles.container}>
@@ -46,9 +53,9 @@ export const UserDetailProfileSection: React.FC<UserProfileSectionProps> = ({
               onPress={() => toggleLike(userId)}
             >
               <Ionicons
-                name={isLiked ? "heart" : "heart-outline"}
+                name={liked ? "heart" : "heart-outline"}
                 size={28}
-                color={isLiked ? COLORS.primary[100] : "#878789"}
+                color={liked ? COLORS.primary[100] : "#878789"}
               />
             </TouchableOpacity>
           </View>

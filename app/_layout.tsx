@@ -1,4 +1,5 @@
 import { useAuthStore } from "@/shared/store";
+import { useLikeStore } from "@/shared/store/likeStore";
 import { COLORS } from "@/shared/styles";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -32,6 +33,11 @@ export default function RootLayout() {
     const prepareApp = async () => {
       // 폰트가 다 로드되었는지 체크
       if (fontsLoaded) {
+        // 로그인 상태일 때 좋아요 데이터 패치
+        if (isLoggedIn) {
+          await useLikeStore.getState().fetchLikes(); 
+        }
+
         await SplashScreen.hideAsync(); // 스플래시 숨기기
         // 여기에서 초기 데이터 fetch, 토큰 검증 등 할 수 있음
         await new Promise((resolve) => setTimeout(resolve, 1000)); // 테스트용 지연
@@ -40,7 +46,7 @@ export default function RootLayout() {
     };
 
     prepareApp();
-  }, [fontsLoaded]);
+  }, [fontsLoaded, isLoggedIn]);
 
   if (!appReady) {
     // 폰트 + 초기화가 끝나기 전까지 로딩 화면

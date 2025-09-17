@@ -6,23 +6,24 @@ interface LikeState {
   likedUsers: Record<number, boolean>;
   fetchLikes: () => Promise<void>;
   toggleLike: (userId: number) => Promise<void>;
+  isLiked: (userId: number) => boolean; // ✅ 추가
 }
 
 export const useLikeStore = create<LikeState>((set, get) => ({
   likedUsers: {},
 
-  // ✅ 서버에서 좋아요 목록 불러오기
+  // 좋아요 목록 불러오기
   fetchLikes: async () => {
     try {
       const res = await api.get("/likes", {
-        params: { page: 0, size: 10000 }, // 페이지 크게 설정
+        params: { page: 0, size: 10000 },
       });
 
       const likedList = res.data?.data?.content ?? [];
-      // likedUsers 형태로 변환 { [likedUserId]: true }
       const likedMap: Record<number, boolean> = {};
       likedList.forEach((item: any) => {
-        likedMap[item.likedUserId] = true;
+        likedMap[item.id] = true;
+        console.log(item);
       });
 
       set({ likedUsers: likedMap });
@@ -54,4 +55,10 @@ export const useLikeStore = create<LikeState>((set, get) => ({
       }
     }
   },
+
+  // ✅ userId가 좋아요 목록에 있는지 확인
+  isLiked: (userId: number) => {
+    if (!userId) return false;           // userId가 없으면 false
+    return !!get().likedUsers[userId];   // 있으면 true, 없으면 false
+  }
 }));
