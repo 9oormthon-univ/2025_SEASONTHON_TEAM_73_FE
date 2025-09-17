@@ -9,6 +9,7 @@ import {
 import { getRoomText } from "@/widgets/home/constants";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import React from "react";
 import {
   Image,
   ScrollView,
@@ -237,9 +238,8 @@ function UserProfileCard({
           <Text style={styles.userProfileCardName}>{nickname}</Text>
           <View style={{ flexDirection: "row", gap: 6 }}>
             {[gender, age, smoking].map((item, index) => (
-              <>
+              <React.Fragment key={index + item.toString()}>
                 <Text
-                  key={index}
                   style={{
                     fontSize: FONT_SIZE.c1,
                     fontFamily: FONTS.regular,
@@ -260,7 +260,7 @@ function UserProfileCard({
                     />
                   </View>
                 )}
-              </>
+              </React.Fragment>
             ))}
           </View>
         </View>
@@ -385,9 +385,8 @@ function UserListItem({ nickname, gender, age, smoking }: LikedUser) {
           </Text>
           <View style={{ flexDirection: "row", gap: 6 }}>
             {[gender, age, smoking].map((item, index) => (
-              <>
+              <React.Fragment key={index + item.toString()}>
                 <Text
-                  key={index}
                   style={{
                     fontSize: FONT_SIZE.c1,
                     fontFamily: FONTS.regular,
@@ -408,7 +407,7 @@ function UserListItem({ nickname, gender, age, smoking }: LikedUser) {
                     />
                   </View>
                 )}
-              </>
+              </React.Fragment>
             ))}
           </View>
         </View>

@@ -1,5 +1,6 @@
 import { post } from "@/shared/api/method";
 import { useAuthStore } from "@/shared/store";
+import { useLikeStore } from "@/shared/store/likeStore";
 import type { BaseResponse } from "@/shared/types";
 import { useMutation } from "@tanstack/react-query";
 import { REQUEST } from "../../../shared/api/request";
@@ -25,6 +26,8 @@ const submitLogin = async (data: LoginFormData) => {
 };
 
 export const useSubmitLogin = () => {
+  const fetchLikes = useLikeStore((state) => state.fetchLikes);
+
   return useMutation({
     mutationFn: submitLogin,
     onSuccess: ({
@@ -49,6 +52,7 @@ export const useSubmitLogin = () => {
         nickname,
         isPersonalitySurveyCompleted,
       });
+      fetchLikes();
     },
   });
 };

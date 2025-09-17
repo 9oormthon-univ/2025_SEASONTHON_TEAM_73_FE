@@ -1,5 +1,4 @@
 import { useAuthStore } from "@/shared/store";
-import { useLikeStore } from "@/shared/store/likeStore";
 import { COLORS } from "@/shared/styles";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -15,7 +14,6 @@ SplashScreen.preventAutoHideAsync(); // 스플래시 화면 유지
 export default function RootLayout() {
   const { isLoggedIn } = useAuthStore();
   const [appReady, setAppReady] = useState(false);
-  const fetchLikes = useLikeStore((state) => state.fetchLikes);
 
   // 1️⃣ 폰트 로드
   const [fontsLoaded] = useFonts({
@@ -42,8 +40,6 @@ export default function RootLayout() {
     };
 
     prepareApp();
-    fetchLikes();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fontsLoaded]);
 
   if (!appReady) {
