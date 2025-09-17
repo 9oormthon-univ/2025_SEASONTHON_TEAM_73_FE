@@ -15,7 +15,7 @@ import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 
-export const MyPageScreen: React.FC = () => {
+export const UserDetailScreen: React.FC = () => {
     const [user, setUser] = useState<any>([]);
     const { userId } = useLocalSearchParams();
     const accessToken = useAuthStore.getState().accessToken;
@@ -35,7 +35,22 @@ export const MyPageScreen: React.FC = () => {
             });
             if (res.data.success) {
                 const data = res.data.data;
-                console.log(data);
+                console.log(data.soundSensitivity.sleepHabit);
+
+                // sleepHabit 처리
+                if (Array.isArray(data.soundSensitivity.sleepHabit)) {
+                  const habits = data.soundSensitivity.sleepHabit
+                    .flatMap((h: string) => h.split(',').map(s => s.trim())); // 쉼표 분리 & 공백 제거
+
+                  data.soundSensitivity.sleepHabit = habits.map((habit: string) => {
+                    switch (habit) {
+                      case "NONE": return "없음";
+                      case "SNORING": return "코골이";
+                      case "TEETH_GRINDING": return "이갈이";
+                      default: return habit;
+                    }
+                  });
+                }
 
                // workDays 변환
                 const weekDays = ['월', '화', '수', '목', '금', '토', '일'];
@@ -60,13 +75,6 @@ export const MyPageScreen: React.FC = () => {
 
     //console.log(user);
 
-    const handleEditProfile = () => {
-        console.log('Edit profile pressed');
-    };
-
-    const handleMyPersonality = () => {
-        console.log('My personality pressed');
-    };
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <UserDetailProfileSection
@@ -74,10 +82,9 @@ export const MyPageScreen: React.FC = () => {
             gender={user.gender}
             age={user.age}
             description={user.introduce}
-            avatarUri={user.imageUrl}
-            onEditProfile={handleEditProfile}
-            onMyPersonality={handleMyPersonality}
+            avatarUri={user.userProfileImage}
             smoking={user.smoking}
+            userId={user.userId}
         />
 
         {/* 유저가 작성한 글이 없을 때 */}
@@ -106,4 +113,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MyPageScreen;
+export default UserDetailScreen;

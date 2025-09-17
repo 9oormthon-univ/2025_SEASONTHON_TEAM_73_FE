@@ -1,3 +1,4 @@
+// ChatScreen.tsx
 import api from "@/shared/api/axios";
 import { useAuthStore } from "@/shared/store";
 import { COLORS } from "@/shared/styles";
@@ -16,7 +17,7 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  View,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -51,7 +52,6 @@ const mapMessage = (msg: any, userId: string): Message => {
   };
 };
 
-
 const mergeMessages = (prev: DateGroup[], newMessages: Message[]): DateGroup[] => {
   const all = [...prev.flatMap(g => g.messages)];
 
@@ -79,7 +79,6 @@ const mergeMessages = (prev: DateGroup[], newMessages: Message[]): DateGroup[] =
   return grouped;
 };
 
-
 const ChatScreen: React.FC = () => {
   const { roomId, chatRoomStatus, senderName } = useLocalSearchParams();
   const [chatData, setChatData] = useState<DateGroup[]>([]);
@@ -90,7 +89,7 @@ const ChatScreen: React.FC = () => {
   const config = Constants as NativeConstants;
   const { WS_BASE_URL } = config.expoConfig!.extra!;
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState<any>(null);
+  const [selectedImage, setSelectedImage] = useState<any>(null); // 미리보기 이미지
   const [roomInfo, setRoomInfo] = useState<{
     receiverId: number;
     receiverName: string;
@@ -132,7 +131,6 @@ const ChatScreen: React.FC = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      // ✅ 메시지랑 같이 room 정보 세팅
       if (res.data.roomInfo) {
         setRoomInfo({
           receiverId: res.data.roomInfo.receiverId,
@@ -147,16 +145,15 @@ const ChatScreen: React.FC = () => {
       const messages: Message[] = res.data.data.map((msg: any) =>
         mapMessage(msg, userId)
       );
-      setChatData((prev) => mergeMessages(prev, messages));
+      setChatData(prev => mergeMessages(prev, messages));
     } catch (err) {
       console.error("메시지 가져오기 실패", err);
     }
   };
 
-
   useEffect(() => { fetchMessages(); }, [roomId]);
 
-  // WebSocket 이벤트 기반 처리
+  // WebSocket
   useEffect(() => {
     if (!roomId || isPending) return;
 
@@ -164,7 +161,6 @@ const ChatScreen: React.FC = () => {
     socketRef.current = ws;
 
     ws.onopen = () => {
-      console.log("✅ WebSocket connected");
       ws.send(JSON.stringify({ websocket: "JOIN", chatRoomId: Number(roomId) }));
     };
 
@@ -172,77 +168,83 @@ const ChatScreen: React.FC = () => {
       let msg: any;
       try { msg = JSON.parse(event.data); } catch { return; }
 
-      switch (msg.event) {
-        case "connect":
-          console.log("✅ WebSocket 연결 완료");
-          break;
-        case "joined":
-          console.log(`✅ 방 참여 완료: ${msg.roomId}`);
-          break;
-        case "send": // 본인 메시지
-        case "receive": // 다른 사람 메시지
-          if (msg.messageId && msg.content) {
-            // 이미 내 로컬에서 optimistic update 한 메시지라면 추가 X
-            if (msg.senderId?.toString() === userId) return;
-
-            const message = mapMessage({
-              messageId: msg.messageId,
-              content: msg.content,
-              senderId: msg.sender ?? msg.senderId,
-              senderName: msg.senderName,
-              senderProfile: msg.senderProfile,
-              createdAt: msg.createdAt ?? new Date().toISOString(),
-            }, userId);
-            setChatData(prev => mergeMessages(prev, [message]));
-          }
-          break;
-        case "read":
-          console.log(`👀 메시지 읽음 처리: readerId=${msg.readerId}`);
-          // 읽음 상태 UI 업데이트 가능
-          break;
-        case "error":
-          console.error("❌ 서버 에러:", msg.message);
-          Alert.alert("에러", msg.message);
-          break;
-        default:
-          console.warn("⚠️ 알 수 없는 이벤트:", msg);
+      if ((msg.event === "send" || msg.event === "receive") && msg.messageId && msg.content) {
+        if (msg.senderId?.toString() === userId) return;
+        const message = mapMessage({
+          messageId: msg.messageId,
+          content: msg.content,
+          senderId: msg.sender ?? msg.senderId,
+          senderName: msg.senderName,
+          senderProfile: msg.senderProfile,
+          createdAt: msg.createdAt ?? new Date().toISOString(),
+        }, userId);
+        setChatData(prev => mergeMessages(prev, [message]));
       }
     };
 
-    ws.onerror = (error) => console.error("WebSocket 오류 발생:", error);
-    ws.onclose = (event) => console.log(`❌ WebSocket closed (code=${event.code})`);
-
+    ws.onerror = console.error;
+    ws.onclose = (event) => console.log(`WebSocket closed (code=${event.code})`);
     return () => ws.close();
   }, [roomId, token, userId, isPending]);
 
-  const handleSendMessage = (text: string) => {
-    if (socketRef.current && text.trim()) {
-      socketRef.current.send(JSON.stringify({
-        type: "TEXT",
-        websocket: "SEND",
-        content: text,
-        chatRoomId: Number(roomId),
-      }));
+  // 메시지 보내기
+  const handleSendMessage = async (textOrUrl: string) => {
+    if (!socketRef.current || !textOrUrl) return;
 
-      const now = new Date();
-      const myMessage: Message = {
-        id: Date.now().toString(),
-        text,
-        isOwn: true,
-        time: now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        date: formatDate(now),
-        senderId: userId,
-      };
-      setChatData(prev => mergeMessages(prev, [myMessage]));
+    const isImage = selectedImage && textOrUrl === selectedImage.uri;
+
+    if (isImage) {
+      const fileUrl = await handleUploadFile(selectedImage);
+      if (!fileUrl) return;
+      textOrUrl = fileUrl;
+      setSelectedImage(null);
     }
+
+    socketRef.current.send(JSON.stringify({
+      type: "TEXT",
+      websocket: "SEND",
+      content: textOrUrl,
+      chatRoomId: Number(roomId),
+    }));
+
+    const now = new Date();
+    const myMessage: Message = {
+      id: Date.now().toString(),
+      text: textOrUrl,
+      isOwn: true,
+      time: now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      date: formatDate(now),
+      senderId: userId,
+    };
+    setChatData(prev => mergeMessages(prev, [myMessage]));
   };
 
+  // 파일 업로드
+  const handleUploadFile = async (file: any) => {
+    if (!file) return null;
+    setIsUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", { uri: file.uri, name: file.name, type: file.mimeType || "image/jpeg" } as any);
+
+      const res = await api.post(`/s3/upload/chat?chatRoomId=${roomId}`, formData, {
+        headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
+      });
+      return res.data?.data?.fileUrl || null;
+    } catch (err) {
+      console.error(err);
+      Alert.alert("오류", "파일 업로드에 실패했습니다.");
+      return null;
+    } finally { setIsUploading(false); }
+  };
+
+  // 이미지 선택
   const handlePhotoPress = async () => {
     try {
-      const result = await DocumentPicker.getDocumentAsync({ type: ["application/pdf", "image/*"], copyToCacheDirectory: true });
-      if (!result.canceled && result.assets && result.assets.length > 0) setUploadedFile(result.assets[0]);
-    } catch { Alert.alert("오류", "파일 업로드 중 오류가 발생했습니다."); }
-    finally { setIsUploading(false); }
+      const result = await DocumentPicker.getDocumentAsync({ type: ["image/*"], copyToCacheDirectory: true });
+      if (!result.canceled && result.assets && result.assets.length > 0) setSelectedImage(result.assets[0]);
+    } catch (err) { console.error(err); }
   };
 
   // 자동 스크롤
@@ -284,8 +286,22 @@ const ChatScreen: React.FC = () => {
           </View>
         </ScrollView>
 
-        {isPending && <View style={styles.containerPendig}><MessageRequestDialog userName={senderName as string} onAccept={handleAccept} onReject={handleReject} /></View>}
-        {!isPending && <ChatInput onSendMessage={handleSendMessage} onPhotoPress={handlePhotoPress} />}
+        {isPending && (
+          <View style={styles.containerPendig}>
+            <MessageRequestDialog userName={senderName as string} onAccept={handleAccept} onReject={handleReject} />
+          </View>
+        )}
+
+        {!isPending && (
+          <ChatInput
+            onSendMessage={handleSendMessage}
+            onPhotoPress={handlePhotoPress}
+            selectedImage={selectedImage}
+            setSelectedImage={setSelectedImage}
+            handleUploadFile={handleUploadFile}
+            isUploading={isUploading}
+          />
+        )}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

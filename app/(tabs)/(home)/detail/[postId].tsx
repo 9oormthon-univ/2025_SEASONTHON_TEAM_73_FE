@@ -78,7 +78,7 @@ const PropertyDetailView: React.FC = () => {
           userId={postData.userId}
           nickname={postData.userName}
           badgeText={badge}
-          profileImageUrl={postData.imageUrl}
+          profileImageUrl={postData.userProfileImageUrl}
         />
         <PropertyTitle
           title={postData.title}

@@ -1,7 +1,7 @@
 import { useAuthStore } from "@/shared/store";
 import { router } from "expo-router";
-import React from "react";
-import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import { Image, Modal, StyleSheet, TouchableOpacity, View } from "react-native";
 import { MessageBubble } from "./MessageBubble";
 
 interface ChatMessageProps {
@@ -28,38 +28,52 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   receiverProfile,
 }) => {
   const myUserId = Number(useAuthStore().userId);
-
-  // ✅ 항상 "상대방" 프로필만 보여주기
   const otherProfile = myUserId === senderId ? receiverProfile : senderProfile;
   const otherId = myUserId === senderId ? receiverId : senderId;
+
+  const [modalVisible, setModalVisible] = useState(false);
 
   const handleProfilePress = () => {
     if (!otherId) return;
     router.push(`/chat/room/user-detail?userId=${otherId}`);
   };
 
+  // 이미지인지 판별
+  const isImage = text.startsWith("https://") && text.match(/\.(jpeg|jpg|png|gif)$/);
+
+  const handleImagePress = () => {
+    if (isImage) setModalVisible(true);
+  };
+
   return (
-    <View
-      style={[
-        styles.container,
-        isOwn ? styles.ownContainer : styles.otherContainer,
-      ]}
-    >
-      {/* 내가 보낸 메시지일 때는 아바타 안 보이고, 
-          상대방 메시지일 때는 상대방 프로필만 보이게 */}
+    <View style={[styles.container, isOwn ? styles.ownContainer : styles.otherContainer]}>
+      {/* 상대방 아바타 */}
       {!isOwn && (
         <TouchableOpacity onPress={handleProfilePress}>
           <Image
-            source={
-              otherProfile
-                ? { uri: otherProfile }
-                : require("@/assets/icons/friendIcon.png")
-            }
+            source={otherProfile ? { uri: otherProfile } : require("@/assets/icons/friendIcon.png")}
             style={styles.avatar}
           />
         </TouchableOpacity>
       )}
-      <MessageBubble text={text} isOwn={isOwn} time={time} />
+
+      {/* 메시지 또는 이미지 */}
+      {isImage ? (
+        <TouchableOpacity onPress={handleImagePress}>
+          <Image source={{ uri: text }} style={styles.chatImage} resizeMode="cover" />
+        </TouchableOpacity>
+      ) : (
+        <MessageBubble text={text} isOwn={isOwn} time={time} />
+      )}
+
+      {/* 이미지 확대 모달 */}
+      {isImage && (
+        <Modal visible={modalVisible} transparent animationType="fade">
+          <TouchableOpacity style={styles.modalBackground} onPress={() => setModalVisible(false)}>
+            <Image source={{ uri: text }} style={styles.modalImage} resizeMode="contain" />
+          </TouchableOpacity>
+        </Modal>
+      )}
     </View>
   );
 };
@@ -82,5 +96,21 @@ const styles = StyleSheet.create({
     height: 36,
     borderRadius: 18,
     marginRight: 8,
+  },
+  chatImage: {
+    width: 150,
+    height: 150,
+    borderRadius: 8,
+    marginVertical: 4,
+  },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.9)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalImage: {
+    width: "90%",
+    height: "70%",
   },
 });
