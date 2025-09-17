@@ -6,3 +6,4 @@ export { default as RoomListItem } from "./RoomListItem";
 export { default as RoomSearchFilter } from "./RoomSearchFilter";
 export { default as RoomTypeTab } from "./RoomTypeTab";
 export { default as TabHeader } from "./TabHeader";
+export { default as UserListItem } from "./UserListItem";
