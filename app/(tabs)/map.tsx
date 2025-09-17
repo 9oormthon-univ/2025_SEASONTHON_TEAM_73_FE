@@ -99,15 +99,27 @@ export default function MapFullScreen() {
               <Text style={styles.schedule}>{info.schedule}</Text>
             </View>
           </Pressable>
+
+            <View style={styles.noticeBox}>
+              <Text style={styles.noticeText}>
+                실제 위치와 200m정도 차이가 날 수 있습니다.
+              </Text>
+            </View>
         </Pressable>
       )}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.white },
   overlay: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 },
+  infoWrapper: {
+    position: "absolute",
+    bottom: 40,
+    left: 18,
+    right: 18,
+  },
   infoBox: {
     flexDirection: "row",
     top: 580,
@@ -116,7 +128,7 @@ const styles = StyleSheet.create({
     gap: 20,
     borderWidth: 1,
     borderColor: "#ddd",
-    backgroundColor: "#fff",
+    backgroundColor: COLORS.white,
     borderRadius: 8,
   },
   image: {
@@ -126,9 +138,41 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     paddingRight: 10,
   },
-  textBox: { flex: 1, flexShrink: 1 },
-  price: { fontWeight: "bold", fontSize: FONT_SIZE.b1, marginBottom: 4 },
-  desc: { color: COLORS.black, fontSize: FONT_SIZE.c1, marginBottom: 4 },
-  etc: { color: COLORS.black, fontSize: FONT_SIZE.c1, marginBottom: 4 },
-  schedule: { color: COLORS.black, fontSize: FONT_SIZE.c1 },
+  textBox: { 
+    flex: 1, 
+    flexShrink: 1,
+  },
+  price: { 
+    fontWeight: "bold", 
+    fontSize: FONT_SIZE.b1, 
+    marginTop: 4,
+    marginBottom: 8
+  },
+  desc: { 
+    color: COLORS.black, 
+    fontSize: FONT_SIZE.c1, 
+    marginBottom: 4 
+  },
+  etc: { 
+    color: COLORS.black, 
+    fontSize: FONT_SIZE.c1, 
+    marginBottom: 4 
+  },
+  schedule: { 
+    color: COLORS.black, 
+    fontSize: FONT_SIZE.c1 
+  },
+  noticeBox: {
+    top: 570,
+    padding: 6,
+    borderRadius: 6,
+    backgroundColor: COLORS.white,
+    alignItems: "center",
+  },
+  noticeText: {
+    fontSize: FONT_SIZE.c1,
+    color: COLORS.black,
+    opacity: 0.7,
+  },
 });
+
