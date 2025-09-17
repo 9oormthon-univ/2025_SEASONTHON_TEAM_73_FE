@@ -1,7 +1,6 @@
 import api from '@/shared/api/axios';
 import { Button } from '@/shared/components';
 import { InputField } from '@/shared/components/InputField/InputField';
-import { ActionButton } from '@/widgets/chat/room/ActionButton';
 import { PhoneNumberField } from '@/widgets/signUp/PhoneNumberField';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
@@ -90,15 +89,6 @@ export const PhoneVerificationForm: React.FC = () => {
         onPress={handleVerifyPress}
         disabled={!isCodeSent || !verificationCode || loading}
         style={{ marginTop: 457 }}
-      />
-      <ActionButton
-        title="다음2"
-        onPress={() => {
-          router.push({
-            pathname: '/signUp/lifeRhythm',
-            params: { token: "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI5IiwidXNlcklkIjo5LCJ0eXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3NTgwMzIxNzQsImV4cCI6MTc1ODM5MjE3NH0.3KaLmEkcstI0q_vCS2kJx2UAE4EbrU5IzNfMR3m6KJcZfPDHkjDIwrtMpvDaPIuBkpvttLuY2TtfiMlb3BtKwA" },
-          });
-          }}
       />
     </View>
   );

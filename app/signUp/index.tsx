@@ -5,7 +5,7 @@ import { RadioButtonGroup } from '@/widgets/signUp/RadioButtonGroup';
 import { ToggleSwitch } from '@/widgets/signUp/ToggleSwitch';
 import { router } from 'expo-router';
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export const RegistrationForm: React.FC = () => {
   const [form, setForm] = React.useState({
@@ -93,13 +93,10 @@ export const RegistrationForm: React.FC = () => {
         })
         .catch(error => {
             console.error('회원가입 실패:', error.response?.data || error.message);
+            Alert.alert("이미 존재하는 계정입니다")
         });
     } else {
       console.log('유효성 오류 있음:', errors);
-      router.push({
-                pathname: '/signUp/messageVerify',
-                params: { username: form.username ?? '' },
-            });
     }
   };
 
