@@ -29,7 +29,10 @@ export const LifestyleSurvey: React.FC = () => {
             <ToggleOff isOn={isWorkingStudying} onToggle={setIsWorkingStudying} />
         )}
 
-        <Button text='다음' size='lg'/>
+        <Button text='다음' 
+                size='lg' 
+                style={{ marginTop: 20 }} 
+                onPress={() => {}}/>
       </View>
     </ScrollView>
   );
