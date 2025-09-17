@@ -49,13 +49,15 @@ export const PhoneVerificationForm: React.FC = () => {
       });
 
       if (res.data.success) {
-        // ✅ 여기서 토큰 저장 가능 (예: SecureStore 또는 AsyncStorage)
-        console.log('회원가입 완료:', res.data.data);
-
         Alert.alert('인증 성공', '회원가입이 완료되었습니다.', [
           {
             text: '확인',
-            onPress: () => router.push('/signUp/complete' as any),
+            onPress: () => {
+                router.push({
+                    pathname: '/signUp/lifeRhythm',
+                    params: { token: res.data.data.accessToken ?? '' },
+                });
+            },
           },
         ]);
       } else {

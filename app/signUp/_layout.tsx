@@ -14,6 +14,7 @@ export default function SignUpLayout() {
       >
         <Stack.Screen name="index" options={{ headerShown: true, headerTitle: "회원가입" }}/>
         <Stack.Screen name="messageVerify" options={{ headerShown: true, headerTitle: "문자 인증" }}/>
+        <Stack.Screen name="lifeRhythm" options={{ headerShown: true, headerTitle: "성향 조사" }}/>
 
       </Stack>
     </FilterDefaultProvider>
