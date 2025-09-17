@@ -83,13 +83,13 @@ export const LifestyleSurvey: React.FC = () => {
         payload = {
             workType: "UNEMPLOYED",
             workDays: [],
-            wakeUpTimeWorkday: "--:--",
-            goWorkTime: "--:--",
-            comeHomeTime: "--:--",
-            sleepTimeWorkday: "--:--",
-            wakeUpTimeHoliday: wakeUpTime,
-            sleepTimeHoliday: sleepTime,
-            alarmCount: alarmTypeMap[selectedAlarmType]
+            wakeUpTimeWorkday: "",
+            goWorkTime: "",
+            comeHomeTime: "",
+            sleepTimeWorkday: "",
+            wakeUpTimeHoliday: wakeUpTime || "",
+            sleepTimeHoliday: sleepTime || "",
+            alarmCount: alarmTypeMap[selectedAlarmType] || "ONCE"
         };
     }
 
@@ -101,10 +101,9 @@ export const LifestyleSurvey: React.FC = () => {
                 'Authorization': `Bearer ${token}`
             }
         });
-        if(res.data.data.success) {
-            Alert.alert("회원가입이 완료되었습니다.");
-            router.replace("/onboarding");
-        }
+        
+        Alert.alert("회원가입이 완료되었습니다.");
+        router.replace("/onboarding");
         console.log('API 성공:', res.data);
     } catch (err) {
         console.error('API 실패:', err);
