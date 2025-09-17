@@ -83,7 +83,7 @@ export const UserDetailScreen: React.FC = () => {
             age={user.age}
             description={user.introduce}
             avatarUri={user.userProfileImage}
-            smoking={user.smoking}
+            smoking={user.etc?.smoking ?? '정보 없음'}
             userId={user.userId}
         />
 

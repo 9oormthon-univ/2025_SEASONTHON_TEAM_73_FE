@@ -73,7 +73,7 @@ export const UserDetailScreen: React.FC = () => {
         getUser();
     }, [])
 
-    //console.log(user.etc);
+    console.log(user);
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -83,7 +83,7 @@ export const UserDetailScreen: React.FC = () => {
             age={user.age}
             description={user.introduce}
             avatarUri={user.userProfileImage}
-            smoking={user.etc.smoking}
+            smoking={user.etc?.smoking ?? '정보 없음'}
             userId={user.userId}
         />
 
