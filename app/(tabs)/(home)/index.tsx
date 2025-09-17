@@ -70,10 +70,12 @@ function WelcomeSection({ isRoom }: { isRoom: boolean }) {
       <Text style={styles.welcomeTitle}>{getRoomText(isRoom)}</Text>
       <View style={styles.actionCards}>
         <ActionCard
+          onPress={() => router.push("/rooms")}
           image={require("@/assets/images/home-home.png")}
           title={`Sharer의${"\n"}집 보러가기`}
         />
         <ActionCard
+          onPress={() => router.push("/users")}
           image={require("@/assets/images/home-people.png")}
           title={`Joiner의${"\n"}프로필 보러가기`}
         />
@@ -82,9 +84,17 @@ function WelcomeSection({ isRoom }: { isRoom: boolean }) {
   );
 }
 
-function ActionCard({ image, title }: { image: any; title: string }) {
+function ActionCard({
+  image,
+  title,
+  onPress,
+}: {
+  image: any;
+  title: string;
+  onPress: () => void;
+}) {
   return (
-    <TouchableOpacity style={styles.actionCard}>
+    <TouchableOpacity style={styles.actionCard} onPress={onPress}>
       <Image source={image} style={styles.actionCardImage} />
       <Text style={styles.actionCardText}>{title}</Text>
     </TouchableOpacity>

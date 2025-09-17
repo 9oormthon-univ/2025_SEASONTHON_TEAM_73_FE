@@ -4,16 +4,13 @@ import { RoomListItem, RoomSearchFilter } from "@/widgets/home/components";
 import { useDefaultFilter } from "@/widgets/home/contexts";
 import { Room } from "@/widgets/home/types";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
-  Image,
   ListRenderItem,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 
@@ -50,10 +47,6 @@ export default function HomeScreen() {
     }
   }, [isFirstRender]);
 
-  const onCreatePress = () => {
-    router.push("/post-create");
-  };
-
   const allRooms = isFirstRender
     ? data?.pages.flatMap((page) => page.content) ?? []
     : searchResults;
@@ -89,7 +82,6 @@ export default function HomeScreen() {
   };
 
   const renderEmptyComponent = () => {
-    // 로딩 중이면 empty component를 표시하지 않음
     if (isLoading || isSearchLoading) {
       return null;
     }
@@ -118,11 +110,6 @@ export default function HomeScreen() {
   ) {
     return (
       <>
-        <View style={styles.searchContainer}>
-          <TouchableOpacity>
-            <Ionicons name="search" size={24} color={COLORS.black} />
-          </TouchableOpacity>
-        </View>
         <RoomSearchFilter />
         <View style={[styles.loadingContainer, { paddingBottom: SPACING.md }]}>
           <RoomListItem.Skeleton />
@@ -137,11 +124,6 @@ export default function HomeScreen() {
   if (isError) {
     return (
       <>
-        <View style={styles.searchContainer}>
-          <TouchableOpacity>
-            <Ionicons name="search" size={24} color={COLORS.black} />
-          </TouchableOpacity>
-        </View>
         <RoomSearchFilter />
         <View style={styles.errorContainer}>
           <Ionicons
@@ -161,15 +143,6 @@ export default function HomeScreen() {
 
   return (
     <>
-      <View style={styles.searchContainer}>
-        <Image
-          source={require("@/assets/icons/logo.png")}
-          style={styles.logo}
-        />
-        <TouchableOpacity>
-          <Ionicons name="search" size={24} color={COLORS.black} />
-        </TouchableOpacity>
-      </View>
       <RoomSearchFilter />
       <FlatList
         data={allRooms}

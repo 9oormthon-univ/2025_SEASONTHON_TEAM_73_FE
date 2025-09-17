@@ -31,7 +31,10 @@ export default function HomeLayout() {
         />
         <Stack.Screen
           name="rooms"
-          options={{ headerShown: true, headerTitle: "내가 찜한 방" }}
+          options={{
+            headerShown: true,
+            headerTitle: "Sharer 게시글",
+          }}
         />
       </Stack>
     </FilterDefaultProvider>
