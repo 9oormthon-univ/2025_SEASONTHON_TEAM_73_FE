@@ -1,4 +1,5 @@
 import { Chip } from "@/shared/components/chip/Chip";
+import { COLORS, FONT_SIZE } from "@/shared/styles";
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { TimePicker } from "./TimePicker";
@@ -61,10 +62,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   questionLabel: {
-    fontSize: 14,
+    fontSize: FONT_SIZE.b2,
     fontWeight: '400',
-    lineHeight: 21,
-    color: '#17171B',
+    color: COLORS.black,
   },
   chipContainer: {
     flexDirection: 'row',

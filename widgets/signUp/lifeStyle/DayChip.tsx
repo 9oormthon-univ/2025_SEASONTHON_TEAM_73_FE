@@ -1,3 +1,4 @@
+import { COLORS, FONT_SIZE } from '@/shared/styles';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
@@ -29,28 +30,27 @@ export const DayChip: React.FC<DayChipProps> = ({ day, isSelected, onPress }) =>
 
 const styles = StyleSheet.create({
   container: {
-    width: 36,
-    height: 36,
+    width: 40,
+    height: 40,
     borderRadius: 100,
     justifyContent: 'center',
     alignItems: 'center',
   },
   selected: {
-    backgroundColor: '#6287F2',
+    backgroundColor: COLORS.primary[90],
   },
   unselected: {
-    backgroundColor: '#E5E5E6',
+    backgroundColor: COLORS.gray[10],
   },
   text: {
-    fontSize: 16,
+    fontSize: FONT_SIZE.b2,
     fontWeight: '400',
-    lineHeight: 24,
     textAlign: 'center',
   },
   selectedText: {
-    color: '#FCFCFC',
+    color: COLORS.white,
   },
   unselectedText: {
-    color: '#B3B3B4',
+    color: COLORS.gray[30],
   },
 });

@@ -1,3 +1,4 @@
+import { COLORS, FONT_SIZE } from '@/shared/styles';
 import React, { useState } from 'react';
 import { FlatList, NativeScrollEvent, NativeSyntheticEvent, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { DropdownArrow } from './DropdownArrow';
@@ -104,7 +105,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 18,
     borderBottomWidth: 1,
-    borderBottomColor: '#F2F2F2',
+    borderBottomColor: COLORS.gray[5],
   },
   header: {
     flexDirection: 'row',
@@ -112,8 +113,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   label: {
-    fontSize: 14,
-    color: '#17171B',
+    fontSize: FONT_SIZE.b2,
+    color: COLORS.black,
   },
   timeContainer: {
     flexDirection: 'row',
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   timeText: {
-    fontSize: 16,
+    fontSize: FONT_SIZE.b1,
     fontWeight: '700',
   },
   expandedContainer: {
@@ -142,29 +143,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   itemText: {
-    fontSize: 16,
-    color: '#17171B',
+    fontSize: FONT_SIZE.b1,
+    color: COLORS.black,
   },
   selectedItem: {
     borderTopWidth: 0.5,
     borderBottomWidth: 0.5,
-    borderColor: '#878789',
+    borderColor: COLORS.gray[50],
     width: '100%',
   },
   selectedItemText: {
-    color: '#6287F2',
+    color: COLORS.primary[90],
     fontWeight: '700',
   },
   confirmButton: {
     marginTop: 10,
-    backgroundColor: '#6287F2',
+    backgroundColor: COLORS.primary[90],
     paddingVertical: 8,
     paddingHorizontal: 20,
     borderRadius: 8,
   },
   confirmText: {
-    color: '#fff',
-    fontSize: 14,
+    color: COLORS.white,
+    fontSize: FONT_SIZE.b2,
     fontWeight: '700',
   },
 });

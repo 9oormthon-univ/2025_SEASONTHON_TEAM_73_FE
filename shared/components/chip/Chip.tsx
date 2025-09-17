@@ -1,3 +1,4 @@
+import { COLORS, FONT_SIZE } from '@/shared/styles';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
@@ -36,22 +37,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   selected: {
-    backgroundColor: '#6287F2',
+    backgroundColor: COLORS.primary[90],
   },
   unselected: {
-    backgroundColor: '#FCFCFC',
+    backgroundColor: COLORS.white,
     borderWidth: 1,
-    borderColor: '#CBCBCB',
+    borderColor: COLORS.gray[20],
   },
   text: {
-    fontSize: 14,
+    fontSize: FONT_SIZE.b2,
     fontWeight: '400',
-    lineHeight: 21,
   },
   selectedText: {
-    color: '#FCFCFC',
+    color: COLORS.white,
   },
   unselectedText: {
-    color: '#CBCBCB',
+    color: COLORS.gray[20],
   },
 });

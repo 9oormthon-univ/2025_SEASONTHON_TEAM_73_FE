@@ -1,5 +1,5 @@
 import { Toggle } from '@/shared/components/toggle/Toggle';
-import { COLORS } from '@/shared/styles';
+import { COLORS, FONT_SIZE } from '@/shared/styles';
 import ToggleOff from '@/widgets/signUp/lifeStyle/ToggleOff';
 import ToggleOn from '@/widgets/signUp/lifeStyle/ToggleOn';
 import React, { useState } from 'react';
@@ -42,13 +42,12 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingHorizontal: 18,
     paddingBottom: 189,
-    backgroundColor:    COLORS.white,
+    backgroundColor: COLORS.white,
   },
   title: {
-    fontSize: 16,
+    fontSize: FONT_SIZE.b1,
     fontWeight: '700',
-    lineHeight: 24,
-    color: '#17171B',
+    color: COLORS.black,
     marginBottom: 16,
   },
   section: {
@@ -59,10 +58,9 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   sectionLabel: {
-    fontSize: 14,
+    fontSize: FONT_SIZE.b2,
     fontWeight: '700',
-    lineHeight: 21,
-    color: '#17171B',
+    color: COLORS.black,
   },
 });
 
