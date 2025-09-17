@@ -11,7 +11,7 @@ interface UserProfileSectionProps {
   age: number;
   description: string;
   avatarUri: string;
-  smoking?: boolean;
+  smoking: string;
 }
 
 export const UserDetailProfileSection: React.FC<UserProfileSectionProps> = ({
@@ -36,7 +36,7 @@ export const UserDetailProfileSection: React.FC<UserProfileSectionProps> = ({
             <View style={styles.userDetails}>
               <Text style={styles.name}>{name}</Text>
               <Text style={styles.genderAge}>
-                {gender}성・{age}세・{smoking ? "흡연" : "비흡연"}
+                {gender}성・{age}세・{smoking}
               </Text>
             </View>
 

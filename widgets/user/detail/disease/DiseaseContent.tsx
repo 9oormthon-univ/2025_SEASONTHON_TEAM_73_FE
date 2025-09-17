@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { InfoSection } from '../InfoSection';
 
 interface DiseaseContentProps {
-  disease: string;
+  disease: string | null;
 }
 
 export const DiseaseContent: React.FC<DiseaseContentProps> = ({ disease }) => {

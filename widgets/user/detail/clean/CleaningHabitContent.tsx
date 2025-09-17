@@ -1,9 +1,10 @@
+import { CleaningHabit } from '@/shared/types/userProfile';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { InfoSection } from '../InfoSection';
 
 interface CleaningHabitContentProps {
-  cleaningHabit: any;
+  cleaningHabit: CleaningHabit;
 }
 
 export const CleaningHabitContent: React.FC<CleaningHabitContentProps> = ({ cleaningHabit }) => {

@@ -1,9 +1,10 @@
+import { SoundSensitivity } from '@/shared/types/userProfile';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { InfoSection } from '../InfoSection';
 
 interface NoiseSensitivityContentProps {
-  soundSensitivity: any;
+  soundSensitivity: SoundSensitivity;
 }
 
 export const NoiseSensitivityContent: React.FC<NoiseSensitivityContentProps> = ({ soundSensitivity }) => {
