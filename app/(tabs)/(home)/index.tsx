@@ -1,11 +1,8 @@
-import { Skeleton } from "@/shared/components";
 import { useAuthStore } from "@/shared/store";
 import { COLORS, FONT_SIZE, FONTS, RADIUS, SPACING } from "@/shared/styles";
-import {
-  LikedUser,
-  RecommendUser,
-  useFetchDashboard,
-} from "@/widgets/home/api";
+import type { LikedUser } from "@/shared/types";
+import { RecommendUser, useFetchDashboard } from "@/widgets/home/api";
+import { UserListItem } from "@/widgets/home/components";
 import { getRoomText } from "@/widgets/home/constants";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -149,7 +146,7 @@ function FavoriteUsersSection({
       </View>
       <View>
         {isFetching ? (
-          <FavoriteUsersSkeleton />
+          <UserListItem.Skeleton />
         ) : likedUsers && likedUsers.length > 0 ? (
           likedUsers.map((user) => <UserListItem key={user.userId} {...user} />)
         ) : (
@@ -203,7 +200,7 @@ function RecommendSection({
         contentContainerStyle={{ gap: 16 }}
       >
         {isFetching ? (
-          <RecommendUsersSkeleton />
+          <UserListItem.Skeleton />
         ) : recommendedUsers && recommendedUsers.length > 0 ? (
           recommendedUsers.map((user) => (
             <UserProfileCard key={user.userId} {...user} />
@@ -269,52 +266,6 @@ function UserProfileCard({
   );
 }
 
-function FavoriteUsersSkeleton() {
-  return (
-    <View>
-      {[1, 2, 3].map((index) => (
-        <View
-          key={index}
-          style={{
-            paddingHorizontal: SPACING.normal,
-            paddingVertical: 16,
-            borderBottomWidth: 1,
-            borderBottomColor: COLORS.gray[10],
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 20,
-          }}
-        >
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
-            <Skeleton width={48} height={48} radius={24} />
-            <View
-              style={{ height: 44, justifyContent: "space-between", gap: 8 }}
-            >
-              <Skeleton width={80} height={16} />
-              <Skeleton width={120} height={12} />
-            </View>
-          </View>
-          <Skeleton width={24} height={24} radius={12} />
-        </View>
-      ))}
-    </View>
-  );
-}
-
-function RecommendUsersSkeleton() {
-  return (
-    <View style={styles.recommendSkeletonContainer}>
-      {[1, 2, 3].map((index) => (
-        <View key={index} style={styles.userProfileCard}>
-          <Skeleton width={80} height={80} radius={40} />
-          <Skeleton width={60} height={16} />
-        </View>
-      ))}
-    </View>
-  );
-}
-
 function EmptyRecommendUsersState({ isRoom }: { isRoom: boolean }) {
   return (
     <View style={styles.emptyRecommendContainer}>
@@ -349,70 +300,6 @@ function EmptyFavoriteUsersState() {
       >
         <Text style={styles.emptyStateButtonText}>사용자 둘러보기</Text>
       </TouchableOpacity>
-    </View>
-  );
-}
-
-function UserListItem({ nickname, gender, age, smoking }: LikedUser) {
-  return (
-    <View
-      style={{
-        paddingHorizontal: SPACING.normal,
-        paddingVertical: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: COLORS.gray[10],
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 20,
-      }}
-    >
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
-        <Image
-          style={{ width: 48, height: 48 }}
-          source={require("@/assets/images/profile-default.png")}
-        />
-        <View style={{ height: 44, justifyContent: "space-between" }}>
-          <Text
-            style={{
-              fontSize: FONT_SIZE.b1,
-              lineHeight: 24,
-              fontFamily: FONTS.bold,
-              color: COLORS.black,
-            }}
-          >
-            {nickname}
-          </Text>
-          <View style={{ flexDirection: "row", gap: 6 }}>
-            {[gender, age, smoking].map((item, index) => (
-              <React.Fragment key={index + item.toString()}>
-                <Text
-                  style={{
-                    fontSize: FONT_SIZE.c1,
-                    fontFamily: FONTS.regular,
-                    color: COLORS.gray[50],
-                  }}
-                >
-                  {item}
-                </Text>
-                {index !== [gender, age, smoking].length - 1 && (
-                  <View style={{ justifyContent: "center" }}>
-                    <View
-                      style={{
-                        width: 3,
-                        height: 3,
-                        backgroundColor: COLORS.gray[50],
-                        borderRadius: 100,
-                      }}
-                    />
-                  </View>
-                )}
-              </React.Fragment>
-            ))}
-          </View>
-        </View>
-      </View>
-      <Ionicons name="heart" size={24} color={COLORS.primary[90]} />
     </View>
   );
 }

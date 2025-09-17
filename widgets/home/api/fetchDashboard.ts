@@ -1,5 +1,5 @@
 import { REQUEST, userGet } from "@/shared/api";
-import { BaseResponse } from "@/shared/types";
+import { BaseResponse, LikedUser } from "@/shared/types";
 import { useQuery } from "@tanstack/react-query";
 
 type User = {
@@ -10,12 +10,6 @@ type User = {
 
 export type RecommendUser = User & {
   matchScore: number;
-  gender: string;
-  age: number;
-  smoking: boolean;
-};
-
-export type LikedUser = User & {
   gender: string;
   age: number;
   smoking: boolean;
