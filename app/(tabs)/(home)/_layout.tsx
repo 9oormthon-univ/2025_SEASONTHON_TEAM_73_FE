@@ -30,6 +30,10 @@ export default function HomeLayout() {
           options={{ headerShown: true, headerTitle: "내가 찜한 사용자" }}
         />
         <Stack.Screen
+          name="user-search"
+          options={{ headerShown: true, headerTitle: "Joiner 프로필" }}
+        />
+        <Stack.Screen
           name="rooms"
           options={{
             headerShown: true,

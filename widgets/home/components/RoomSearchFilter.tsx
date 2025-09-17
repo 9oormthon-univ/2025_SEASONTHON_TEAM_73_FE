@@ -1,11 +1,13 @@
 import { COLORS, SPACING } from "@/shared/styles";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { useDefaultFilter } from "../contexts";
+import FilterBottomSheet from "./FilterBottomSheet";
 
 export default function RoomSearchFilter() {
+  const [isFilterVisible, setIsFilterVisible] = useState(false);
+
   const {
     minDeposit,
     maxDeposit,
@@ -25,23 +27,38 @@ export default function RoomSearchFilter() {
     preferredGender !== null ||
     dongs.length > 0;
 
+  const handleFilterPress = () => {
+    setIsFilterVisible(true);
+  };
+
+  const handleFilterClose = () => {
+    setIsFilterVisible(false);
+  };
+
   return (
-    <View style={styles.filterContainer}>
-      <TouchableOpacity
-        style={[
-          styles.customButton,
-          applied ? styles.customButtonActive : styles.customButtonInactive,
-        ]}
-        onPress={() => router.push("/filter")}
-        activeOpacity={0.8}
-      >
-        <Ionicons
-          name="filter"
-          size={20}
-          color={applied ? COLORS.primary[90] : COLORS.gray[40]}
-        />
-      </TouchableOpacity>
-    </View>
+    <>
+      <View style={styles.filterContainer}>
+        <TouchableOpacity
+          style={[
+            styles.customButton,
+            applied ? styles.customButtonActive : styles.customButtonInactive,
+          ]}
+          onPress={handleFilterPress}
+          activeOpacity={0.8}
+        >
+          <Ionicons
+            name="filter"
+            size={20}
+            color={applied ? COLORS.primary[90] : COLORS.gray[40]}
+          />
+        </TouchableOpacity>
+      </View>
+
+      <FilterBottomSheet
+        isVisible={isFilterVisible}
+        onClose={handleFilterClose}
+      />
+    </>
   );
 }
 

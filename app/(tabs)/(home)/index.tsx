@@ -75,7 +75,7 @@ function WelcomeSection({ isRoom }: { isRoom: boolean }) {
           title={`Sharer의${"\n"}집 보러가기`}
         />
         <ActionCard
-          onPress={() => router.push("/users")}
+          onPress={() => router.push("/user-search")}
           image={require("@/assets/images/home-people.png")}
           title={`Joiner의${"\n"}프로필 보러가기`}
         />
