@@ -1,7 +1,11 @@
 import { Skeleton } from "@/shared/components";
 import { useAuthStore } from "@/shared/store";
 import { COLORS, FONT_SIZE, FONTS, RADIUS, SPACING } from "@/shared/styles";
-import { LikedUser, useFetchDashboard, User } from "@/widgets/home/api";
+import {
+  LikedUser,
+  RecommendUser,
+  useFetchDashboard,
+} from "@/widgets/home/api";
 import { getRoomText } from "@/widgets/home/constants";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -163,7 +167,7 @@ function RecommendSection({
 }: {
   isRoom: boolean;
   userName: string;
-  recommendedUsers?: User[];
+  recommendedUsers?: RecommendUser[];
   isFetching: boolean;
 }) {
   return (
@@ -211,14 +215,56 @@ function RecommendSection({
   );
 }
 
-function UserProfileCard({ nickname, profileImageUrl }: User) {
+function UserProfileCard({
+  nickname,
+  profileImageUrl,
+  matchScore,
+  gender,
+  age,
+  smoking,
+}: RecommendUser) {
   return (
     <View style={styles.userProfileCard}>
-      <Image
-        source={{ uri: profileImageUrl }}
-        style={styles.userProfileCardImage}
-      />
-      <Text style={styles.userProfileCardName}>{nickname}</Text>
+      <Text style={styles.userProfileCardTitle}>
+        나와 {matchScore}% 잘 맞아요!
+      </Text>
+      <View style={styles.userProfileInfoWrapper}>
+        <Image
+          source={{ uri: profileImageUrl }}
+          style={styles.userProfileCardImage}
+        />
+        <View>
+          <Text style={styles.userProfileCardName}>{nickname}</Text>
+          <View style={{ flexDirection: "row", gap: 6 }}>
+            {[gender, age, smoking].map((item, index) => (
+              <>
+                <Text
+                  key={index}
+                  style={{
+                    fontSize: FONT_SIZE.c1,
+                    fontFamily: FONTS.regular,
+                    color: COLORS.gray[50],
+                  }}
+                >
+                  {item}
+                </Text>
+                {index !== [gender, age, smoking].length - 1 && (
+                  <View style={{ justifyContent: "center" }}>
+                    <View
+                      style={{
+                        width: 3,
+                        height: 3,
+                        backgroundColor: COLORS.gray[50],
+                        borderRadius: 100,
+                      }}
+                    />
+                  </View>
+                )}
+              </>
+            ))}
+          </View>
+        </View>
+      </View>
     </View>
   );
 }
@@ -472,7 +518,6 @@ const styles = StyleSheet.create({
     color: COLORS.primary[90],
   },
 
-  // 찜한 사용자 섹션 스타일
   favoriteContainer: {
     paddingHorizontal: SPACING.normal,
   },
@@ -511,25 +556,44 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.normal,
   },
   userProfileCard: {
+    alignSelf: "flex-start",
     padding: 20,
     borderRadius: RADIUS.xs,
-    backgroundColor: COLORS.gray[5],
     gap: 17,
+    borderWidth: 1,
+    borderColor: COLORS.gray[10],
+    shadowColor: "#00000033",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  userProfileCardTitle: {
+    color: COLORS.primary[90],
+    fontSize: FONT_SIZE.b1,
+    fontFamily: FONTS.bold,
+  },
+  userProfileInfoWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
   },
   userProfileCardImage: {
-    width: 80,
-    height: 80,
+    width: 56,
+    height: 56,
     borderRadius: 100,
   },
   userProfileCardName: {
-    fontSize: FONT_SIZE.b1,
+    fontSize: FONT_SIZE.b2,
     lineHeight: 24,
-    fontFamily: FONTS.regular,
+    fontFamily: FONTS.bold,
     color: COLORS.black,
-    textAlign: "center",
+    textAlign: "left",
   },
-
-  // 추천 사용자 스켈레톤 스타일
+  userProfileCardDes: {
+    color: COLORS.gray[50],
+    fontSize: FONT_SIZE.c1,
+    fontFamily: FONTS.regular,
+  },
   recommendSkeletonContainer: {
     flexDirection: "row",
     gap: SPACING.sm,
