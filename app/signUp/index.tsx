@@ -96,6 +96,10 @@ export const RegistrationForm: React.FC = () => {
         });
     } else {
       console.log('유효성 오류 있음:', errors);
+      router.push({
+                pathname: '/signUp/messageVerify',
+                params: { username: form.username ?? '' },
+            });
     }
   };
 
