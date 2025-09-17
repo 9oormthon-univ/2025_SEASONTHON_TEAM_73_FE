@@ -1,3 +1,4 @@
+import { Button } from '@/shared/components';
 import { Toggle } from '@/shared/components/toggle/Toggle';
 import { COLORS, FONT_SIZE } from '@/shared/styles';
 import ToggleOff from '@/widgets/signUp/lifeStyle/ToggleOff';
@@ -27,6 +28,8 @@ export const LifestyleSurvey: React.FC = () => {
           ) : (
             <ToggleOff isOn={isWorkingStudying} onToggle={setIsWorkingStudying} />
         )}
+
+        <Button text='다음' size='lg'/>
       </View>
     </ScrollView>
   );
@@ -41,7 +44,6 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingTop: 20,
     paddingHorizontal: 18,
-    paddingBottom: 189,
     backgroundColor: COLORS.white,
   },
   title: {
