@@ -1,6 +1,7 @@
 import api from '@/shared/api/axios';
 import { Button } from '@/shared/components';
 import { Toggle } from '@/shared/components/toggle/Toggle';
+import { alarmTypeMap, workTypeMap } from '@/shared/constants/maps';
 import { COLORS, FONT_SIZE } from '@/shared/styles';
 import ToggleOff from '@/widgets/signUp/lifeStyle/ToggleOff';
 import ToggleOn from '@/widgets/signUp/lifeStyle/ToggleOn';
@@ -8,30 +9,51 @@ import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+interface ToggleOnData {
+  selectedWorkType: string;
+  selectedDays: string[];
+  wakeUpTime: string;
+  leaveTime: string;
+  returnTime: string;
+  sleepTime: string;
+  holidayWakeUpTime: string;
+  holidaySleepTime: string;
+  selectedAlarmType: string;
+}
+
+interface ToggleOffData {
+  wakeUpTime: string;
+  sleepTime: string;
+  selectedAlarmType: string;
+}
+
+
 export const LifestyleSurvey: React.FC = () => {
   const [isWorkingStudying, setIsWorkingStudying] = useState(false);
   const { token } = useLocalSearchParams<{ token: string }>();
 
   // ToggleOn 관련 상태
-  const [toggleOnData, setToggleOnData] = useState<any>({});
+  const [toggleOnData, setToggleOnData] = useState<ToggleOnData>({
+    selectedWorkType: '',
+    selectedDays: [],
+    wakeUpTime: '',
+    leaveTime: '',
+    returnTime: '',
+    sleepTime: '',
+    holidayWakeUpTime: '',
+    holidaySleepTime: '',
+    selectedAlarmType: ''
+  });
+
   // ToggleOff 관련 상태
-  const [toggleOffData, setToggleOffData] = useState<any>({});
+  const [toggleOffData, setToggleOffData] = useState<ToggleOffData>({
+    wakeUpTime: '',
+    sleepTime: '',
+    selectedAlarmType: ''
+  });
 
   const handleSubmit = async () => {
     let payload;
-    // 백엔드 요구사항에 맞게 변경
-    const workTypeMap: Record<string, string> = {
-        '회사원': 'OFFICE',
-        '학생': 'STUDENT',
-        '재택근무': 'REMOTE',
-        '프리랜서': 'FREELANCER'
-    };
-
-    const alarmTypeMap: Record<string, string> = {
-        '1회': 'ONCE',
-        '2회': 'TWICE',
-        '3회 이상': 'THREE_OR_MORE'
-    }
 
     if (isWorkingStudying) {
         // 직업/학생 있는 경우
@@ -60,8 +82,13 @@ export const LifestyleSurvey: React.FC = () => {
 
         payload = {
             workType: "UNEMPLOYED",
-            wakeUpTime,
-            sleepTime,
+            workDays: [],
+            wakeUpTimeWorkday: "--:--",
+            goWorkTime: "--:--",
+            comeHomeTime: "--:--",
+            sleepTimeWorkday: "--:--",
+            wakeUpTimeHoliday: wakeUpTime,
+            sleepTimeHoliday: sleepTime,
             alarmCount: alarmTypeMap[selectedAlarmType]
         };
     }
