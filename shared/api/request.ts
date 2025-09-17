@@ -7,4 +7,6 @@ export const REQUEST = {
   POST_CREATE: "/posts",
   CERTIFICATE_UPLOAD: "/certificate/upload",
   USER_VERIFY: "/certificate/upload",
+  DASHBOARD_NOROOM: "/dashboard/noroom",
+  DASHBOARD_ROOM: "/dashboard/hasroom",
 };

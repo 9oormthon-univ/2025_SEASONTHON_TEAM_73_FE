@@ -1,51 +1,75 @@
-import { ROUTES, TabsUI, type TabsArray } from "@/widgets/menu";
-import { Tabs, router, type Href } from "expo-router";
-
-const tabs: TabsArray = [
-  {
-    name: "My",
-    route: ROUTES.E,
-    action: () => router.push(ROUTES.E as Href),
-  },
-  {
-    name: "채팅",
-    route: ROUTES.B,
-    action: () => router.push(ROUTES.B as Href),
-  },
-  {
-    name: "센터",
-    route: ROUTES.C,
-    action: () => router.push(ROUTES.C as Href),
-  },
-  {
-    name: "지도",
-    route: ROUTES.D,
-    action: () => router.push(ROUTES.D as Href),
-  },
-  {
-    name: "홈",
-    route: ROUTES.A,
-    action: () => router.push(ROUTES.A as Href),
-  },
-];
+import { COLORS, FONTS } from "@/shared/styles";
+import { Ionicons } from "@expo/vector-icons";
+import { Tabs, usePathname } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeLayout() {
+  const isUserScreen = usePathname().includes("/users");
+  const isRoomScreen = usePathname().includes("/rooms");
+  const isUserSearchScreen = usePathname().includes("/user-search");
+
   return (
-    <>
+    <SafeAreaView style={{ flex: 1 }}>
       <Tabs
         screenOptions={{
           headerShown: false,
-          tabBarStyle: { display: "none" },
+          tabBarActiveTintColor: COLORS.primary[90],
+          tabBarInactiveTintColor: COLORS.gray[30],
+          tabBarStyle: {
+            display:
+              isUserScreen || isRoomScreen || isUserSearchScreen
+                ? "none"
+                : "flex",
+            borderTopWidth: 1,
+            height: 68,
+            paddingTop: 4,
+            paddingHorizontal: 20,
+            borderTopColor: COLORS.gray[10],
+          },
+          tabBarLabelStyle: {
+            fontSize: 11,
+            fontFamily: FONTS.medium,
+            includeFontPadding: false,
+          },
         }}
       >
-        <Tabs.Screen name="(home)" />
-        <Tabs.Screen name="(chat)" />
-        <Tabs.Screen name="map" />
-        <Tabs.Screen name="user" />
+        <Tabs.Screen
+          name="(home)"
+          options={{
+            tabBarLabel: "홈",
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="home" color={color} size={size} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="map"
+          options={{
+            tabBarLabel: "지도",
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="location" color={color} size={size} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="chat"
+          options={{
+            tabBarLabel: "채팅",
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="chatbubble" color={color} size={size} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="user"
+          options={{
+            tabBarLabel: "My",
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="person" color={color} size={size} />
+            ),
+          }}
+        />
       </Tabs>
-
-      {/* 커스텀 탭바 */}
-      <TabsUI tabs={tabs} />
-    </>
+    </SafeAreaView>
   );
 }

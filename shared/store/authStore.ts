@@ -16,6 +16,18 @@ interface AuthState extends UserToken {
   userId: string;
   setUserName: (name: string) => void;
   setUserId: (id: string) => void;
+  isRoom: boolean;
+  isCertified: boolean;
+  verified: boolean;
+  nickname: string;
+  setIsRoom: (isRoom: boolean) => void;
+  setIsCertified: (isCertified: boolean) => void;
+  setVerified: (verified: boolean) => void;
+  setNickname: (nickname: string) => void;
+  isPersonalitySurveyCompleted: boolean;
+  setIsPersonalitySurveyCompleted: (
+    isPersonalitySurveyCompleted: boolean
+  ) => void;
 }
 
 export const useAuthStore = create(
@@ -42,6 +54,22 @@ export const useAuthStore = create(
       userId: "",
       setUserName: (name: string) => set(() => ({ userName: name })),
       setUserId: (id: string) => set(() => ({ userId: id })),
+      isRoom: false,
+      isCertified: false,
+      verified: false,
+      nickname: "",
+      setIsRoom: (isRoom: boolean) => set(() => ({ isRoom: isRoom })),
+      setIsCertified: (isCertified: boolean) =>
+        set(() => ({ isCertified: isCertified })),
+      setVerified: (verified: boolean) => set(() => ({ verified: verified })),
+      setNickname: (nickname: string) => set(() => ({ nickname: nickname })),
+      isPersonalitySurveyCompleted: false,
+      setIsPersonalitySurveyCompleted: (
+        isPersonalitySurveyCompleted: boolean
+      ) =>
+        set(() => ({
+          isPersonalitySurveyCompleted: isPersonalitySurveyCompleted,
+        })),
     }),
     {
       name: "auth-store",

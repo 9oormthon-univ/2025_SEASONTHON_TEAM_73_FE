@@ -1,11 +1,14 @@
 import { useAuthStore } from "@/shared/store";
 import { useLikeStore } from "@/shared/store/likeStore";
+import { COLORS } from "@/shared/styles";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
-import LoadingScreen from "./loading"; // 로딩화면 컴포넌트
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { LoadingScreen } from "./loading"; // 로딩화면 컴포넌트
 
 SplashScreen.preventAutoHideAsync(); // 스플래시 화면 유지
 
@@ -33,13 +36,14 @@ export default function RootLayout() {
       if (fontsLoaded) {
         await SplashScreen.hideAsync(); // 스플래시 숨기기
         // 여기에서 초기 데이터 fetch, 토큰 검증 등 할 수 있음
-        await new Promise(resolve => setTimeout(resolve, 1000)); // 테스트용 지연
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // 테스트용 지연
         setAppReady(true);
       }
     };
 
     prepareApp();
     fetchLikes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fontsLoaded]);
 
   if (!appReady) {
@@ -50,22 +54,27 @@ export default function RootLayout() {
   const queryClient = new QueryClient();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
-        <Stack.Protected guard={!isLoggedIn}>
-          <Stack.Screen name="onboarding" />
-        </Stack.Protected>
-        <Stack.Protected guard={!isLoggedIn}>
-          <Stack.Screen name="login" />
-        </Stack.Protected>
-        <Stack.Protected guard={isLoggedIn}>
-          <Stack.Screen name="(tabs)" />
-        </Stack.Protected>
-      </Stack>
-    </QueryClientProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <BottomSheetModalProvider>
+        <QueryClientProvider client={queryClient}>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: COLORS.white },
+            }}
+          >
+            <Stack.Protected guard={!isLoggedIn}>
+              <Stack.Screen name="onboarding" />
+            </Stack.Protected>
+            <Stack.Protected guard={!isLoggedIn}>
+              <Stack.Screen name="login" />
+            </Stack.Protected>
+            <Stack.Protected guard={isLoggedIn}>
+              <Stack.Screen name="(tabs)" />
+            </Stack.Protected>
+          </Stack>
+        </QueryClientProvider>
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 }

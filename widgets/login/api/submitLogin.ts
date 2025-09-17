@@ -9,6 +9,11 @@ type SubmitLoginResponse = BaseResponse<{
   accessToken: string;
   refreshToken: string;
   userId: number;
+  isRoom: boolean;
+  isCertified: boolean;
+  verified: boolean;
+  nickname: string;
+  isPersonalitySurveyCompleted: boolean;
 }>;
 
 const submitLogin = async (data: LoginFormData) => {
@@ -22,13 +27,27 @@ const submitLogin = async (data: LoginFormData) => {
 export const useSubmitLogin = () => {
   return useMutation({
     mutationFn: submitLogin,
-    onSuccess: ({ accessToken, refreshToken, userId }) => {
+    onSuccess: ({
+      accessToken,
+      refreshToken,
+      userId,
+      isRoom,
+      isCertified,
+      verified,
+      nickname,
+      isPersonalitySurveyCompleted,
+    }) => {
       console.log(accessToken, refreshToken, userId);
       useAuthStore.setState({
         isLoggedIn: true,
         accessToken,
         refreshToken,
         userId: userId.toString(),
+        isRoom,
+        isCertified,
+        verified,
+        nickname,
+        isPersonalitySurveyCompleted,
       });
     },
   });
