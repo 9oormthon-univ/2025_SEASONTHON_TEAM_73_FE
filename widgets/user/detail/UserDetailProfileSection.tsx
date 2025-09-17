@@ -1,5 +1,5 @@
 import { useLikeStore } from "@/shared/store/likeStore";
-import { COLORS } from "@/shared/styles";
+import { COLORS, FONT_SIZE } from "@/shared/styles";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -11,7 +11,7 @@ interface UserProfileSectionProps {
   age: number;
   description: string;
   avatarUri: string;
-  smoking: string;
+  smoking?: string;
 }
 
 export const UserDetailProfileSection: React.FC<UserProfileSectionProps> = ({
@@ -65,7 +65,7 @@ export const UserDetailProfileSection: React.FC<UserProfileSectionProps> = ({
 const styles = StyleSheet.create({
   container: {
     borderBottomWidth: 3,
-    borderBottomColor: "#F2F2F2",
+    borderBottomColor: COLORS.white,
     width: "100%",
   },
   profileContainer: {
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: "#F2F2F2",
+    backgroundColor: COLORS.gray[5],
   },
   userDetails: {
     flex: 1,
@@ -96,20 +96,20 @@ const styles = StyleSheet.create({
     padding: 6,
   },
   name: {
-    color: "#17171B",
-    fontSize: 16,
+    color: COLORS.black,
+    fontSize: FONT_SIZE.b1,
     fontWeight: "700",
+    marginBottom: 4,
   },
   genderAge: {
-    color: "#878789",
-    fontSize: 12,
+    color: COLORS.gray[50],
+    fontSize: FONT_SIZE.c1,
   },
   descriptionContainer: {
     marginTop: 10,
   },
   description: {
-    color: "#17171B",
-    fontSize: 14,
-    lineHeight: 21,
+    color: COLORS.black,
+    fontSize: FONT_SIZE.b2,
   },
 });
