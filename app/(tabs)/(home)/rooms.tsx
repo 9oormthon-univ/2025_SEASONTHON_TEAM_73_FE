@@ -1,11 +1,9 @@
-import { Header } from "@/shared/components";
+import { EmptyStatus, Header } from "@/shared/components";
 import { COLORS, FONTS, SPACING } from "@/shared/styles";
-import { useFetchPostList, useSubmitPostSearch } from "@/widgets/home/api";
+import { useSubmitPostSearch } from "@/widgets/home/api";
 import { RoomListItem, RoomSearchFilter } from "@/widgets/home/components";
-import { FILTER_DEFAULT } from "@/widgets/home/constants";
 import { useDefaultFilter } from "@/widgets/home/contexts";
 import { Room } from "@/widgets/home/types";
-import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -15,26 +13,16 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
   StyleSheet,
-  Text,
   View,
 } from "react-native";
 
 export default function HomeScreen() {
-  const { defaultFilter, userFilter, resetFilter } = useDefaultFilter();
+  const { roomFilter, userFilter, resetFilter } = useDefaultFilter();
   const [searchResults, setSearchResults] = useState<Room[]>([]);
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const scrollY = useRef(new Animated.Value(0)).current;
   const lastScrollY = useRef(0);
-
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    isError,
-  } = useFetchPostList();
 
   const { mutate: submitPostSearch, isPending: isSearchLoading } =
     useSubmitPostSearch();
@@ -44,14 +32,14 @@ export default function HomeScreen() {
   }, [resetFilter]);
 
   useEffect(() => {
-    console.log("필터 변경 감지:", defaultFilter);
+    console.log("필터 변경 감지:", roomFilter);
     if (!isFirstRender) {
-      const isFilterChanged =
-        JSON.stringify(defaultFilter) !== JSON.stringify(FILTER_DEFAULT);
+      const hasActiveFilters =
+        Object.keys(roomFilter).length > 0 || userFilter !== null;
 
-      if (isFilterChanged) {
+      if (hasActiveFilters) {
         const searchData = {
-          ...defaultFilter,
+          ...roomFilter,
           userFilter: userFilter,
         };
         console.log("POST 요청으로 검색 실행:", searchData);
@@ -62,11 +50,11 @@ export default function HomeScreen() {
           },
         });
       } else {
-        console.log("필터가 기본값이므로 검색하지 않음");
+        console.log("필터가 비어있으므로 검색하지 않음");
         setSearchResults([]);
       }
     }
-  }, [defaultFilter, userFilter, submitPostSearch, isFirstRender]);
+  }, [roomFilter, userFilter, submitPostSearch, isFirstRender]);
 
   useEffect(() => {
     if (isFirstRender) {
@@ -74,24 +62,11 @@ export default function HomeScreen() {
     }
   }, [isFirstRender]);
 
-  // 필터가 기본값인지 확인
-  const isDefaultFilter =
-    JSON.stringify(defaultFilter) === JSON.stringify(FILTER_DEFAULT);
-
-  const allRooms =
-    isFirstRender || isDefaultFilter
-      ? data?.pages.flatMap((page) => page.content) ?? []
-      : searchResults;
+  const allRooms = searchResults;
 
   const handleLoadMore = () => {
-    if (
-      (isFirstRender || isDefaultFilter) &&
-      hasNextPage &&
-      !isFetchingNextPage
-    ) {
-      fetchNextPage();
-    }
-    // TODO: 필터 검색 결과에 대한 페이지네이션 구현 필요
+    // TODO: 페이지네이션 구현 필요
+    console.log("더 많은 데이터 로드 요청");
   };
 
   const renderItem: ListRenderItem<Room> = ({ item }) => (
@@ -99,15 +74,7 @@ export default function HomeScreen() {
   );
 
   const renderFooter = () => {
-    if ((isFirstRender || isDefaultFilter) && isFetchingNextPage) {
-      return (
-        <View style={styles.footerLoader}>
-          <ActivityIndicator size="small" color={COLORS.black} />
-        </View>
-      );
-    }
-
-    if (!isDefaultFilter && isSearchLoading) {
+    if (isSearchLoading) {
       return (
         <View style={styles.footerLoader}>
           <ActivityIndicator size="small" color={COLORS.black} />
@@ -119,23 +86,16 @@ export default function HomeScreen() {
   };
 
   const renderEmptyComponent = () => {
-    if (isLoading || isSearchLoading) {
+    if (isSearchLoading) {
       return null;
     }
 
     return (
-      <View style={styles.emptyContainer}>
-        <Ionicons
-          name="home-outline"
-          size={48}
-          color={COLORS.gray[30]}
-          style={styles.emptyIcon}
-        />
-        <Text style={styles.emptyText}>방이 없어요</Text>
-        <Text style={styles.emptySubText}>
-          조건에 맞는 방을 찾을 수 없습니다
-        </Text>
-      </View>
+      <EmptyStatus
+        title="방이 없어요"
+        description="조건에 맞는 방을 찾을 수 없습니다"
+        icon="home-outline"
+      />
     );
   };
 
@@ -186,10 +146,7 @@ export default function HomeScreen() {
     </Animated.View>
   );
 
-  if (
-    isLoading ||
-    (!isDefaultFilter && isSearchLoading && searchResults.length === 0)
-  ) {
+  if (isSearchLoading && searchResults.length === 0) {
     return (
       <View style={styles.container}>
         <RoomSearchFilter scrollY={scrollY} isHeaderVisible={isHeaderVisible} />
@@ -204,27 +161,6 @@ export default function HomeScreen() {
           <RoomListItem.Skeleton />
           <RoomListItem.Skeleton />
           <RoomListItem.Skeleton />
-        </View>
-      </View>
-    );
-  }
-
-  if (isError) {
-    return (
-      <View style={styles.container}>
-        <RoomSearchFilter scrollY={scrollY} isHeaderVisible={isHeaderVisible} />
-        {renderHeader()}
-        <View style={[styles.errorContainer, { paddingTop: 60 }]}>
-          <Ionicons
-            name="alert-circle-outline"
-            size={48}
-            color={COLORS.gray[30]}
-            style={styles.errorIcon}
-          />
-          <Text style={styles.errorText}>에러가 발생했어요</Text>
-          <Text style={styles.errorSubText}>
-            방들을 받아오던 중 문제가 발생했습니다
-          </Text>
         </View>
       </View>
     );
@@ -284,28 +220,6 @@ const styles = StyleSheet.create({
   footerLoader: {
     paddingVertical: SPACING.md,
     alignItems: "center",
-  },
-  emptyContainer: {
-    height: 500,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  emptyIcon: {
-    marginBottom: SPACING.xs,
-  },
-  emptyText: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: COLORS.gray[70],
-    textAlign: "center",
-    marginBottom: SPACING.xs,
-    fontFamily: FONTS.medium,
-  },
-  emptySubText: {
-    fontSize: 14,
-    color: COLORS.gray[50],
-    textAlign: "center",
-    fontFamily: FONTS.regular,
   },
   errorIcon: {
     marginBottom: SPACING.xs,

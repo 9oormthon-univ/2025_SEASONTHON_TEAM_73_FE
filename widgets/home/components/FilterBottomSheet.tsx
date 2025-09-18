@@ -20,17 +20,11 @@ export default function FilterBottomSheet({
   onClose,
 }: FilterBottomSheetProps) {
   const {
-    minDeposit,
-    maxDeposit,
-    minMonthlyCost,
-    maxMonthlyCost,
-    roomTypes,
+    roomFilter,
     setRoomTypes,
-    preferredGender,
     setGenders,
     setDepositRange,
     setRentRange,
-    selectedRegions,
     setSelectedRegions,
     userFilter,
     updateUserFilter,
@@ -38,17 +32,22 @@ export default function FilterBottomSheet({
 
   const [activeTab, setActiveTab] = useState<TabType>("preference");
   const [localDeposit, setLocalDeposit] = useState<[number, number]>([
-    minDeposit,
-    maxDeposit,
+    roomFilter.minDeposit || 0,
+    roomFilter.maxDeposit || 100000,
   ]);
   const [localRent, setLocalRent] = useState<[number, number]>([
-    minMonthlyCost,
-    maxMonthlyCost,
+    roomFilter.minMonthlyCost || 0,
+    roomFilter.maxMonthlyCost || 100000,
   ]);
-  const [localRoomTypes, setLocalRoomTypes] = useState<string[]>(roomTypes);
-  const [localGender, setLocalGender] = useState<string[]>(preferredGender);
-  const [localSelectedRegions, setLocalSelectedRegions] =
-    useState(selectedRegions);
+  const [localRoomTypes, setLocalRoomTypes] = useState<string[]>(
+    roomFilter.roomTypes || []
+  );
+  const [localGender, setLocalGender] = useState<string[]>(
+    roomFilter.preferredGender || []
+  );
+  const [localSelectedRegions, setLocalSelectedRegions] = useState(
+    roomFilter.selectedRegions || []
+  );
   const [localUserFilter, setLocalUserFilter] = useState(userFilter || {});
 
   const handleApply = () => {
