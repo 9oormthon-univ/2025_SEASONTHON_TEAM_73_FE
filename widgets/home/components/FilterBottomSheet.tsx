@@ -32,6 +32,8 @@ export default function FilterBottomSheet({
     setRentRange,
     selectedRegions,
     setSelectedRegions,
+    userFilter,
+    updateUserFilter,
   } = useDefaultFilter();
 
   const [activeTab, setActiveTab] = useState<TabType>("preference");
@@ -47,6 +49,7 @@ export default function FilterBottomSheet({
   const [localGender, setLocalGender] = useState<string[]>(preferredGender);
   const [localSelectedRegions, setLocalSelectedRegions] =
     useState(selectedRegions);
+  const [localUserFilter, setLocalUserFilter] = useState(userFilter || {});
 
   const handleApply = () => {
     setDepositRange(localDeposit[0], localDeposit[1]);
@@ -54,6 +57,7 @@ export default function FilterBottomSheet({
     setRoomTypes(localRoomTypes);
     setGenders(localGender as Gender[]);
     setSelectedRegions(localSelectedRegions);
+    updateUserFilter(localUserFilter);
   };
 
   const handleDepositChange = useCallback(
@@ -79,7 +83,20 @@ export default function FilterBottomSheet({
       <View style={styles.contentContainer}>
         <TabHeader activeTab={activeTab} onTabChange={setActiveTab} />
 
-        {activeTab === "preference" && <PreferenceTab />}
+        {activeTab === "preference" && (
+          <PreferenceTab
+            userFilter={localUserFilter}
+            onFilterChange={(key, value) => {
+              const newFilter = { ...localUserFilter };
+              if (value === undefined) {
+                delete newFilter[key as keyof typeof newFilter];
+              } else {
+                (newFilter as any)[key] = value;
+              }
+              setLocalUserFilter(newFilter);
+            }}
+          />
+        )}
 
         {activeTab === "roomType" && (
           <RoomTypeTab

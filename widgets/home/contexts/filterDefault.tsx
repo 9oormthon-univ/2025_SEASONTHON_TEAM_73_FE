@@ -7,10 +7,11 @@ import {
 } from "react";
 import { Gender } from "../../../shared/constants";
 import { FILTER_DEFAULT } from "../constants";
-import { DefaultFilter, SelectedRegion } from "../types";
+import { DefaultFilter, SelectedRegion, UserDefaultFilter } from "../types";
 
 interface FilterDefaultContextProps extends DefaultFilter {
   defaultFilter: DefaultFilter;
+  userFilter: UserDefaultFilter | null;
   setDepositRange: (min: number, max: number) => void;
   setRentRange: (min: number, max: number) => void;
   setRoomTypes: (value: string[]) => void;
@@ -19,6 +20,8 @@ interface FilterDefaultContextProps extends DefaultFilter {
   setKeyword: (value: string) => void;
   setDongs: (value: string[]) => void;
   setSelectedRegions: (value: SelectedRegion[]) => void;
+  setUserFilter: (value: UserDefaultFilter | null) => void;
+  updateUserFilter: (filter: Partial<UserDefaultFilter>) => void;
   resetFilter: () => void;
   resetDepositRange: () => void;
   resetRentRange: () => void;
@@ -26,6 +29,7 @@ interface FilterDefaultContextProps extends DefaultFilter {
   resetGender: () => void;
   resetKeyword: () => void;
   resetDongs: () => void;
+  resetUserFilter: () => void;
 }
 
 const FilterDefaultContext = createContext<FilterDefaultContextProps | null>(
@@ -39,6 +43,7 @@ export const FilterDefaultProvider = ({
 }) => {
   const [defaultFilter, setDefaultFilter] =
     useState<DefaultFilter>(FILTER_DEFAULT);
+  const [userFilter, setUserFilter] = useState<UserDefaultFilter | null>(null);
 
   const {
     minDeposit,
@@ -98,6 +103,30 @@ export const FilterDefaultProvider = ({
     []
   );
 
+  const updateUserFilter = useCallback((filter: Partial<UserDefaultFilter>) => {
+    setUserFilter((prev) => {
+      const newFilter = { ...prev, ...filter };
+
+      // undefined 값들을 제거
+      Object.keys(newFilter).forEach((key) => {
+        if (newFilter[key as keyof UserDefaultFilter] === undefined) {
+          delete newFilter[key as keyof UserDefaultFilter];
+        }
+      });
+
+      // 빈 객체인 경우 null 반환
+      if (Object.keys(newFilter).length === 0) {
+        return null;
+      }
+
+      return newFilter;
+    });
+  }, []);
+
+  const resetUserFilter = useCallback(() => {
+    setUserFilter(null);
+  }, []);
+
   const setDepositRange = useCallback((min: number, max: number) => {
     setDefaultFilter((prev) => ({
       ...prev,
@@ -116,6 +145,7 @@ export const FilterDefaultProvider = ({
 
   const resetFilter = useCallback(() => {
     setDefaultFilter(FILTER_DEFAULT);
+    setUserFilter(null);
   }, []);
 
   const resetDepositRange = useCallback(() => {
@@ -167,6 +197,7 @@ export const FilterDefaultProvider = ({
     <FilterDefaultContext.Provider
       value={{
         defaultFilter,
+        userFilter,
         minDeposit,
         maxDeposit,
         minMonthlyCost,
@@ -184,6 +215,8 @@ export const FilterDefaultProvider = ({
         setKeyword,
         setDongs,
         setSelectedRegions,
+        setUserFilter,
+        updateUserFilter,
         resetFilter,
         resetDepositRange,
         resetRentRange,
@@ -191,6 +224,7 @@ export const FilterDefaultProvider = ({
         resetGender,
         resetKeyword,
         resetDongs,
+        resetUserFilter,
       }}
     >
       {children}

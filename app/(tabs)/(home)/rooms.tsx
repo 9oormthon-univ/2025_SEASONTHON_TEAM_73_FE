@@ -20,7 +20,7 @@ import {
 } from "react-native";
 
 export default function HomeScreen() {
-  const { defaultFilter } = useDefaultFilter();
+  const { defaultFilter, userFilter } = useDefaultFilter();
   const [searchResults, setSearchResults] = useState<Room[]>([]);
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
@@ -47,8 +47,12 @@ export default function HomeScreen() {
         JSON.stringify(defaultFilter) !== JSON.stringify(FILTER_DEFAULT);
 
       if (isFilterChanged) {
-        console.log("POST 요청으로 검색 실행:", defaultFilter);
-        submitPostSearch(defaultFilter, {
+        const searchData = {
+          ...defaultFilter,
+          userFilter: userFilter,
+        };
+        console.log("POST 요청으로 검색 실행:", searchData);
+        submitPostSearch(searchData, {
           onSuccess: (data) => {
             console.log("검색 결과:", data.content.length, "개");
             setSearchResults(data.content);
@@ -59,7 +63,7 @@ export default function HomeScreen() {
         setSearchResults([]);
       }
     }
-  }, [defaultFilter, submitPostSearch, isFirstRender]);
+  }, [defaultFilter, userFilter, submitPostSearch, isFirstRender]);
 
   useEffect(() => {
     if (isFirstRender) {

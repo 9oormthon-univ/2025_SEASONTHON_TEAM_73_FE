@@ -8,6 +8,7 @@ export default function HomeLayout() {
   const isRoomScreen = usePathname().includes("/rooms");
   const isUserSearchScreen = usePathname().includes("/user-search");
   const isPostCreateScreen = usePathname().includes("/post-create");
+  const isDetailScreen = usePathname().includes("/detail");
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -21,7 +22,8 @@ export default function HomeLayout() {
               isUserScreen ||
               isRoomScreen ||
               isUserSearchScreen ||
-              isPostCreateScreen
+              isPostCreateScreen ||
+              isDetailScreen
                 ? "none"
                 : "flex",
             borderTopWidth: 1,
