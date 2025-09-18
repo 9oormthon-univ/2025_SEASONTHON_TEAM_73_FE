@@ -17,6 +17,14 @@ export type DefaultFilter = SearchFilter &
 
 export type SearchFilter = { keyword: string };
 
+export type UserDefaultFilter = Partial<{
+  smoking: boolean;
+  alcoholCount: "ZERO" | "ONE_TO_THREE" | "MORE_THAN_FOUR" | "UNKNOWN";
+  sleepLevel: "LOW" | "MEDIUM" | "HIGH" | "UNKNOWN";
+  pet: string[];
+  tidinessLevel: "LOW" | "MEDIUM" | "HIGH" | "UNKNOWN";
+}>;
+
 export interface SelectedRegion {
   id: string;
   name: string;
