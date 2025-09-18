@@ -14,4 +14,4 @@
  | ![정다운](https://github.com/user-attachments/assets/642a6f6d-071a-4b4f-a465-63f91211147e)
  |
 | PM | PD | FE | FE | BE | BE |
-| [GitHub]([https://github.com/LDK1009](https://github.com/lee-jaemmin)) | [GitHub](https://github.com/SinYusi) | [GitHub](https://github.com/nay3on) | [GitHub](https://github.com/conconcc) | [GitHub](https://github.com/새팀원1) | [GitHub](https://github.com/새팀원2) |
+| [GitHub](https://github.com/lee-jaemmin) | [GitHub](https://github.com/hyeonji44) | [GitHub](https://github.com/ehy0414) | [GitHub](https://github.com/yummjin) | [GitHub](https://github.com/Jiwon-Yoon00) | [GitHub](https://github.com/wjdekdns1028) |
