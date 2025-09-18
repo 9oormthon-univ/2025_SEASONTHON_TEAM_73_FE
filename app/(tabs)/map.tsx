@@ -122,12 +122,12 @@ const styles = StyleSheet.create({
   },
   infoBox: {
     flexDirection: "row",
-    top: 580,
+    top: 520,
     padding: 10,
     margin: 18,
     gap: 20,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: COLORS.gray[5],
     backgroundColor: COLORS.white,
     borderRadius: 8,
   },
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZE.c1 
   },
   noticeBox: {
-    top: 570,
+    top: 520,
     padding: 6,
     borderRadius: 6,
     backgroundColor: COLORS.white,
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   },
   noticeText: {
     fontSize: FONT_SIZE.c1,
-    color: COLORS.black,
+    color: "red",
     opacity: 0.7,
   },
 });
