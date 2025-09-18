@@ -1,4 +1,5 @@
-import { COLORS, FONT_SIZE, FONTS } from "@/shared/styles";
+import { Header } from "@/shared/components";
+import { COLORS } from "@/shared/styles";
 import { Stack } from "expo-router";
 
 export default function ProfileLayout() {
@@ -7,9 +8,7 @@ export default function ProfileLayout() {
   return (
     <Stack
       screenOptions={{
-        headerShown: true,
-        headerTitle: title,
-        headerTitleStyle: { fontFamily: FONTS.bold, fontSize: FONT_SIZE.b1 },
+        header: () => <Header title={title} />,
         contentStyle: { backgroundColor: COLORS.white },
         animation: "none",
       }}

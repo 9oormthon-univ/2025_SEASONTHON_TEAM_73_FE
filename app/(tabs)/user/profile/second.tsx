@@ -21,7 +21,6 @@ import {
   Text,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 interface ProfileSleepFormData {
   sleepLevel: "LOW" | "MEDIUM" | "HIGH";
@@ -61,7 +60,7 @@ export default function ProfileSleepScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -263,7 +262,7 @@ export default function ProfileSleepScreen() {
           disabled={!isFormValid}
         />
       </View>
-    </SafeAreaView>
+    </>
   );
 }
 

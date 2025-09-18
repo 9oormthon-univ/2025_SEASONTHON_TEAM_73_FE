@@ -14,7 +14,6 @@ import {
   Text,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 interface ProfileHabitsFormData {
   smoking: boolean;
@@ -48,7 +47,7 @@ export default function ProfileHabitsScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -101,6 +100,6 @@ export default function ProfileHabitsScreen() {
           disabled={!isFormValid}
         />
       </View>
-    </SafeAreaView>
+    </>
   );
 }

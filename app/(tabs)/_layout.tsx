@@ -11,6 +11,7 @@ export default function HomeLayout() {
   const isPostCreateScreen = usePathname().includes("/post-create");
   const isDetailScreen = usePathname().includes("/detail");
   const isChatScreen = usePathname().includes("/chat/rooms");
+  const isProfileScreen = usePathname().includes("/profile");
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -26,7 +27,8 @@ export default function HomeLayout() {
               isUserSearchScreen ||
               isPostCreateScreen ||
               isDetailScreen ||
-              isChatScreen
+              isChatScreen ||
+              isProfileScreen
                 ? "none"
                 : "flex",
             borderTopWidth: 1,

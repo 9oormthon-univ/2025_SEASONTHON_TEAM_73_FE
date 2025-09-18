@@ -20,7 +20,6 @@ import {
   Text,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 interface ProfileBasicFormData {
   cookingCount: "ORDER" | "COOK";
@@ -56,7 +55,7 @@ export default function ProfileBasicScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -199,7 +198,7 @@ export default function ProfileBasicScreen() {
           disabled={!isFormValid}
         />
       </View>
-    </SafeAreaView>
+    </>
   );
 }
 
