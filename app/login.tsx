@@ -21,7 +21,6 @@ export default function LoginScreen() {
   const { mutate: submitLogin, isPending } = useSubmitLogin();
 
   const onSubmit = (data: LoginFormData) => {
-    console.log(data);
     submitLogin(data);
   };
 

@@ -6,12 +6,11 @@ import {
   type ReactNode,
 } from "react";
 import { Gender } from "../../../shared/constants";
-import { FILTER_DEFAULT } from "../constants";
 import { DefaultFilter, SelectedRegion, UserDefaultFilter } from "../types";
 
-interface FilterDefaultContextProps extends DefaultFilter {
-  defaultFilter: DefaultFilter;
-  userFilter: UserDefaultFilter | null;
+interface FilterDefaultContextProps {
+  roomFilter: Partial<DefaultFilter>;
+  userFilter: Partial<UserDefaultFilter> | null;
   setDepositRange: (min: number, max: number) => void;
   setRentRange: (min: number, max: number) => void;
   setRoomTypes: (value: string[]) => void;
@@ -20,7 +19,7 @@ interface FilterDefaultContextProps extends DefaultFilter {
   setKeyword: (value: string) => void;
   setDongs: (value: string[]) => void;
   setSelectedRegions: (value: SelectedRegion[]) => void;
-  setUserFilter: (value: UserDefaultFilter | null) => void;
+  setUserFilter: (value: Partial<UserDefaultFilter> | null) => void;
   updateUserFilter: (filter: Partial<UserDefaultFilter>) => void;
   resetFilter: () => void;
   resetDepositRange: () => void;
@@ -41,32 +40,20 @@ export const FilterDefaultProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const [defaultFilter, setDefaultFilter] =
-    useState<DefaultFilter>(FILTER_DEFAULT);
-  const [userFilter, setUserFilter] = useState<UserDefaultFilter | null>(null);
-
-  const {
-    minDeposit,
-    maxDeposit,
-    minMonthlyCost,
-    maxMonthlyCost,
-    roomTypes,
-    preferredGender,
-    keyword,
-    dongs,
-    selectedRegions,
-  } = defaultFilter;
+  const [roomFilter, setRoomFilter] = useState<Partial<DefaultFilter>>({});
+  const [userFilter, setUserFilter] =
+    useState<Partial<UserDefaultFilter> | null>(null);
 
   const setRoomTypes = useCallback(
     (value: string[]) =>
-      setDefaultFilter((prev) => ({ ...prev, roomTypes: value })),
+      setRoomFilter((prev) => ({ ...prev, roomTypes: value })),
     []
   );
 
   const setGender = useCallback(
     (value: Gender) =>
-      setDefaultFilter((prev) => {
-        const currentGenders = prev.preferredGender;
+      setRoomFilter((prev) => {
+        const currentGenders = prev.preferredGender || [];
         const isAlreadySelected = currentGenders.includes(value);
 
         return {
@@ -81,25 +68,23 @@ export const FilterDefaultProvider = ({
 
   const setGenders = useCallback(
     (value: Gender[]) =>
-      setDefaultFilter((prev) => ({ ...prev, preferredGender: value })),
+      setRoomFilter((prev) => ({ ...prev, preferredGender: value })),
     []
   );
 
   const setKeyword = useCallback(
-    (value: string) =>
-      setDefaultFilter((prev) => ({ ...prev, keyword: value })),
+    (value: string) => setRoomFilter((prev) => ({ ...prev, keyword: value })),
     []
   );
 
   const setDongs = useCallback(
-    (value: string[]) =>
-      setDefaultFilter((prev) => ({ ...prev, dongs: value })),
+    (value: string[]) => setRoomFilter((prev) => ({ ...prev, dongs: value })),
     []
   );
 
   const setSelectedRegions = useCallback(
     (value: SelectedRegion[]) =>
-      setDefaultFilter((prev) => ({ ...prev, selectedRegions: value })),
+      setRoomFilter((prev) => ({ ...prev, selectedRegions: value })),
     []
   );
 
@@ -128,7 +113,7 @@ export const FilterDefaultProvider = ({
   }, []);
 
   const setDepositRange = useCallback((min: number, max: number) => {
-    setDefaultFilter((prev) => ({
+    setRoomFilter((prev) => ({
       ...prev,
       minDeposit: min,
       maxDeposit: max,
@@ -136,7 +121,7 @@ export const FilterDefaultProvider = ({
   }, []);
 
   const setRentRange = useCallback((min: number, max: number) => {
-    setDefaultFilter((prev) => ({
+    setRoomFilter((prev) => ({
       ...prev,
       minMonthlyCost: min,
       maxMonthlyCost: max,
@@ -144,69 +129,57 @@ export const FilterDefaultProvider = ({
   }, []);
 
   const resetFilter = useCallback(() => {
-    setDefaultFilter(FILTER_DEFAULT);
+    setRoomFilter({});
     setUserFilter(null);
   }, []);
 
   const resetDepositRange = useCallback(() => {
-    setDefaultFilter((prev) => ({
-      ...prev,
-      minDeposit: FILTER_DEFAULT.minDeposit,
-      maxDeposit: FILTER_DEFAULT.maxDeposit,
-    }));
+    setRoomFilter((prev) => {
+      const { minDeposit, maxDeposit, ...rest } = prev;
+      return rest;
+    });
   }, []);
 
   const resetRentRange = useCallback(() => {
-    setDefaultFilter((prev) => ({
-      ...prev,
-      minMonthlyCost: FILTER_DEFAULT.minMonthlyCost,
-      maxMonthlyCost: FILTER_DEFAULT.maxMonthlyCost,
-    }));
+    setRoomFilter((prev) => {
+      const { minMonthlyCost, maxMonthlyCost, ...rest } = prev;
+      return rest;
+    });
   }, []);
 
   const resetRoomTypes = useCallback(() => {
-    setDefaultFilter((prev) => ({
-      ...prev,
-      roomTypes: FILTER_DEFAULT.roomTypes,
-    }));
+    setRoomFilter((prev) => {
+      const { roomTypes, ...rest } = prev;
+      return rest;
+    });
   }, []);
 
   const resetGender = useCallback(() => {
-    setDefaultFilter((prev) => ({
-      ...prev,
-      preferredGender: FILTER_DEFAULT.preferredGender,
-    }));
+    setRoomFilter((prev) => {
+      const { preferredGender, ...rest } = prev;
+      return rest;
+    });
   }, []);
 
   const resetKeyword = useCallback(() => {
-    setDefaultFilter((prev) => ({
-      ...prev,
-      keyword: FILTER_DEFAULT.keyword,
-    }));
+    setRoomFilter((prev) => {
+      const { keyword, ...rest } = prev;
+      return rest;
+    });
   }, []);
 
   const resetDongs = useCallback(() => {
-    setDefaultFilter((prev) => ({
-      ...prev,
-      dongs: FILTER_DEFAULT.dongs,
-      selectedRegions: FILTER_DEFAULT.selectedRegions,
-    }));
+    setRoomFilter((prev) => {
+      const { dongs, selectedRegions, ...rest } = prev;
+      return rest;
+    });
   }, []);
 
   return (
     <FilterDefaultContext.Provider
       value={{
-        defaultFilter,
+        roomFilter,
         userFilter,
-        minDeposit,
-        maxDeposit,
-        minMonthlyCost,
-        maxMonthlyCost,
-        roomTypes,
-        preferredGender,
-        keyword,
-        dongs,
-        selectedRegions,
         setDepositRange,
         setRentRange,
         setRoomTypes,

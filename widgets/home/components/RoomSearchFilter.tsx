@@ -16,12 +16,12 @@ export default function RoomSearchFilter({
 }: RoomSearchFilterProps) {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
 
-  const { roomTypes, preferredGender, dongs, userFilter } = useDefaultFilter();
+  const { roomFilter, userFilter } = useDefaultFilter();
 
   const applied =
-    roomTypes.length > 0 ||
-    preferredGender.length > 0 ||
-    dongs.length > 0 ||
+    (roomFilter.roomTypes && roomFilter.roomTypes.length > 0) ||
+    (roomFilter.preferredGender && roomFilter.preferredGender.length > 0) ||
+    (roomFilter.dongs && roomFilter.dongs.length > 0) ||
     (userFilter && Object.keys(userFilter).length > 0);
 
   const handleFilterPress = () => {

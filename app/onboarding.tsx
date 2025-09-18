@@ -1,87 +1,60 @@
-import { Button } from '@/shared/components/Button/Button';
-import { OnboardingTitle } from '@/widgets/onboarding/OnboardingTitle';
-import { router } from 'expo-router';
-import React from 'react';
-import { Image, ScrollView, StyleSheet, View } from 'react-native';
+import { Button } from "@/shared/components/Button/Button";
+import { COLORS, FONT_SIZE, FONTS, SPACING } from "@/shared/styles";
+import { router } from "expo-router";
+import React from "react";
+import { Image, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-export const OnboardingScreen: React.FC = () => {
+export default function OnboardingScreen() {
   const handleLogin = () => {
-    router.push('/login');
+    router.push("/login");
   };
 
   const handleSignUp = () => {
-    router.push('/signUp' as any);
+    router.push("/signUp" as any);
   };
 
   return (
-    <ScrollView 
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-    >
-      <View style={styles.contentWrapper}>
-        <View style={styles.headerSection}>
-          {/* <ProgressIndicator /> */}
-          <OnboardingTitle />
-        </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.headerSection}>
+        <Text style={styles.title}>
+          다양한 조건을 바탕으로{"\n"}
+          룸메이트를 찾아요
+        </Text>
       </View>
-
       <Image
-        source={{
-          uri: "https://api.builder.io/api/v1/image/assets/TEMP/541f05f67f00ac4b02854c230b04eae7eb3b12c3?placeholderIfAbsent=true&apiKey=7adddd5587f24b91884c2915be4df62c",
-        }}
-        style={styles.illustration}
-        resizeMode="contain"
+        source={require("@/assets/images/home-home.png")}
+        style={{ width: 268, height: 300 }}
       />
-
-      <Button
-        text="로그인"
-        onPress={handleLogin}
-        style={styles.loginButton}
-        size='lg'
-      />
-
-      <Button
-        text="회원가입"
-        onPress={handleSignUp}
-        size='lg'
-        style={styles.signUpButton}
-      />
-    </ScrollView>
+      <View style={styles.buttonContainer}>
+        <Button text="로그인" onPress={handleLogin} size="lg" />
+        <Button text="회원가입" onPress={handleSignUp} size="lg" />
+      </View>
+    </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
-  },
-  contentContainer: {
-    flexGrow: 1, // ✅ ScrollView 내부 전체 공간 사용
-    justifyContent: 'center', // 세로 가운데 정렬
-    alignItems: 'center', // 가로 가운데 정렬
-    paddingVertical: 68,
-    paddingHorizontal: 18,
-  },
-  contentWrapper: {
-    width: 300,
-    alignItems: 'center',
+    alignItems: "center",
+    justifyContent: "center",
+    gap: SPACING.xl,
   },
   headerSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
-  illustration: {
-    aspectRatio: 0.73,
-    width: 268,
-    marginTop: 36,
+  title: {
+    fontSize: FONT_SIZE.h2,
+    fontFamily: FONTS.semiBold,
+    textAlign: "center",
+    color: COLORS.black,
   },
-  loginButton: {
-    marginTop: 103,
-  },
-  signUpButton: {
-    marginTop: 19,
-    zIndex: 10,
+  buttonContainer: {
+    paddingHorizontal: SPACING.normal,
+    width: "100%",
+    gap: SPACING.xs,
   },
 });
-
-export default OnboardingScreen;

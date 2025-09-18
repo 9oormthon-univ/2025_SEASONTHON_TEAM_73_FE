@@ -1,18 +1,17 @@
-import { COLORS } from '@/shared/styles';
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Tab } from './Tab';
+import { COLORS } from "@/shared/styles";
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import { Tab } from "./Tab";
 
 interface TabBarProps {
-  activeTab: 'chat' | 'chatRequest';
-  onTabPress: (tabId: 'chat' | 'chatRequest') => void;
+  activeTab: "chat" | "chatRequest";
+  onTabPress: (tabId: "chat" | "chatRequest") => void;
 }
 
-
 export const TabBar: React.FC<TabBarProps> = ({ activeTab, onTabPress }) => {
-  const tabs: { id: 'chat' | 'chatRequest'; title: string }[] = [
-    { id: 'chat', title: '채팅' },
-    { id: 'chatRequest', title: '채팅 신청' }
+  const tabs: { id: "chat" | "chatRequest"; title: string }[] = [
+    { id: "chat", title: "채팅" },
+    { id: "chatRequest", title: "채팅 신청" },
   ];
 
   return (
@@ -31,15 +30,15 @@ export const TabBar: React.FC<TabBarProps> = ({ activeTab, onTabPress }) => {
 
 const styles = StyleSheet.create({
   tabBarContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
     borderBottomWidth: 1,
     borderBottomColor: COLORS.gray[20],
-    width: '100%',
+    width: "100%",
     height: 50,
     marginBottom: 40,
-    top: 50
+    top: 14,
   },
 });

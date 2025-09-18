@@ -25,20 +25,21 @@ export const UserDetailProfileSection: React.FC<UserProfileSectionProps> = ({
 }) => {
   const { toggleLike } = useLikeStore();
 
-  // 해당 userId의 좋아요 상태를 zustand에서 구독
   const liked = useLikeStore((state) => state.likedUsers[userId] ?? false);
 
-
   console.log("userId =", userId, "liked =", liked);
-
-  //console.log(isLiked);
 
   return (
     <View style={styles.container}>
       <View style={styles.profileContainer}>
         <View style={styles.profileContent}>
           <View style={styles.userInfoRow}>
-            <Image source={{ uri: avatarUri }} style={styles.avatar} />
+            <Image
+              source={
+                avatarUri || require("@/assets/images/profile-default.png")
+              }
+              style={styles.avatar}
+            />
 
             <View style={styles.userDetails}>
               <Text style={styles.name}>{name}</Text>

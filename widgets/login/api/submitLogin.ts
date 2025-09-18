@@ -3,6 +3,7 @@ import { useAuthStore } from "@/shared/store";
 import { useLikeStore } from "@/shared/store/likeStore";
 import type { BaseResponse } from "@/shared/types";
 import { useMutation } from "@tanstack/react-query";
+import { Alert } from "react-native";
 import { REQUEST } from "../../../shared/api/request";
 import type { LoginFormData } from "../types";
 
@@ -30,6 +31,9 @@ export const useSubmitLogin = () => {
 
   return useMutation({
     mutationFn: submitLogin,
+    onError: (error) => {
+      Alert.alert(error.message);
+    },
     onSuccess: ({
       accessToken,
       refreshToken,

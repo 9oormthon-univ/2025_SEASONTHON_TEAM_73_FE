@@ -3,13 +3,13 @@ import { useMutation } from "@tanstack/react-query";
 import { REQUEST, userPost } from "../../../shared/api";
 import { DefaultFilter, Room } from "../types";
 
-const submitPostSearch = async (filters: DefaultFilter) => {
+const submitPostSearch = async (roomFilter: Partial<DefaultFilter>) => {
   const response = await userPost<
-    DefaultFilter,
+    Partial<DefaultFilter>,
     BasePaginationResponse<Room[]>
   >({
     request: REQUEST.POST_SEARCH,
-    data: filters,
+    data: roomFilter,
   });
   console.log(response.data.data);
   return response.data.data;

@@ -1,6 +1,7 @@
 import { COLORS, FONTS } from "@/shared/styles";
-import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { Tabs, usePathname } from "expo-router";
+import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeLayout() {
@@ -9,6 +10,7 @@ export default function HomeLayout() {
   const isUserSearchScreen = usePathname().includes("/user-search");
   const isPostCreateScreen = usePathname().includes("/post-create");
   const isDetailScreen = usePathname().includes("/detail");
+  const isChatScreen = usePathname().includes("/chat/rooms");
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -23,12 +25,13 @@ export default function HomeLayout() {
               isRoomScreen ||
               isUserSearchScreen ||
               isPostCreateScreen ||
-              isDetailScreen
+              isDetailScreen ||
+              isChatScreen
                 ? "none"
                 : "flex",
             borderTopWidth: 1,
             height: 68,
-            paddingTop: 4,
+            paddingTop: 10,
             paddingHorizontal: 20,
             borderTopColor: COLORS.gray[10],
           },
@@ -43,39 +46,83 @@ export default function HomeLayout() {
           name="(home)"
           options={{
             tabBarLabel: "홈",
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="home" color={color} size={size} />
-            ),
+            tabBarIcon: ({ focused }) =>
+              focused ? (
+                <Image
+                  source={require("@/assets/icons/icon-home-sel.svg")}
+                  style={styles.icon}
+                />
+              ) : (
+                <Image
+                  source={require("@/assets/icons/icon-home.svg")}
+                  style={styles.icon}
+                />
+              ),
           }}
         />
         <Tabs.Screen
           name="map"
           options={{
             tabBarLabel: "지도",
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="location" color={color} size={size} />
-            ),
+            tabBarIcon: ({ focused }) =>
+              focused ? (
+                <Image
+                  source={require("@/assets/icons/icon-map-sel.svg")}
+                  style={styles.icon}
+                />
+              ) : (
+                <Image
+                  source={require("@/assets/icons/icon-map.svg")}
+                  style={styles.icon}
+                />
+              ),
           }}
         />
         <Tabs.Screen
           name="chat"
           options={{
             tabBarLabel: "채팅",
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="chatbubble" color={color} size={size} />
-            ),
+            tabBarIcon: ({ focused }) =>
+              focused ? (
+                <Image
+                  source={require("@/assets/icons/icon-chat-sel.svg")}
+                  style={styles.icon}
+                />
+              ) : (
+                <Image
+                  source={require("@/assets/icons/icon-chat.svg")}
+                  style={styles.icon}
+                />
+              ),
           }}
         />
         <Tabs.Screen
           name="user"
           options={{
             tabBarLabel: "My",
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="person" color={color} size={size} />
-            ),
+            tabBarIcon: ({ focused }) =>
+              focused ? (
+                <Image
+                  source={require("@/assets/icons/icon-my-sel.svg")}
+                  style={styles.icon}
+                />
+              ) : (
+                <Image
+                  source={require("@/assets/icons/icon-my.svg")}
+                  style={styles.icon}
+                />
+              ),
           }}
         />
       </Tabs>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  icon: {
+    width: 24,
+    height: 24,
+    marginBottom: 4,
+  },
+});
