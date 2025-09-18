@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { ScrollView } from "react-native";
 import {
   getFilterDisplayValue,
-  getRadioSelectedIndex,
+  getRadioSelectedIndices,
   USER_FILTER_FIELDS,
 } from "../constants/userFilter";
 import { useUserFilter } from "../contexts/filterUserDefault";
@@ -91,18 +91,18 @@ export default function UserFilterBottomSheet({
   ) => {
     const description = getFilterDisplayValue(localFilter, fieldKey);
     const items = options.map((option) => option.label);
-    const selected = [getRadioSelectedIndex(localFilter, fieldKey)];
+    const selected = getRadioSelectedIndices(localFilter, fieldKey);
 
     const handleSelectionChange = (selected: number[]) => {
       if (selected.length === 0) {
         handleFilterChange(fieldKey, undefined);
       } else {
-        const selectedValue = options[selected[0]]?.value;
-        if (selectedValue === localFilter?.[fieldKey]) {
-          handleFilterChange(fieldKey, undefined);
-        } else {
-          handleFilterChange(fieldKey, selectedValue);
-        }
+        // 선택된 인덱스들을 ENUM 값으로 변환
+        const selectedValues = selected
+          .map((index) => options[index]?.value)
+          .filter((value) => value !== undefined);
+
+        handleFilterChange(fieldKey, selectedValues);
       }
     };
 
@@ -112,7 +112,7 @@ export default function UserFilterBottomSheet({
       items,
       selected,
       handleSelectionChange,
-      false
+      true
     );
   };
 

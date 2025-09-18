@@ -24,10 +24,10 @@ export type SearchFilter = { keyword: string };
 
 export type UserDefaultFilter = Partial<{
   smoking: boolean;
-  alcoholCount: AlcoholCountValue;
-  sleepLevel: SleepLevelValue;
+  alcoholCount: AlcoholCountValue[];
+  sleepLevel: SleepLevelValue[];
   pet: string[];
-  tidinessLevel: TidinessLevelValue;
+  tidinessLevel: TidinessLevelValue[];
 }>;
 
 export interface SelectedRegion {

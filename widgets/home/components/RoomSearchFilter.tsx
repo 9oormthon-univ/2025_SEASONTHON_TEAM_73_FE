@@ -16,24 +16,10 @@ export default function RoomSearchFilter({
 }: RoomSearchFilterProps) {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
 
-  const {
-    minDeposit,
-    maxDeposit,
-    minMonthlyCost,
-    maxMonthlyCost,
-    roomTypes,
-    preferredGender,
-    dongs,
-  } = useDefaultFilter();
+  const { roomTypes, preferredGender, dongs } = useDefaultFilter();
 
   const applied =
-    minDeposit !== 0 ||
-    maxDeposit !== 100000000 ||
-    minMonthlyCost !== 0 ||
-    maxMonthlyCost !== 1000000 ||
-    roomTypes.length > 0 ||
-    preferredGender !== null ||
-    dongs.length > 0;
+    roomTypes.length > 0 || preferredGender.length > 0 || dongs.length > 0;
 
   const handleFilterPress = () => {
     setIsFilterVisible(true);
