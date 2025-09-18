@@ -29,10 +29,13 @@ const PropertyDetailView: React.FC = () => {
             Authorization: `Bearer ${accessToken}`,
           },
         });
-        if (res.data.data.isCertified === true) {
+        console.log(res.data.data.isCertified);
+        if (res.data.data.isCertified === "학생") {
           setBadge("대학생 인증");
+        } else if(res.data.data.isCertified === "회사원") {
+          setBadge("직장인 인증");
         } else {
-          return;
+          setBadge("");
         }
         setPostData(res.data.data);
         console.log(res.data.data);
