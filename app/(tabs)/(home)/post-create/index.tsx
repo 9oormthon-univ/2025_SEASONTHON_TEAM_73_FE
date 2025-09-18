@@ -18,7 +18,6 @@ import {
   ScrollView,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RoomInfoScreen() {
   const { width } = Dimensions.get("screen");
@@ -44,7 +43,7 @@ export default function RoomInfoScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -264,6 +263,6 @@ export default function RoomInfoScreen() {
           disabled={!isFormValid}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
