@@ -20,7 +20,7 @@ import {
 } from "react-native";
 
 export default function HomeScreen() {
-  const { defaultFilter, userFilter } = useDefaultFilter();
+  const { defaultFilter, userFilter, resetFilter } = useDefaultFilter();
   const [searchResults, setSearchResults] = useState<Room[]>([]);
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
@@ -40,9 +40,12 @@ export default function HomeScreen() {
     useSubmitPostSearch();
 
   useEffect(() => {
+    resetFilter();
+  }, [resetFilter]);
+
+  useEffect(() => {
     console.log("필터 변경 감지:", defaultFilter);
     if (!isFirstRender) {
-      // 필터가 기본값과 다른지 확인
       const isFilterChanged =
         JSON.stringify(defaultFilter) !== JSON.stringify(FILTER_DEFAULT);
 

@@ -20,7 +20,7 @@ import {
 } from "react-native";
 
 export default function UserSearchScreen() {
-  const { defaultFilter } = useUserFilter();
+  const { defaultFilter, resetFilter } = useUserFilter();
   const [searchResults, setSearchResults] = useState<UserProfile[]>([]);
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
@@ -29,6 +29,10 @@ export default function UserSearchScreen() {
 
   const { mutate: submitUserSearch, isPending: isSearchLoading } =
     useSubmitUserSearch();
+
+  useEffect(() => {
+    resetFilter();
+  }, [resetFilter]);
 
   useEffect(() => {
     console.log("필터 변경 감지:", defaultFilter);

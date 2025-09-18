@@ -40,7 +40,6 @@ export const USER_FILTER_FIELDS = {
     title: "음주 빈도",
     type: "radio" as const,
     options: [
-      { label: "선택안함", value: undefined },
       { label: "0회", value: ALCOHOL_COUNT_VALUES.ZERO },
       { label: "주 1-3회", value: ALCOHOL_COUNT_VALUES.ONE_TO_THREE },
       { label: "주 4회 이상", value: ALCOHOL_COUNT_VALUES.MORE_THAN_FOUR },
@@ -51,7 +50,6 @@ export const USER_FILTER_FIELDS = {
     title: "수면 패턴",
     type: "radio" as const,
     options: [
-      { label: "선택안함", value: undefined },
       { label: "낮음", value: SLEEP_LEVEL_VALUES.LOW },
       { label: "보통", value: SLEEP_LEVEL_VALUES.MEDIUM },
       { label: "높음", value: SLEEP_LEVEL_VALUES.HIGH },
@@ -67,7 +65,6 @@ export const USER_FILTER_FIELDS = {
     title: "청결도",
     type: "radio" as const,
     options: [
-      { label: "선택안함", value: undefined },
       { label: "낮음", value: TIDINESS_LEVEL_VALUES.LOW },
       { label: "보통", value: TIDINESS_LEVEL_VALUES.MEDIUM },
       { label: "높음", value: TIDINESS_LEVEL_VALUES.HIGH },
@@ -128,7 +125,6 @@ export const getFilterDisplayValue = (
   }
 };
 
-// 라디오 버튼 선택 인덱스 계산 (단일 선택용)
 export const getRadioSelectedIndex = (
   filter: UserDefaultFilter | null,
   key: keyof UserDefaultFilter
@@ -139,25 +135,25 @@ export const getRadioSelectedIndex = (
     case "alcoholCount":
       if (!filter.alcoholCount || filter.alcoholCount.length === 0) return 0;
       const alcoholValue = filter.alcoholCount[0];
-      if (alcoholValue === ALCOHOL_COUNT_VALUES.ZERO) return 1;
-      if (alcoholValue === ALCOHOL_COUNT_VALUES.ONE_TO_THREE) return 2;
-      if (alcoholValue === ALCOHOL_COUNT_VALUES.MORE_THAN_FOUR) return 3;
+      if (alcoholValue === ALCOHOL_COUNT_VALUES.ZERO) return 0;
+      if (alcoholValue === ALCOHOL_COUNT_VALUES.ONE_TO_THREE) return 1;
+      if (alcoholValue === ALCOHOL_COUNT_VALUES.MORE_THAN_FOUR) return 2;
       return 0;
 
     case "sleepLevel":
       if (!filter.sleepLevel || filter.sleepLevel.length === 0) return 0;
       const sleepValue = filter.sleepLevel[0];
-      if (sleepValue === SLEEP_LEVEL_VALUES.LOW) return 1;
-      if (sleepValue === SLEEP_LEVEL_VALUES.MEDIUM) return 2;
-      if (sleepValue === SLEEP_LEVEL_VALUES.HIGH) return 3;
+      if (sleepValue === SLEEP_LEVEL_VALUES.LOW) return 0;
+      if (sleepValue === SLEEP_LEVEL_VALUES.MEDIUM) return 1;
+      if (sleepValue === SLEEP_LEVEL_VALUES.HIGH) return 2;
       return 0;
 
     case "tidinessLevel":
       if (!filter.tidinessLevel || filter.tidinessLevel.length === 0) return 0;
       const tidinessValue = filter.tidinessLevel[0];
-      if (tidinessValue === TIDINESS_LEVEL_VALUES.LOW) return 1;
-      if (tidinessValue === TIDINESS_LEVEL_VALUES.MEDIUM) return 2;
-      if (tidinessValue === TIDINESS_LEVEL_VALUES.HIGH) return 3;
+      if (tidinessValue === TIDINESS_LEVEL_VALUES.LOW) return 0;
+      if (tidinessValue === TIDINESS_LEVEL_VALUES.MEDIUM) return 1;
+      if (tidinessValue === TIDINESS_LEVEL_VALUES.HIGH) return 2;
       return 0;
 
     default:
@@ -165,7 +161,6 @@ export const getRadioSelectedIndex = (
   }
 };
 
-// 라디오 버튼 선택 인덱스 계산 (다중 선택용)
 export const getRadioSelectedIndices = (
   filter: UserDefaultFilter | null,
   key: keyof UserDefaultFilter
@@ -177,34 +172,34 @@ export const getRadioSelectedIndices = (
       if (!filter.alcoholCount || filter.alcoholCount.length === 0) return [];
       return filter.alcoholCount
         .map((value) => {
-          if (value === ALCOHOL_COUNT_VALUES.ZERO) return 1;
-          if (value === ALCOHOL_COUNT_VALUES.ONE_TO_THREE) return 2;
-          if (value === ALCOHOL_COUNT_VALUES.MORE_THAN_FOUR) return 3;
-          return 0;
+          if (value === ALCOHOL_COUNT_VALUES.ZERO) return 0;
+          if (value === ALCOHOL_COUNT_VALUES.ONE_TO_THREE) return 1;
+          if (value === ALCOHOL_COUNT_VALUES.MORE_THAN_FOUR) return 2;
+          return -1;
         })
-        .filter((index) => index !== 0);
+        .filter((index) => index !== -1);
 
     case "sleepLevel":
       if (!filter.sleepLevel || filter.sleepLevel.length === 0) return [];
       return filter.sleepLevel
         .map((value) => {
-          if (value === SLEEP_LEVEL_VALUES.LOW) return 1;
-          if (value === SLEEP_LEVEL_VALUES.MEDIUM) return 2;
-          if (value === SLEEP_LEVEL_VALUES.HIGH) return 3;
-          return 0;
+          if (value === SLEEP_LEVEL_VALUES.LOW) return 0;
+          if (value === SLEEP_LEVEL_VALUES.MEDIUM) return 1;
+          if (value === SLEEP_LEVEL_VALUES.HIGH) return 2;
+          return -1;
         })
-        .filter((index) => index !== 0);
+        .filter((index) => index !== -1);
 
     case "tidinessLevel":
       if (!filter.tidinessLevel || filter.tidinessLevel.length === 0) return [];
       return filter.tidinessLevel
         .map((value) => {
-          if (value === TIDINESS_LEVEL_VALUES.LOW) return 1;
-          if (value === TIDINESS_LEVEL_VALUES.MEDIUM) return 2;
-          if (value === TIDINESS_LEVEL_VALUES.HIGH) return 3;
-          return 0;
+          if (value === TIDINESS_LEVEL_VALUES.LOW) return 0;
+          if (value === TIDINESS_LEVEL_VALUES.MEDIUM) return 1;
+          if (value === TIDINESS_LEVEL_VALUES.HIGH) return 2;
+          return -1;
         })
-        .filter((index) => index !== 0);
+        .filter((index) => index !== -1);
 
     default:
       return [];
