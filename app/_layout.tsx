@@ -8,7 +8,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { LoadingScreen } from "./loading"; // 로딩화면 컴포넌트
+import { LoadingScreen } from "./loading";
 
 SplashScreen.preventAutoHideAsync(); // 스플래시 화면 유지
 
@@ -35,7 +35,7 @@ export default function RootLayout() {
       if (fontsLoaded) {
         // 로그인 상태일 때 좋아요 데이터 패치
         if (isLoggedIn) {
-          await useLikeStore.getState().fetchLikes(); 
+          await useLikeStore.getState().fetchLikes();
         }
 
         await SplashScreen.hideAsync(); // 스플래시 숨기기
@@ -49,7 +49,6 @@ export default function RootLayout() {
   }, [fontsLoaded, isLoggedIn]);
 
   if (!appReady) {
-    // 폰트 + 초기화가 끝나기 전까지 로딩 화면
     return <LoadingScreen />;
   }
 

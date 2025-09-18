@@ -14,6 +14,12 @@ export default function UsersScreen() {
   console.log(type);
 
   const renderItem = () => {
+    if (type === "recommend") {
+      return data.content.map((user) => (
+        <RecommendUserItem key={user.id} user={user} />
+      ));
+    }
+
     if (data && data.content.length > 0) {
       return data.content.map((user) => (
         <UserListItem key={user.id} user={user} />
@@ -50,3 +56,5 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
   },
 });
+
+function RecommendUserItem({ user }: { user: RecommendUser }) {}

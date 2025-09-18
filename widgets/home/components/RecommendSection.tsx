@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
 import {
+  Dimensions,
   ScrollView,
   StyleSheet,
   Text,
@@ -30,6 +31,8 @@ export function RecommendSection({
   setIsModalVisible,
   setSelectedUser,
 }: RecommendSectionProps) {
+  const { width } = Dimensions.get("screen");
+
   return (
     <View>
       <View style={styles.sectionHeader}>
@@ -77,7 +80,12 @@ export function RecommendSection({
             />
           ))
         ) : (
-          <View style={{ width: "100%", justifyContent: "center" }}>
+          <View
+            style={{
+              width: width - 2 * SPACING.normal,
+              justifyContent: "center",
+            }}
+          >
             <EmptyRecommendUsersState isRoom={isRoom} />
           </View>
         )}

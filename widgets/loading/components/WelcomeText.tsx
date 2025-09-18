@@ -1,10 +1,8 @@
-import { FONT_SIZE } from '@/shared/styles';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { FONT_SIZE } from "@/shared/styles";
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
 
-interface WelcomeTextProps {}
-
-export const WelcomeText: React.FC<WelcomeTextProps> = () => {
+export default function WelcomeText() {
   return (
     <View style={styles.container}>
       <View style={styles.textContainer}>
@@ -13,25 +11,25 @@ export const WelcomeText: React.FC<WelcomeTextProps> = () => {
       </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     width: 360,
     height: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   textContainer: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   text: {
-    color: '#6F6F6F',
+    color: "#6F6F6F",
     fontSize: FONT_SIZE.b1,
     lineHeight: 24,
     letterSpacing: -0.4,
-    fontFamily: 'Noto Sans KR',
-    fontWeight: '400',
-    textAlign: 'center',
+    fontFamily: "Noto Sans KR",
+    fontWeight: "400",
+    textAlign: "center",
   },
 });

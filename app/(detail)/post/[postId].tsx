@@ -2,13 +2,15 @@ import api from "@/shared/api/axios";
 import { Button } from "@/shared/components/Button/Button";
 import { useAuthStore } from "@/shared/store";
 import { COLORS, SPACING } from "@/shared/styles";
-import DescriptionSection from "@/widgets/detail/DescriptionSection";
-import MapSection from "@/widgets/detail/MapSection";
-import PriceSection from "@/widgets/detail/PriceSection";
-import ProfileSection from "@/widgets/detail/ProfileSection";
-import PropertyHeader from "@/widgets/detail/PropertyHeader";
-import PropertyInfo from "@/widgets/detail/PropertyInfo";
-import PropertyTitle from "@/widgets/detail/PropertyTitle";
+import {
+  DescriptionSection,
+  MapSection,
+  PriceSection,
+  ProfileSection,
+  PropertyHeader,
+  PropertyInfo,
+  PropertyTitle,
+} from "@/widgets/detail";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
@@ -16,12 +18,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const PropertyDetailView: React.FC = () => {
   const { postId } = useLocalSearchParams();
-  if (!postId) return null;
-  const accessToken = useAuthStore.getState().accessToken;
+
+  const { accessToken } = useAuthStore();
   const [postData, setPostData] = useState<any>([]);
   const [badge, setBadge] = useState("");
 
   useEffect(() => {
+    if (!postId) return;
     const getPostData = async () => {
       try {
         const res = await api.get(`/posts/${postId}`, {
@@ -63,7 +66,7 @@ const PropertyDetailView: React.FC = () => {
 
       // 채팅방 화면으로 이동 (chatRoomId 전달)
       router.push({
-        pathname: `/chat/room/${chatRoom.chatRoomId}` as any,
+        pathname: `/chat/${chatRoom.chatRoomId}` as any,
         params: { senderName: chatRoom.receiverName },
       });
       console.log("채팅방 생성 및 이동:", chatRoom);

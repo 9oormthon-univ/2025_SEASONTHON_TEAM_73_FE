@@ -17,7 +17,7 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  View
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -52,23 +52,28 @@ const mapMessage = (msg: any, userId: string): Message => {
   };
 };
 
-const mergeMessages = (prev: DateGroup[], newMessages: Message[]): DateGroup[] => {
-  const all = [...prev.flatMap(g => g.messages)];
+const mergeMessages = (
+  prev: DateGroup[],
+  newMessages: Message[]
+): DateGroup[] => {
+  const all = [...prev.flatMap((g) => g.messages)];
 
-  newMessages.forEach(m => {
-    const exists = all.some(x => x.senderId === m.senderId && x.text === m.text && x.time === m.time);
+  newMessages.forEach((m) => {
+    const exists = all.some(
+      (x) => x.senderId === m.senderId && x.text === m.text && x.time === m.time
+    );
     if (!exists) all.push(m);
   });
 
   const grouped: DateGroup[] = [];
-  all.forEach(message => {
-    const g = grouped.find(x => x.date === message.date);
+  all.forEach((message) => {
+    const g = grouped.find((x) => x.date === message.date);
     if (g) g.messages.push(message);
     else grouped.push({ date: message.date, messages: [message] });
   });
 
   grouped.sort((a, b) => (a.date > b.date ? 1 : -1));
-  grouped.forEach(g =>
+  grouped.forEach((g) =>
     g.messages.sort((a, b) => {
       const aTime = new Date(`${a.date}T${a.time}`);
       const bTime = new Date(`${b.date}T${b.time}`);
@@ -84,8 +89,7 @@ const ChatScreen: React.FC = () => {
   const [chatData, setChatData] = useState<DateGroup[]>([]);
   const socketRef = useRef<WebSocket | null>(null);
   const scrollViewRef = useRef<ScrollView>(null);
-  const token = useAuthStore.getState().accessToken;
-  const userId = useAuthStore.getState().userId;
+  const { userId, accessToken: token } = useAuthStore();
   const config = Constants as NativeConstants;
   const { WS_BASE_URL } = config.expoConfig!.extra!;
   const [isUploading, setIsUploading] = useState(false);
@@ -101,12 +105,15 @@ const ChatScreen: React.FC = () => {
 
   const isPending = chatRoomStatus === "PENDING";
 
-  // 채팅 신청 수락/거절
   const handleAccept = async () => {
     try {
-      await api.post(`/chatrooms/accept/${roomId}`, {}, { headers: { Authorization: `Bearer ${token}` } });
+      await api.post(
+        `/chatrooms/accept/${roomId}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       Alert.alert("✅ 채팅 신청 수락 완료");
-      router.replace(`/chat/room/${roomId}?senderName=${senderName}`);
+      router.replace(`/chat/${roomId}?senderName=${senderName}`);
     } catch {
       Alert.alert("❌ 채팅 신청 수락 실패");
     }
@@ -114,7 +121,9 @@ const ChatScreen: React.FC = () => {
 
   const handleReject = async () => {
     try {
-      await api.delete(`/chatrooms/reject/${roomId}`, { headers: { Authorization: `Bearer ${token}` } });
+      await api.delete(`/chatrooms/reject/${roomId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       Alert.alert("채팅 신청 거절 완료");
       router.push(`/`);
     } catch {
@@ -145,45 +154,63 @@ const ChatScreen: React.FC = () => {
       const messages: Message[] = res.data.data.map((msg: any) =>
         mapMessage(msg, userId)
       );
-      setChatData(prev => mergeMessages(prev, messages));
+      setChatData((prev) => mergeMessages(prev, messages));
     } catch (err) {
       console.error("메시지 가져오기 실패", err);
     }
   };
 
-  useEffect(() => { fetchMessages(); }, [roomId]);
+  useEffect(() => {
+    fetchMessages();
+  }, [roomId]);
 
   // WebSocket
   useEffect(() => {
     if (!roomId || isPending) return;
 
-    const ws = new WebSocket(`${WS_BASE_URL}/ws-chat?token=${encodeURIComponent(token)}`);
+    const ws = new WebSocket(
+      `${WS_BASE_URL}/ws-chat?token=${encodeURIComponent(token)}`
+    );
     socketRef.current = ws;
 
     ws.onopen = () => {
-      ws.send(JSON.stringify({ websocket: "JOIN", chatRoomId: Number(roomId) }));
+      ws.send(
+        JSON.stringify({ websocket: "JOIN", chatRoomId: Number(roomId) })
+      );
     };
 
     ws.onmessage = (event) => {
       let msg: any;
-      try { msg = JSON.parse(event.data); } catch { return; }
+      try {
+        msg = JSON.parse(event.data);
+      } catch {
+        return;
+      }
 
-      if ((msg.event === "send" || msg.event === "receive") && msg.messageId && msg.content) {
+      if (
+        (msg.event === "send" || msg.event === "receive") &&
+        msg.messageId &&
+        msg.content
+      ) {
         if (msg.senderId?.toString() === userId) return;
-        const message = mapMessage({
-          messageId: msg.messageId,
-          content: msg.content,
-          senderId: msg.sender ?? msg.senderId,
-          senderName: msg.senderName,
-          senderProfile: msg.senderProfile,
-          createdAt: msg.createdAt ?? new Date().toISOString(),
-        }, userId);
-        setChatData(prev => mergeMessages(prev, [message]));
+        const message = mapMessage(
+          {
+            messageId: msg.messageId,
+            content: msg.content,
+            senderId: msg.sender ?? msg.senderId,
+            senderName: msg.senderName,
+            senderProfile: msg.senderProfile,
+            createdAt: msg.createdAt ?? new Date().toISOString(),
+          },
+          userId
+        );
+        setChatData((prev) => mergeMessages(prev, [message]));
       }
     };
 
     ws.onerror = console.error;
-    ws.onclose = (event) => console.log(`WebSocket closed (code=${event.code})`);
+    ws.onclose = (event) =>
+      console.log(`WebSocket closed (code=${event.code})`);
     return () => ws.close();
   }, [roomId, token, userId, isPending]);
 
@@ -200,12 +227,14 @@ const ChatScreen: React.FC = () => {
       setSelectedImage(null);
     }
 
-    socketRef.current.send(JSON.stringify({
-      type: "TEXT",
-      websocket: "SEND",
-      content: textOrUrl,
-      chatRoomId: Number(roomId),
-    }));
+    socketRef.current.send(
+      JSON.stringify({
+        type: "TEXT",
+        websocket: "SEND",
+        content: textOrUrl,
+        chatRoomId: Number(roomId),
+      })
+    );
 
     const now = new Date();
     const myMessage: Message = {
@@ -216,7 +245,7 @@ const ChatScreen: React.FC = () => {
       date: formatDate(now),
       senderId: userId,
     };
-    setChatData(prev => mergeMessages(prev, [myMessage]));
+    setChatData((prev) => mergeMessages(prev, [myMessage]));
   };
 
   // 파일 업로드
@@ -226,47 +255,84 @@ const ChatScreen: React.FC = () => {
 
     try {
       const formData = new FormData();
-      formData.append("file", { uri: file.uri, name: file.name, type: file.mimeType || "image/jpeg" } as any);
+      formData.append("file", {
+        uri: file.uri,
+        name: file.name,
+        type: file.mimeType || "image/jpeg",
+      } as any);
 
-      const res = await api.post(`/s3/upload/chat?chatRoomId=${roomId}`, formData, {
-        headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
-      });
+      const res = await api.post(
+        `/s3/upload/chat?chatRoomId=${roomId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       return res.data?.data?.fileUrl || null;
     } catch (err) {
       console.error(err);
       Alert.alert("오류", "파일 업로드에 실패했습니다.");
       return null;
-    } finally { setIsUploading(false); }
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   // 이미지 선택
   const handlePhotoPress = async () => {
     try {
-      const result = await DocumentPicker.getDocumentAsync({ type: ["image/*"], copyToCacheDirectory: true });
-      if (!result.canceled && result.assets && result.assets.length > 0) setSelectedImage(result.assets[0]);
-    } catch (err) { console.error(err); }
+      const result = await DocumentPicker.getDocumentAsync({
+        type: ["image/*"],
+        copyToCacheDirectory: true,
+      });
+      if (!result.canceled && result.assets && result.assets.length > 0)
+        setSelectedImage(result.assets[0]);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   // 자동 스크롤
   useEffect(() => {
-    if (chatData.length > 0 && !isPending) setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);
+    if (chatData.length > 0 && !isPending)
+      setTimeout(
+        () => scrollViewRef.current?.scrollToEnd({ animated: true }),
+        100
+      );
   }, [chatData, isPending]);
 
   useEffect(() => {
-    const listener = Keyboard.addListener("keyboardDidShow", () => setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100));
+    const listener = Keyboard.addListener("keyboardDidShow", () =>
+      setTimeout(
+        () => scrollViewRef.current?.scrollToEnd({ animated: true }),
+        100
+      )
+    );
     return () => listener.remove();
   }, []);
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={80}>
-        <ScrollView ref={scrollViewRef} style={styles.messagesContainer} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={80}
+      >
+        <ScrollView
+          ref={scrollViewRef}
+          style={styles.messagesContainer}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
           <View style={styles.messagesContent}>
             {chatData.map((dateGroup, dateIndex) => (
               <View key={dateIndex} style={styles.dateGroup}>
                 <DateSeparator date={dateGroup.date} />
                 <View style={styles.messagesGroup}>
-                  {dateGroup.messages.map(message => (
+                  {dateGroup.messages.map((message) => (
                     <ChatMessage
                       key={message.id}
                       text={message.text}
@@ -288,7 +354,11 @@ const ChatScreen: React.FC = () => {
 
         {isPending && (
           <View style={styles.containerPendig}>
-            <MessageRequestDialog userName={senderName as string} onAccept={handleAccept} onReject={handleReject} />
+            <MessageRequestDialog
+              userName={senderName as string}
+              onAccept={handleAccept}
+              onReject={handleReject}
+            />
           </View>
         )}
 
@@ -311,9 +381,21 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.white },
   messagesContainer: { flex: 1 },
   messagesContent: { paddingVertical: 20, gap: 20, alignSelf: "stretch" },
-  dateGroup: { flexDirection: "column", alignItems: "center", gap: 10, flex: 1, alignSelf: "stretch" },
+  dateGroup: {
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 10,
+    flex: 1,
+    alignSelf: "stretch",
+  },
   messagesGroup: { flexDirection: "column", gap: 10, alignSelf: "stretch" },
-  containerPendig: { position: "absolute", bottom: 0, left: 0, right: 0, alignItems: "center" },
+  containerPendig: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+  },
 });
 
 export default ChatScreen;

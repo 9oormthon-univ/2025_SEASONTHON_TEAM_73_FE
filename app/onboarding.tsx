@@ -11,7 +11,7 @@ export default function OnboardingScreen() {
   };
 
   const handleSignUp = () => {
-    router.push("/signUp" as any);
+    router.push("/sign-up" as any);
   };
 
   return (
@@ -23,8 +23,8 @@ export default function OnboardingScreen() {
         </Text>
       </View>
       <Image
-        source={require("@/assets/images/home-home.png")}
-        style={{ width: 268, height: 300 }}
+        source={require("@/assets/images/image-character.png")}
+        style={{ width: 268, height: 230 }}
       />
       <View style={styles.buttonContainer}>
         <Button text="로그인" onPress={handleLogin} size="lg" />
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     alignItems: "center",
     justifyContent: "center",
-    gap: SPACING.xl,
+    gap: 50,
   },
   headerSection: {
     alignItems: "center",
@@ -56,5 +56,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.normal,
     width: "100%",
     gap: SPACING.xs,
+    marginTop: 40,
   },
 });

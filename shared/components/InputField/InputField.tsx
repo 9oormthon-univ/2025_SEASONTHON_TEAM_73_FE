@@ -1,7 +1,7 @@
-import { COLORS, FONT_SIZE, FONTS } from '@/shared/styles';
-import React from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
-import { FormLabel } from './FormLabel';
+import { COLORS, FONT_SIZE, FONTS } from "@/shared/styles";
+import React from "react";
+import { StyleSheet, Text, TextInput, View } from "react-native";
+import { FormLabel } from "./FormLabel";
 
 interface InputFieldProps {
   label: string;
@@ -10,7 +10,7 @@ interface InputFieldProps {
   onChangeText?: (text: string) => void;
   secureTextEntry?: boolean;
   errorMessage?: string;
-  textContentType?: any;   // ✅ 추가
+  textContentType?: any;
 }
 
 export const InputField: React.FC<InputFieldProps> = ({
@@ -20,7 +20,7 @@ export const InputField: React.FC<InputFieldProps> = ({
   onChangeText,
   secureTextEntry = false,
   errorMessage,
-  textContentType,   // ✅ 구조분해 할당 추가
+  textContentType,
 }) => {
   return (
     <View style={styles.container}>
@@ -32,26 +32,28 @@ export const InputField: React.FC<InputFieldProps> = ({
         value={value}
         onChangeText={onChangeText}
         secureTextEntry={secureTextEntry}
-        textContentType={textContentType}  // ✅ 전달
+        textContentType={textContentType}
       />
-      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+      {errorMessage ? (
+        <Text style={styles.errorText}>{errorMessage}</Text>
+      ) : null}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    display: 'flex',
+    display: "flex",
     width: "100%",
-    flexDirection: 'column',
-    alignItems: 'flex-start',
+    flexDirection: "column",
+    alignItems: "flex-start",
     gap: 10,
-    position: 'relative',
+    position: "relative",
     height: 69,
     marginBottom: 10,
   },
   input: {
-    width: '100%',
+    width: "100%",
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
@@ -64,10 +66,10 @@ const styles = StyleSheet.create({
     color: COLORS.black,
   },
   inputError: {
-    borderColor: 'red',
+    borderColor: "red",
   },
   errorText: {
-    color: 'red',
+    color: "red",
     fontSize: 12,
     marginTop: -6,
   },

@@ -17,7 +17,7 @@ export default function Header({ title }: { title: string }) {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: SPACING.normal,
-    paddingVertical: SPACING.sm,
+    paddingTop: SPACING.sm,
     flexDirection: "row",
     alignItems: "center",
     gap: SPACING.sm,
