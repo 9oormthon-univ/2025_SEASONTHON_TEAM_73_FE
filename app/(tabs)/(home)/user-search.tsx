@@ -1,11 +1,10 @@
-import { Header } from "@/shared/components";
+import { EmptyStatus, Header } from "@/shared/components";
 import { HEADER_HEIGHT } from "@/shared/constants";
 import { COLORS, FONT_SIZE, FONTS, SPACING } from "@/shared/styles";
 import { UserProfile } from "@/shared/types";
 import { useSubmitUserSearch } from "@/widgets/home/api/submitUserSearch";
 import { UserListItem, UserSearchFilter } from "@/widgets/home/components";
 import { useUserFilter } from "@/widgets/home/contexts/filterUserDefault";
-import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -15,7 +14,6 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
   StyleSheet,
-  Text,
   View,
 } from "react-native";
 
@@ -85,18 +83,11 @@ export default function UserSearchScreen() {
     }
 
     return (
-      <View style={styles.emptyContainer}>
-        <Ionicons
-          name="people-outline"
-          size={48}
-          color={COLORS.gray[30]}
-          style={styles.emptyIcon}
-        />
-        <Text style={styles.emptyText}>사용자가 없어요</Text>
-        <Text style={styles.emptySubText}>
-          조건에 맞는 사용자를 찾을 수 없습니다
-        </Text>
-      </View>
+      <EmptyStatus
+        title="사용자가 없어요"
+        description="조건에 맞는 사용자를 찾을 수 없습니다"
+        icon="people-outline"
+      />
     );
   };
 
@@ -174,18 +165,11 @@ export default function UserSearchScreen() {
         <UserSearchFilter scrollY={scrollY} isHeaderVisible={isHeaderVisible} />
         {renderHeader()}
 
-        <View style={styles.emptyContainer}>
-          <Ionicons
-            name="people-outline"
-            size={48}
-            color={COLORS.gray[30]}
-            style={styles.emptyIcon}
-          />
-          <Text style={styles.emptyText}>사용자가 없어요</Text>
-          <Text style={styles.emptySubText}>
-            조건에 맞는 사용자를 찾을 수 없습니다
-          </Text>
-        </View>
+        <EmptyStatus
+          title="사용자가 없어요"
+          description="조건에 맞는 사용자를 찾을 수 없습니다"
+          icon="people-outline"
+        />
       </View>
     );
   }
@@ -266,28 +250,6 @@ const styles = StyleSheet.create({
   footerLoader: {
     paddingVertical: SPACING.md,
     alignItems: "center",
-  },
-  emptyContainer: {
-    height: 500,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  emptyIcon: {
-    marginBottom: SPACING.xs,
-  },
-  emptyText: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: COLORS.gray[70],
-    textAlign: "center",
-    marginBottom: SPACING.xs,
-    fontFamily: FONTS.medium,
-  },
-  emptySubText: {
-    fontSize: 14,
-    color: COLORS.gray[50],
-    textAlign: "center",
-    fontFamily: FONTS.regular,
   },
   errorIcon: {
     marginBottom: SPACING.xs,
