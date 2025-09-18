@@ -1,15 +1,8 @@
-import { Button } from "@/shared/components";
+import { BottomSheet } from "@/shared/components";
 import { Toggle } from "@/shared/components/toggle/Toggle";
 import { COLORS, FONT_SIZE, FONTS, SPACING } from "@/shared/styles";
 import { PostCreateField } from "@/widgets/post-create/components";
-import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import {
   getFilterDisplayValue,
@@ -28,9 +21,6 @@ export default function UserFilterBottomSheet({
   isVisible,
   onClose,
 }: UserFilterBottomSheetProps) {
-  const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ["84%"], []);
-
   const { defaultFilter, updateFilter } = useUserFilter();
 
   const [localFilter, setLocalFilter] = useState<UserDefaultFilter | null>(
@@ -39,28 +29,15 @@ export default function UserFilterBottomSheet({
 
   useEffect(() => {
     if (isVisible) {
-      bottomSheetRef.current?.present();
       setLocalFilter(defaultFilter);
-    } else {
-      bottomSheetRef.current?.dismiss();
     }
   }, [isVisible, defaultFilter]);
-
-  const handleSheetChanges = useCallback(
-    (index: number) => {
-      if (index === -1) {
-        onClose();
-      }
-    },
-    [onClose]
-  );
 
   const handleApply = () => {
     console.log("필터 적용:", localFilter);
     if (localFilter) {
       updateFilter(localFilter);
     }
-    onClose();
   };
 
   const handleFilterChange = (key: keyof UserDefaultFilter, value: any) => {
@@ -102,7 +79,7 @@ export default function UserFilterBottomSheet({
               ? localFilter?.smoking || false
               : !!(localFilter?.pet && localFilter.pet.length > 0)
           }
-          onToggle={(value) => {
+          onToggle={(value: boolean) => {
             if (fieldKey === "smoking") {
               // 이미 true인 상태에서 다시 누르면 해제
               if (localFilter?.smoking && value) {
@@ -193,44 +170,19 @@ export default function UserFilterBottomSheet({
   );
 
   return (
-    <BottomSheetModal
-      ref={bottomSheetRef}
-      snapPoints={snapPoints}
-      onChange={handleSheetChanges}
-      enablePanDownToClose
-      backgroundStyle={styles.bottomSheetBackground}
-      handleIndicatorStyle={styles.handleIndicator}
-      onDismiss={onClose}
+    <BottomSheet
+      isVisible={isVisible}
+      onClose={onClose}
+      showButton={true}
+      buttonText="적용"
+      onButtonPress={handleApply}
     >
-      <BottomSheetView style={styles.contentContainer}>
-        <UserFilterContent />
-
-        <View style={styles.buttonWrapper}>
-          <Button size="lg" text="적용" onPress={handleApply} />
-        </View>
-      </BottomSheetView>
-    </BottomSheetModal>
+      <UserFilterContent />
+    </BottomSheet>
   );
 }
 
 const styles = StyleSheet.create({
-  bottomSheetBackground: {
-    backgroundColor: COLORS.white,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    shadowColor: COLORS.black,
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  handleIndicator: {
-    backgroundColor: COLORS.gray[30],
-  },
-  contentContainer: {
-    flex: 1,
-    paddingHorizontal: SPACING.normal,
-  },
   selectContainer: {
     marginBottom: SPACING.lg,
   },
@@ -247,8 +199,5 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZE.c1,
     fontFamily: FONTS.regular,
     color: COLORS.gray[50],
-  },
-  buttonWrapper: {
-    paddingVertical: SPACING.md,
   },
 });
