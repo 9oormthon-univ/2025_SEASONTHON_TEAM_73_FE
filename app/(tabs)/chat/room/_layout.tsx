@@ -1,4 +1,5 @@
-import { COLORS, FONT_SIZE, FONTS } from "@/shared/styles";
+import { Header } from "@/shared/components";
+import { COLORS } from "@/shared/styles";
 import { FilterDefaultProvider } from "@/widgets/home/contexts";
 import { Stack } from "expo-router";
 
@@ -8,8 +9,15 @@ export default function RoomLayout() {
       <Stack
         screenOptions={{
           headerShown: true,
-          headerTitleStyle: { fontFamily: FONTS.bold, fontSize: FONT_SIZE.b1 },
           contentStyle: { backgroundColor: COLORS.white },
+          header: (props) => (
+            <Header
+              title={
+                (props.options.headerTitle as string) ||
+                (props.options.title as string)
+              }
+            />
+          ),
         }}
       >
         <Stack.Screen
