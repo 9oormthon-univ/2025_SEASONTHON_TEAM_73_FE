@@ -1,16 +1,18 @@
 import { Skeleton } from "@/shared/components";
 import { COLORS, FONT_SIZE, FONTS, SPACING } from "@/shared/styles";
-import { LikedUser } from "@/shared/types";
+import { UserProfile } from "@/shared/types";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export default function UserListItem({
-  nickname,
-  gender,
-  age,
-  smoking,
-}: LikedUser) {
+interface UserListItemProps {
+  user: UserProfile;
+}
+
+export default function UserListItem({ user }: UserListItemProps) {
+  const { nickname, gender, age, smoking, verified, certified, boosted } = user;
+  const smokingText = smoking ? "흡연" : "비흡연";
+
   return (
     <View style={styles.container}>
       <View style={styles.userInfo}>
@@ -19,12 +21,37 @@ export default function UserListItem({
           source={require("@/assets/images/profile-default.png")}
         />
         <View style={styles.userDetails}>
-          <Text style={styles.nickname}>{nickname}</Text>
+          <View style={styles.nameContainer}>
+            <Text style={styles.nickname}>{nickname}</Text>
+            {verified && (
+              <View style={styles.badge}>
+                <Ionicons
+                  name="checkmark-circle"
+                  size={16}
+                  color={COLORS.primary[90]}
+                />
+              </View>
+            )}
+            {certified && (
+              <View style={styles.badge}>
+                <Ionicons
+                  name="shield-checkmark"
+                  size={16}
+                  color={COLORS.primary[90]}
+                />
+              </View>
+            )}
+            {boosted && (
+              <View style={styles.badge}>
+                <Ionicons name="flash" size={16} color={COLORS.primary[90]} />
+              </View>
+            )}
+          </View>
           <View style={styles.tagsContainer}>
-            {[gender, age, smoking].map((item, index) => (
+            {[gender, `${age}세`, smokingText].map((item, index) => (
               <React.Fragment key={index + item.toString()}>
                 <Text style={styles.tagText}>{item}</Text>
-                {index !== [gender, age, smoking].length - 1 && (
+                {index !== [gender, `${age}세`, smokingText].length - 1 && (
                   <View style={styles.dotContainer}>
                     <View style={styles.dot} />
                   </View>
@@ -34,7 +61,9 @@ export default function UserListItem({
           </View>
         </View>
       </View>
-      <Ionicons name="heart" size={24} color={COLORS.primary[90]} />
+      <TouchableOpacity onPress={() => {}}>
+        <Ionicons name="heart-outline" size={24} color={COLORS.gray[50]} />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -98,11 +127,19 @@ const styles = StyleSheet.create({
     height: 44,
     justifyContent: "space-between",
   },
+  nameContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
   nickname: {
     fontSize: FONT_SIZE.b1,
     lineHeight: 24,
     fontFamily: FONTS.bold,
     color: COLORS.black,
+  },
+  badge: {
+    marginLeft: 2,
   },
   tagsContainer: {
     flexDirection: "row",

@@ -1,7 +1,7 @@
 import { Button } from "@/shared/components";
 import { useAuthStore } from "@/shared/store";
 import { COLORS, FONT_SIZE, FONTS, RADIUS, SPACING } from "@/shared/styles";
-import type { LikedUser } from "@/shared/types";
+import type { UserProfile } from "@/shared/types";
 import { RecommendUser, useFetchDashboard } from "@/widgets/home/api";
 import { UserListItem } from "@/widgets/home/components";
 import { getRoomText } from "@/widgets/home/constants";
@@ -125,7 +125,7 @@ function FavoriteUsersSection({
   likedUsers,
   isFetching,
 }: {
-  likedUsers?: LikedUser[];
+  likedUsers?: UserProfile[];
   isFetching: boolean;
 }) {
   return (
@@ -149,7 +149,7 @@ function FavoriteUsersSection({
         {isFetching ? (
           <UserListItem.Skeleton />
         ) : likedUsers && likedUsers.length > 0 ? (
-          likedUsers.map((user) => <UserListItem key={user.userId} {...user} />)
+          likedUsers.map((user) => <UserListItem key={user.id} user={user} />)
         ) : (
           <EmptyFavoriteUsersState />
         )}
