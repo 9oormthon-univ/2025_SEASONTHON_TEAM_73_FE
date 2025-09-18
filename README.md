@@ -9,3 +9,6 @@
 | PM | PD | FE | FE | BE | BE |
 | [GitHub](https://github.com/lee-jaemmin) | [GitHub](https://github.com/hyeonji44) | [GitHub](https://github.com/ehy0414) | [GitHub](https://github.com/yummjin) | [GitHub](https://github.com/Jiwon-Yoon00) | [GitHub](https://github.com/wjdekdns1028) |
 
+# Skill (기술 스택)
+<img width="891" height="592" alt="기술스택" src="https://github.com/user-attachments/assets/b78702ea-0233-49f3-a2e3-01025ced46d8" />
+
