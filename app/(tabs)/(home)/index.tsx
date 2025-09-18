@@ -1,4 +1,4 @@
-import { Button } from "@/shared/components";
+import { Button, Skeleton } from "@/shared/components";
 import { useAuthStore } from "@/shared/store";
 import { COLORS, FONT_SIZE, FONTS, RADIUS, SPACING } from "@/shared/styles";
 import type { UserProfile } from "@/shared/types";
@@ -124,7 +124,7 @@ function FavoriteUsersSection({
   isFetching: boolean;
 }) {
   return (
-    <View style={{ marginTop: 35 }}>
+    <View style={{ marginTop: 28 }}>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>내가 찜한 사용자</Text>
         <TouchableOpacity
@@ -167,7 +167,7 @@ function RecommendSection({
   isFetching: boolean;
 }) {
   return (
-    <View style={{ marginTop: 35 }}>
+    <View>
       <View style={styles.sectionHeader}>
         <View>
           <Text style={styles.sectionTitle}>
@@ -195,16 +195,18 @@ function RecommendSection({
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={styles.userProfileCardWrapper}
-        contentContainerStyle={{ gap: 16 }}
+        contentContainerStyle={{ gap: 16, flexDirection: "row" }}
       >
         {isFetching ? (
-          <UserListItem.Skeleton />
+          <RecommendSkeleton />
         ) : recommendedUsers && recommendedUsers.length > 0 ? (
           recommendedUsers.map((user) => (
             <UserProfileCard key={user.userId} {...user} />
           ))
         ) : (
-          <EmptyRecommendUsersState isRoom={isRoom} />
+          <View style={{ width: "100%", justifyContent: "center" }}>
+            <EmptyRecommendUsersState isRoom={isRoom} />
+          </View>
         )}
       </ScrollView>
     </View>
@@ -264,6 +266,25 @@ function UserProfileCard({
   );
 }
 
+function RecommendSkeleton() {
+  return (
+    <View style={styles.recommendSkeletonContainer}>
+      {Array.from({ length: 3 }).map((_, index) => (
+        <View key={index} style={styles.userProfileCard}>
+          <Skeleton width={120} height={16} style={{ marginBottom: 17 }} />
+          <View style={styles.userProfileInfoWrapper}>
+            <Skeleton width={56} height={56} style={{ borderRadius: 28 }} />
+            <View style={{ gap: 8 }}>
+              <Skeleton width={80} height={16} />
+              <Skeleton width={100} height={12} />
+            </View>
+          </View>
+        </View>
+      ))}
+    </View>
+  );
+}
+
 function EmptyRecommendUsersState({ isRoom }: { isRoom: boolean }) {
   return (
     <View style={styles.emptyRecommendContainer}>
@@ -319,14 +340,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: SPACING.sm,
   },
-
   scrollView: {
     flex: 1,
   },
-
   welcomeContainer: {
     paddingHorizontal: SPACING.normal,
-    paddingTop: SPACING.lg,
+    paddingTop: SPACING.xl,
   },
   welcomeTitle: {
     fontSize: 20,
@@ -399,7 +418,6 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.bold,
     color: COLORS.primary[90],
   },
-
   favoriteContainer: {
     paddingHorizontal: SPACING.normal,
   },
@@ -417,7 +435,7 @@ const styles = StyleSheet.create({
     textAlign: "left",
   },
   sectionDescription: {
-    fontSize: 12,
+    fontSize: FONT_SIZE.c1,
     lineHeight: 18,
     fontFamily: FONTS.regular,
     color: COLORS.gray[50],
@@ -439,7 +457,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.normal,
   },
   userProfileCard: {
-    alignSelf: "flex-start",
+    width: 200,
     padding: 20,
     borderRadius: RADIUS.xs,
     gap: 17,
@@ -479,11 +497,8 @@ const styles = StyleSheet.create({
   },
   recommendSkeletonContainer: {
     flexDirection: "row",
-    gap: SPACING.sm,
-    paddingHorizontal: SPACING.normal,
+    gap: 16,
   },
-
-  // 빈 상태 스타일
   emptyStateContainer: {
     alignItems: "center",
     paddingVertical: SPACING.xl,
