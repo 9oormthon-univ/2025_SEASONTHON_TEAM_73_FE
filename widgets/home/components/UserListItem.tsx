@@ -27,7 +27,7 @@ export default function UserListItem({ user }: UserListItemProps) {
   return (
     <TouchableOpacity
       onPress={() => {
-        router.push(`/userDetail?userId=${id}`);
+        router.push(`/user/${id}`);
       }}
       activeOpacity={0.8}
       style={styles.container}

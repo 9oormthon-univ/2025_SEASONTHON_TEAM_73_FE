@@ -17,7 +17,7 @@ export function RecommendUserItem({ recommendUser }: RecommendUserItemProps) {
   return (
     <TouchableOpacity
       onPress={() => {
-        router.push(`/userDetail/${id}`);
+        router.push(`/user/${id}`);
       }}
       activeOpacity={0.8}
       style={styles.container}
@@ -94,15 +94,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   matchScoreText: {
-    fontSize: FONT_SIZE.c2,
+    fontSize: FONT_SIZE.b2,
     fontFamily: FONTS.bold,
     color: COLORS.primary[90],
-  },
-  userInfo: {
-    fontSize: FONT_SIZE.c1,
-    fontFamily: FONTS.regular,
-    color: COLORS.gray[50],
-    marginBottom: 4,
   },
   reason: {
     fontSize: FONT_SIZE.c1,

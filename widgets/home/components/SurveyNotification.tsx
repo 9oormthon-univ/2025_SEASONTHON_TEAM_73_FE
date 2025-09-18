@@ -13,7 +13,7 @@ export function SurveyNotification() {
           성향조사를 완료해야 룸메이트 매칭을 할 수 있어요.
         </Text>
         <TouchableOpacity
-          onPress={() => router.push("/signUp/lifeRhythm")}
+          onPress={() => router.push("/sign-up/life-rhythm")}
           style={styles.surveyButton}
         >
           <Text style={styles.surveyButtonText}>성향조사 바로가기</Text>

@@ -86,7 +86,7 @@ export function UserDetailModal({
               style={{ width: (350 - SPACING.normal * 2) / 2 }}
               onPress={() => {
                 onClose();
-                router.push(`/userDetail?userId=${selectedUser?.userId}`);
+                router.push(`/user/${selectedUser?.userId}`);
               }}
             />
           </View>

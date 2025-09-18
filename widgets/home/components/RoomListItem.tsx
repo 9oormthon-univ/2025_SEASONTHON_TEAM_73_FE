@@ -13,7 +13,7 @@ export default function RoomListItem({ room }: RoomListItemProps) {
   return (
     <TouchableOpacity
       style={styles.roomCard}
-      onPress={() => router.push(`/detail/${room.id}`)}
+      onPress={() => router.push(`/post/${room.id}`)}
     >
       <Image source={{ uri: room.imageUrl }} style={styles.roomImage} />
       <View style={styles.roomInfo}>

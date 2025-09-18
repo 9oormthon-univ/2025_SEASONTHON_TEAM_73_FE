@@ -1,23 +1,47 @@
 import { EmptyStatus } from "@/shared/components";
 import { COLORS } from "@/shared/styles";
 import { useFetchLikedUser } from "@/widgets/home/api";
-import { UserListItem } from "@/widgets/home/components";
+import {
+  RecommendUser,
+  useSubmitRecommendUser,
+} from "@/widgets/home/api/submitRecommendUser";
+import { RecommendUserItem, UserListItem } from "@/widgets/home/components";
 import { useLocalSearchParams } from "expo-router";
-import React from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ScrollView, StyleSheet, Text } from "react-native";
 
 export default function UsersScreen() {
   const { type } = useLocalSearchParams();
-
   const { data, isLoading } = useFetchLikedUser(0);
+  const [recommendData, setRecommendData] = useState<RecommendUser[]>([]);
 
-  console.log(type);
+  const { mutate: submitRecommendUser, isPending: isRecommendLoading } =
+    useSubmitRecommendUser();
+
+  useEffect(() => {
+    if (type === "recommend") {
+      submitRecommendUser(undefined, {
+        onSuccess: (data) => {
+          setRecommendData(data);
+        },
+      });
+    }
+  }, [type, submitRecommendUser]);
 
   const renderItem = () => {
     if (type === "recommend") {
-      return data.content.map((user) => (
-        <RecommendUserItem key={user.id} user={user} />
-      ));
+      if (isRecommendLoading) {
+        return <Text>추천 사용자를 불러오는 중...</Text>;
+      }
+
+      if (recommendData.length > 0) {
+        return recommendData.map((recommendUser) => (
+          <RecommendUserItem
+            key={recommendUser.user.id}
+            recommendUser={recommendUser}
+          />
+        ));
+      }
     }
 
     if (data && data.content.length > 0) {
@@ -29,8 +53,18 @@ export default function UsersScreen() {
   };
 
   const renderEmptyComponent = () => {
-    if (isLoading) {
+    if (isLoading || isRecommendLoading) {
       return null;
+    }
+
+    if (type === "recommend") {
+      return (
+        <EmptyStatus
+          title="추천할 사용자가 없어요"
+          description="조건에 맞는 사용자를 찾을 수 없습니다"
+          icon="people-outline"
+        />
+      );
     }
 
     return (
@@ -45,7 +79,9 @@ export default function UsersScreen() {
   return (
     <ScrollView style={styles.container}>
       {renderItem()}
-      {(!data || data.content.length === 0) && renderEmptyComponent()}
+      {((type === "recommend" && recommendData.length === 0) ||
+        (type !== "recommend" && (!data || data.content.length === 0))) &&
+        renderEmptyComponent()}
     </ScrollView>
   );
 }
@@ -56,5 +92,3 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
   },
 });
-
-function RecommendUserItem({ user }: { user: RecommendUser }) {}
