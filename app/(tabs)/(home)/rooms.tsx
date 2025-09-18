@@ -19,7 +19,6 @@ import {
 export default function HomeScreen() {
   const { roomFilter, userFilter, resetFilter } = useDefaultFilter();
   const [searchResults, setSearchResults] = useState<Room[]>([]);
-  const [isFirstRender, setIsFirstRender] = useState(true);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const scrollY = useRef(new Animated.Value(0)).current;
   const lastScrollY = useRef(0);
@@ -33,34 +32,21 @@ export default function HomeScreen() {
 
   useEffect(() => {
     console.log("필터 변경 감지:", roomFilter);
-    if (!isFirstRender) {
-      const hasActiveFilters =
-        Object.keys(roomFilter).length > 0 || userFilter !== null;
 
-      if (hasActiveFilters) {
-        const searchData = {
-          ...roomFilter,
-          userFilter: userFilter,
-        };
-        console.log("POST 요청으로 검색 실행:", searchData);
-        submitPostSearch(searchData, {
-          onSuccess: (data) => {
-            console.log("검색 결과:", data.content.length, "개");
-            setSearchResults(data.content);
-          },
-        });
-      } else {
-        console.log("필터가 비어있으므로 검색하지 않음");
-        setSearchResults([]);
-      }
-    }
-  }, [roomFilter, userFilter, submitPostSearch, isFirstRender]);
+    const hasActiveFilters =
+      Object.keys(roomFilter).length > 0 || userFilter !== null;
 
-  useEffect(() => {
-    if (isFirstRender) {
-      setIsFirstRender(false);
-    }
-  }, [isFirstRender]);
+    const searchData = {
+      ...roomFilter,
+      userFilter: userFilter,
+    };
+    submitPostSearch(searchData, {
+      onSuccess: (data) => {
+        console.log("검색 결과:", data.content.length, "개");
+        setSearchResults(data.content);
+      },
+    });
+  }, [roomFilter, userFilter, submitPostSearch]);
 
   const allRooms = searchResults;
 

@@ -19,7 +19,6 @@ export const UserFilterProvider = ({ children }: { children: ReactNode }) => {
     setDefaultFilter((prev) => {
       let newFilter = { ...prev };
 
-      // 각 필터 키를 확인하여 undefined인 경우 제거
       Object.entries(filter).forEach(([key, value]) => {
         if (value === undefined) {
           const { [key as keyof UserDefaultFilter]: removed, ...rest } =

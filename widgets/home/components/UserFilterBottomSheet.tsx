@@ -33,8 +33,15 @@ export default function UserFilterBottomSheet({
 
   const handleApply = () => {
     console.log("필터 적용:", localFilter);
-    if (localFilter) {
+
+    // 모든 필터가 해제되었는지 확인
+    const hasActiveFilters = localFilter && Object.keys(localFilter).length > 0;
+
+    if (hasActiveFilters) {
       updateFilter(localFilter);
+    } else {
+      // 필터가 모두 해제된 경우 빈 객체를 전달하여 초기화
+      updateFilter({});
     }
   };
 
@@ -135,9 +142,10 @@ export default function UserFilterBottomSheet({
         USER_FILTER_FIELDS.SLEEP_LEVEL.options
       )}
 
-      {renderToggleField(
+      {renderRadioField(
         USER_FILTER_FIELDS.PET.key,
-        USER_FILTER_FIELDS.PET.title
+        USER_FILTER_FIELDS.PET.title,
+        USER_FILTER_FIELDS.PET.options
       )}
 
       {renderRadioField(

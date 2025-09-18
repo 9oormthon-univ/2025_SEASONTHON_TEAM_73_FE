@@ -78,9 +78,20 @@ export default function PreferenceTab({
 
   return (
     <ScrollView style={{ maxHeight: 510 }} showsVerticalScrollIndicator={false}>
+      {renderRadioField(
+        USER_FILTER_FIELDS.TIDINESS_LEVEL.key,
+        USER_FILTER_FIELDS.TIDINESS_LEVEL.title,
+        USER_FILTER_FIELDS.TIDINESS_LEVEL.options
+      )}
+
       {renderToggleField(
         USER_FILTER_FIELDS.SMOKING.key,
         USER_FILTER_FIELDS.SMOKING.title
+      )}
+
+      {renderToggleField(
+        USER_FILTER_FIELDS.PET.key,
+        USER_FILTER_FIELDS.PET.title
       )}
 
       {renderRadioField(
@@ -93,17 +104,6 @@ export default function PreferenceTab({
         USER_FILTER_FIELDS.SLEEP_LEVEL.key,
         USER_FILTER_FIELDS.SLEEP_LEVEL.title,
         USER_FILTER_FIELDS.SLEEP_LEVEL.options
-      )}
-
-      {renderToggleField(
-        USER_FILTER_FIELDS.PET.key,
-        USER_FILTER_FIELDS.PET.title
-      )}
-
-      {renderRadioField(
-        USER_FILTER_FIELDS.TIDINESS_LEVEL.key,
-        USER_FILTER_FIELDS.TIDINESS_LEVEL.title,
-        USER_FILTER_FIELDS.TIDINESS_LEVEL.options
       )}
     </ScrollView>
   );

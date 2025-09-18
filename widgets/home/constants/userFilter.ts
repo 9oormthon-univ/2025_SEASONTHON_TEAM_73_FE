@@ -1,6 +1,5 @@
 import { UserDefaultFilter } from "../types";
 
-// Enum 값들 상수화
 export const ALCOHOL_COUNT_VALUES = {
   ZERO: "ZERO",
   ONE_TO_THREE: "ONE_TO_THREE",
@@ -37,7 +36,7 @@ export const USER_FILTER_FIELDS = {
   },
   ALCOHOL_COUNT: {
     key: "alcoholCount" as keyof UserDefaultFilter,
-    title: "음주 빈도",
+    title: "주 음주 횟수",
     type: "radio" as const,
     options: [
       { label: "0회", value: ALCOHOL_COUNT_VALUES.ZERO },
@@ -47,27 +46,34 @@ export const USER_FILTER_FIELDS = {
   },
   SLEEP_LEVEL: {
     key: "sleepLevel" as keyof UserDefaultFilter,
-    title: "수면 패턴",
+    title: "잠귀 민감도",
     type: "radio" as const,
     options: [
-      { label: "낮음", value: SLEEP_LEVEL_VALUES.LOW },
-      { label: "보통", value: SLEEP_LEVEL_VALUES.MEDIUM },
-      { label: "높음", value: SLEEP_LEVEL_VALUES.HIGH },
+      { label: "둔감해요", value: SLEEP_LEVEL_VALUES.LOW },
+      { label: "보통이에요", value: SLEEP_LEVEL_VALUES.MEDIUM },
+      { label: "예민한 편이에요", value: SLEEP_LEVEL_VALUES.HIGH },
     ],
   },
   PET: {
     key: "pet" as keyof UserDefaultFilter,
     title: "반려동물",
-    type: "toggle" as const,
+    type: "radio" as const,
+    options: [
+      { label: "강아지", value: "강아지" },
+      { label: "고양이", value: "고양이" },
+      { label: "새", value: "새" },
+      { label: "물고기", value: "물고기" },
+      { label: "기타", value: "기타" },
+    ],
   },
   TIDINESS_LEVEL: {
     key: "tidinessLevel" as keyof UserDefaultFilter,
-    title: "청결도",
+    title: "정리정돈 성향",
     type: "radio" as const,
     options: [
-      { label: "낮음", value: TIDINESS_LEVEL_VALUES.LOW },
-      { label: "보통", value: TIDINESS_LEVEL_VALUES.MEDIUM },
-      { label: "높음", value: TIDINESS_LEVEL_VALUES.HIGH },
+      { label: "항상 제자리에 둬요", value: TIDINESS_LEVEL_VALUES.LOW },
+      { label: "대체로 정돈된 편이에요", value: TIDINESS_LEVEL_VALUES.MEDIUM },
+      { label: "어지르는 편이에요", value: TIDINESS_LEVEL_VALUES.HIGH },
     ],
   },
 } as const;
@@ -107,7 +113,16 @@ export const getFilterDisplayValue = (
       return `${filter.sleepLevel.length}개 선택됨`;
 
     case "pet":
-      return filter.pet && filter.pet.length > 0 ? "있음" : "없음";
+      if (!filter.pet || filter.pet.length === 0) return "선택안함";
+      if (filter.pet.length === 1) {
+        const petValue = filter.pet[0];
+        if (petValue === "강아지") return "강아지";
+        if (petValue === "고양이") return "고양이";
+        if (petValue === "새") return "새";
+        if (petValue === "물고기") return "물고기";
+        if (petValue === "기타") return "기타";
+      }
+      return `${filter.pet.length}개 선택됨`;
 
     case "tidinessLevel":
       if (!filter.tidinessLevel || filter.tidinessLevel.length === 0)
@@ -148,6 +163,16 @@ export const getRadioSelectedIndex = (
       if (sleepValue === SLEEP_LEVEL_VALUES.HIGH) return 2;
       return 0;
 
+    case "pet":
+      if (!filter.pet || filter.pet.length === 0) return 0;
+      const petValue = filter.pet[0];
+      if (petValue === "강아지") return 0;
+      if (petValue === "고양이") return 1;
+      if (petValue === "새") return 2;
+      if (petValue === "물고기") return 3;
+      if (petValue === "기타") return 4;
+      return 0;
+
     case "tidinessLevel":
       if (!filter.tidinessLevel || filter.tidinessLevel.length === 0) return 0;
       const tidinessValue = filter.tidinessLevel[0];
@@ -186,6 +211,19 @@ export const getRadioSelectedIndices = (
           if (value === SLEEP_LEVEL_VALUES.LOW) return 0;
           if (value === SLEEP_LEVEL_VALUES.MEDIUM) return 1;
           if (value === SLEEP_LEVEL_VALUES.HIGH) return 2;
+          return -1;
+        })
+        .filter((index) => index !== -1);
+
+    case "pet":
+      if (!filter.pet || filter.pet.length === 0) return [];
+      return filter.pet
+        .map((value) => {
+          if (value === "강아지") return 0;
+          if (value === "고양이") return 1;
+          if (value === "새") return 2;
+          if (value === "물고기") return 3;
+          if (value === "기타") return 4;
           return -1;
         })
         .filter((index) => index !== -1);

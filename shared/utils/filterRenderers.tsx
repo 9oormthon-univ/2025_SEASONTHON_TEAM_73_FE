@@ -50,7 +50,7 @@ export const renderRangeSlider = (
       <Text style={styles.description}>{description}</Text>
     </View>
     <RangeSlider
-      onValueChanged={onValueChange}
+      onValueChanged={(low, high, byUser) => onValueChange(low, high)}
       min={min}
       max={max}
       low={value[0]}
