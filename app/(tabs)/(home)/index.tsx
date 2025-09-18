@@ -55,14 +55,9 @@ function Header() {
   return (
     <View style={styles.header}>
       <Image source={require("@/assets/icons/logo.png")} style={styles.logo} />
-      <View style={styles.headerActions}>
-        <TouchableOpacity onPress={() => router.push("/post-create")}>
-          <Ionicons name="add-outline" size={30} color={COLORS.black} />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Ionicons name="search" size={24} color={COLORS.black} />
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity onPress={() => router.push("/post-create")}>
+        <Ionicons name="add-outline" size={30} color={COLORS.black} />
+      </TouchableOpacity>
     </View>
   );
 }
