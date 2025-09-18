@@ -1,3 +1,4 @@
+import { Button } from "@/shared/components";
 import { useAuthStore } from "@/shared/store";
 import { COLORS, FONT_SIZE, FONTS, RADIUS, SPACING } from "@/shared/styles";
 import type { LikedUser } from "@/shared/types";
@@ -276,12 +277,11 @@ function EmptyRecommendUsersState({ isRoom }: { isRoom: boolean }) {
       <Text style={styles.emptyStateDescription}>
         성향조사를 완료하면 맞춤 추천을 받을 수 있어요
       </Text>
-      <TouchableOpacity
-        style={styles.emptyStateButton}
-        onPress={() => router.push("/users")}
-      >
-        <Text style={styles.emptyStateButtonText}>전체 사용자 보기</Text>
-      </TouchableOpacity>
+      <Button
+        size="md"
+        text="사용자 둘러보기"
+        onPress={() => router.push("/user-search")}
+      />
     </View>
   );
 }
@@ -294,12 +294,11 @@ function EmptyFavoriteUsersState() {
       <Text style={styles.emptyStateDescription}>
         마음에 드는 룸메이트를 찾아서 찜해보세요
       </Text>
-      <TouchableOpacity
-        style={styles.emptyStateButton}
-        onPress={() => router.push("/users")}
-      >
-        <Text style={styles.emptyStateButtonText}>사용자 둘러보기</Text>
-      </TouchableOpacity>
+      <Button
+        size="md"
+        text="사용자 둘러보기"
+        onPress={() => router.push("/user-search")}
+      />
     </View>
   );
 }
@@ -512,19 +511,6 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.regular,
     color: COLORS.gray[50],
     textAlign: "center",
-    marginBottom: SPACING.lg,
-  },
-  emptyStateButton: {
-    backgroundColor: COLORS.primary[90],
-    paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.sm,
-    borderRadius: RADIUS.sm,
-  },
-  emptyStateButtonText: {
-    fontSize: FONT_SIZE.c1,
-    lineHeight: 18,
-    fontFamily: FONTS.bold,
-    color: COLORS.white,
-    textAlign: "center",
+    marginBottom: SPACING.md,
   },
 });
