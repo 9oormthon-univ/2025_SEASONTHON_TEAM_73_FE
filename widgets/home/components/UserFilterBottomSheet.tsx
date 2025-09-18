@@ -1,5 +1,7 @@
 import { Button } from "@/shared/components";
-import { COLORS, SPACING } from "@/shared/styles";
+import { Toggle } from "@/shared/components/toggle/Toggle";
+import { COLORS, FONT_SIZE, FONTS, SPACING } from "@/shared/styles";
+import { PostCreateField } from "@/widgets/post-create/components";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import React, {
   useCallback,
@@ -8,7 +10,12 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  getFilterDisplayValue,
+  getRadioSelectedIndex,
+  USER_FILTER_FIELDS,
+} from "../constants/userFilter";
 import { useUserFilter } from "../contexts/filterUserDefault";
 import { UserDefaultFilter } from "../types";
 
@@ -49,6 +56,7 @@ export default function UserFilterBottomSheet({
   );
 
   const handleApply = () => {
+    console.log("필터 적용:", localFilter);
     if (localFilter) {
       updateFilter(localFilter);
     }
@@ -56,185 +64,132 @@ export default function UserFilterBottomSheet({
   };
 
   const handleFilterChange = (key: keyof UserDefaultFilter, value: any) => {
-    setLocalFilter((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+    console.log(`필터 변경: ${key} = ${JSON.stringify(value)}`);
+    setLocalFilter((prev) => {
+      let newFilter;
+      if (value === undefined) {
+        // undefined인 경우 해당 키를 제거
+        const { [key]: removed, ...rest } = prev || {};
+        newFilter = rest;
+      } else {
+        newFilter = {
+          ...prev,
+          [key]: value,
+        };
+      }
+      console.log("현재 필터 상태:", newFilter);
+      return newFilter;
+    });
   };
 
-  const FilterContent = () => (
-    <View style={styles.content}>
-      {/* 흡연 */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Button
-            size="sm"
-            text="흡연"
-            variant={localFilter?.smoking ? "primary" : "outline"}
-            onPress={() => handleFilterChange("smoking", !localFilter?.smoking)}
-          />
-        </View>
-      </View>
-
-      {/* 음주 */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Button
-            size="sm"
-            text="음주 (주 1-3회)"
-            variant={
-              localFilter?.alcoholCount === "ONE_TO_THREE"
-                ? "primary"
-                : "outline"
+  // Toggle 필드 렌더러
+  const renderToggleField = (
+    fieldKey: keyof UserDefaultFilter,
+    title: string
+  ) => (
+    <View style={styles.selectContainer}>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Text style={styles.title}>{title}</Text>
+        <Toggle
+          isOn={
+            fieldKey === "smoking"
+              ? localFilter?.smoking || false
+              : !!(localFilter?.pet && localFilter.pet.length > 0)
+          }
+          onToggle={(value) => {
+            if (fieldKey === "smoking") {
+              // 이미 true인 상태에서 다시 누르면 해제
+              if (localFilter?.smoking && value) {
+                handleFilterChange("smoking", undefined);
+              } else {
+                handleFilterChange("smoking", value);
+              }
+            } else if (fieldKey === "pet") {
+              // 이미 pet이 있는 상태에서 다시 누르면 해제
+              if (localFilter?.pet && localFilter.pet.length > 0 && value) {
+                handleFilterChange("pet", undefined);
+              } else {
+                handleFilterChange("pet", value ? ["dog", "cat"] : undefined);
+              }
             }
-            onPress={() =>
-              handleFilterChange(
-                "alcoholCount",
-                localFilter?.alcoholCount === "ONE_TO_THREE"
-                  ? undefined
-                  : "ONE_TO_THREE"
-              )
-            }
-          />
-        </View>
-        <View style={styles.sectionHeader}>
-          <Button
-            size="sm"
-            text="음주 (주 4회 이상)"
-            variant={
-              localFilter?.alcoholCount === "MORE_THAN_FOUR"
-                ? "primary"
-                : "outline"
-            }
-            onPress={() =>
-              handleFilterChange(
-                "alcoholCount",
-                localFilter?.alcoholCount === "MORE_THAN_FOUR"
-                  ? undefined
-                  : "MORE_THAN_FOUR"
-              )
-            }
-          />
-        </View>
-      </View>
-
-      {/* 수면 패턴 */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Button
-            size="sm"
-            text="수면 패턴 (낮음)"
-            variant={localFilter?.sleepLevel === "LOW" ? "primary" : "outline"}
-            onPress={() =>
-              handleFilterChange(
-                "sleepLevel",
-                localFilter?.sleepLevel === "LOW" ? undefined : "LOW"
-              )
-            }
-          />
-        </View>
-        <View style={styles.sectionHeader}>
-          <Button
-            size="sm"
-            text="수면 패턴 (보통)"
-            variant={
-              localFilter?.sleepLevel === "MEDIUM" ? "primary" : "outline"
-            }
-            onPress={() =>
-              handleFilterChange(
-                "sleepLevel",
-                localFilter?.sleepLevel === "MEDIUM" ? undefined : "MEDIUM"
-              )
-            }
-          />
-        </View>
-        <View style={styles.sectionHeader}>
-          <Button
-            size="sm"
-            text="수면 패턴 (높음)"
-            variant={localFilter?.sleepLevel === "HIGH" ? "primary" : "outline"}
-            onPress={() =>
-              handleFilterChange(
-                "sleepLevel",
-                localFilter?.sleepLevel === "HIGH" ? undefined : "HIGH"
-              )
-            }
-          />
-        </View>
-      </View>
-
-      {/* 반려동물 */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Button
-            size="sm"
-            text="반려동물 있음"
-            variant={
-              localFilter?.pet && localFilter.pet.length > 0
-                ? "primary"
-                : "outline"
-            }
-            onPress={() =>
-              handleFilterChange(
-                "pet",
-                localFilter?.pet && localFilter.pet.length > 0
-                  ? []
-                  : ["dog", "cat"]
-              )
-            }
-          />
-        </View>
-      </View>
-
-      {/* 청결도 */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Button
-            size="sm"
-            text="청결도 (낮음)"
-            variant={
-              localFilter?.tidinessLevel === "LOW" ? "primary" : "outline"
-            }
-            onPress={() =>
-              handleFilterChange(
-                "tidinessLevel",
-                localFilter?.tidinessLevel === "LOW" ? undefined : "LOW"
-              )
-            }
-          />
-        </View>
-        <View style={styles.sectionHeader}>
-          <Button
-            size="sm"
-            text="청결도 (보통)"
-            variant={
-              localFilter?.tidinessLevel === "MEDIUM" ? "primary" : "outline"
-            }
-            onPress={() =>
-              handleFilterChange(
-                "tidinessLevel",
-                localFilter?.tidinessLevel === "MEDIUM" ? undefined : "MEDIUM"
-              )
-            }
-          />
-        </View>
-        <View style={styles.sectionHeader}>
-          <Button
-            size="sm"
-            text="청결도 (높음)"
-            variant={
-              localFilter?.tidinessLevel === "HIGH" ? "primary" : "outline"
-            }
-            onPress={() =>
-              handleFilterChange(
-                "tidinessLevel",
-                localFilter?.tidinessLevel === "HIGH" ? undefined : "HIGH"
-              )
-            }
-          />
-        </View>
+          }}
+        />
       </View>
     </View>
+  );
+
+  const renderRadioField = (
+    fieldKey: keyof UserDefaultFilter,
+    title: string,
+    options: readonly { label: string; value: any }[]
+  ) => (
+    <View style={styles.selectContainer}>
+      <View style={styles.headerWrapper}>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.description}>
+          {getFilterDisplayValue(localFilter, fieldKey)}
+        </Text>
+      </View>
+      <PostCreateField.MultiRadio
+        items={options.map((option) => option.label)}
+        selected={[getRadioSelectedIndex(localFilter, fieldKey)]}
+        setSelected={(selected) => {
+          if (selected.length === 0) {
+            // 아무것도 선택되지 않은 경우 필터에서 제거
+            handleFilterChange(fieldKey, undefined);
+          } else {
+            const selectedValue = options[selected[0]]?.value;
+            // 같은 값을 다시 선택한 경우 해제
+            if (selectedValue === localFilter?.[fieldKey]) {
+              handleFilterChange(fieldKey, undefined);
+            } else {
+              handleFilterChange(fieldKey, selectedValue);
+            }
+          }
+        }}
+      />
+    </View>
+  );
+
+  const UserFilterContent = () => (
+    <ScrollView style={{ maxHeight: 510 }} showsVerticalScrollIndicator={false}>
+      {renderToggleField(
+        USER_FILTER_FIELDS.SMOKING.key,
+        USER_FILTER_FIELDS.SMOKING.title
+      )}
+
+      {renderRadioField(
+        USER_FILTER_FIELDS.ALCOHOL_COUNT.key,
+        USER_FILTER_FIELDS.ALCOHOL_COUNT.title,
+        USER_FILTER_FIELDS.ALCOHOL_COUNT.options
+      )}
+
+      {/* 수면 패턴 */}
+      {renderRadioField(
+        USER_FILTER_FIELDS.SLEEP_LEVEL.key,
+        USER_FILTER_FIELDS.SLEEP_LEVEL.title,
+        USER_FILTER_FIELDS.SLEEP_LEVEL.options
+      )}
+
+      {/* 반려동물 */}
+      {renderToggleField(
+        USER_FILTER_FIELDS.PET.key,
+        USER_FILTER_FIELDS.PET.title
+      )}
+
+      {/* 청결도 */}
+      {renderRadioField(
+        USER_FILTER_FIELDS.TIDINESS_LEVEL.key,
+        USER_FILTER_FIELDS.TIDINESS_LEVEL.title,
+        USER_FILTER_FIELDS.TIDINESS_LEVEL.options
+      )}
+    </ScrollView>
   );
 
   return (
@@ -248,7 +203,7 @@ export default function UserFilterBottomSheet({
       onDismiss={onClose}
     >
       <BottomSheetView style={styles.contentContainer}>
-        <FilterContent />
+        <UserFilterContent />
 
         <View style={styles.buttonWrapper}>
           <Button size="lg" text="적용" onPress={handleApply} />
@@ -276,14 +231,22 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: SPACING.normal,
   },
-  content: {
-    flex: 1,
-  },
-  section: {
+  selectContainer: {
     marginBottom: SPACING.lg,
   },
-  sectionHeader: {
+  headerWrapper: {
     marginBottom: SPACING.sm,
+  },
+  title: {
+    fontSize: FONT_SIZE.b2,
+    fontFamily: FONTS.medium,
+    color: COLORS.black,
+    marginBottom: SPACING.xs,
+  },
+  description: {
+    fontSize: FONT_SIZE.c1,
+    fontFamily: FONTS.regular,
+    color: COLORS.gray[50],
   },
   buttonWrapper: {
     paddingVertical: SPACING.md,

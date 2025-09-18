@@ -15,13 +15,31 @@ export const UserFilterProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const updateFilter = (filter: Partial<UserDefaultFilter>) => {
-    setDefaultFilter((prev) => ({
-      ...prev,
-      ...filter,
-    }));
+    console.log("Context 필터 업데이트:", filter);
+    setDefaultFilter((prev) => {
+      let newFilter = { ...prev };
+
+      // 각 필터 키를 확인하여 undefined인 경우 제거
+      Object.entries(filter).forEach(([key, value]) => {
+        if (value === undefined) {
+          const { [key as keyof UserDefaultFilter]: removed, ...rest } =
+            newFilter || {};
+          newFilter = rest;
+        } else {
+          newFilter = {
+            ...newFilter,
+            [key]: value,
+          };
+        }
+      });
+
+      console.log("Context 최종 필터 상태:", newFilter);
+      return newFilter;
+    });
   };
 
   const resetFilter = () => {
+    console.log("필터 리셋");
     setDefaultFilter(null);
   };
 

@@ -1,4 +1,9 @@
 import { Gender } from "@/shared/constants";
+import {
+  AlcoholCountValue,
+  SleepLevelValue,
+  TidinessLevelValue,
+} from "../constants/userFilter";
 
 export type PriceRange = {
   min: number;
@@ -19,10 +24,10 @@ export type SearchFilter = { keyword: string };
 
 export type UserDefaultFilter = Partial<{
   smoking: boolean;
-  alcoholCount: "ZERO" | "ONE_TO_THREE" | "MORE_THAN_FOUR" | "UNKNOWN";
-  sleepLevel: "LOW" | "MEDIUM" | "HIGH" | "UNKNOWN";
+  alcoholCount: AlcoholCountValue;
+  sleepLevel: SleepLevelValue;
   pet: string[];
-  tidinessLevel: "LOW" | "MEDIUM" | "HIGH" | "UNKNOWN";
+  tidinessLevel: TidinessLevelValue;
 }>;
 
 export interface SelectedRegion {

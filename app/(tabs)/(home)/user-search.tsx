@@ -2,7 +2,6 @@ import { Header } from "@/shared/components";
 import { HEADER_HEIGHT } from "@/shared/constants";
 import { COLORS, FONT_SIZE, FONTS, SPACING } from "@/shared/styles";
 import { UserProfile } from "@/shared/types";
-import { useFetchAllUser } from "@/widgets/home/api";
 import { useSubmitUserSearch } from "@/widgets/home/api/submitUserSearch";
 import { UserListItem, UserSearchFilter } from "@/widgets/home/components";
 import { useUserFilter } from "@/widgets/home/contexts/filterUserDefault";
@@ -28,34 +27,24 @@ export default function UserSearchScreen() {
   const scrollY = useRef(new Animated.Value(0)).current;
   const lastScrollY = useRef(0);
 
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    isError,
-  } = useFetchAllUser();
-
   const { mutate: submitUserSearch, isPending: isSearchLoading } =
     useSubmitUserSearch();
 
   useEffect(() => {
+    console.log("필터 변경 감지:", defaultFilter);
     if (!isFirstRender) {
-      if (defaultFilter && Object.keys(defaultFilter).length > 0) {
-        submitUserSearch(
-          { filters: defaultFilter, page: 0 },
-          {
-            onSuccess: (data) => {
-              setSearchResults(data.content);
-            },
-          }
-        );
-      } else {
-        setSearchResults(data?.pages.flatMap((page) => page.content) ?? []);
-      }
+      console.log("POST 요청으로 검색 실행:", defaultFilter || {});
+      submitUserSearch(
+        { filters: defaultFilter || {}, page: 0 },
+        {
+          onSuccess: (data) => {
+            console.log("검색 결과:", data.content.length, "개");
+            setSearchResults(data.content);
+          },
+        }
+      );
     }
-  }, [defaultFilter, isFirstRender, submitUserSearch, data]);
+  }, [defaultFilter, isFirstRender, submitUserSearch]);
 
   useEffect(() => {
     if (isFirstRender) {
@@ -63,14 +52,11 @@ export default function UserSearchScreen() {
     }
   }, [isFirstRender]);
 
-  const allUsers = isFirstRender
-    ? data?.pages.flatMap((page) => page.content) ?? []
-    : searchResults;
+  const allUsers = searchResults;
 
   const handleLoadMore = () => {
-    if (isFirstRender && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
+    // TODO: 페이지네이션 구현 필요
+    console.log("더 많은 데이터 로드 요청");
   };
 
   const renderItem: ListRenderItem<UserProfile> = ({ item }) => (
@@ -78,15 +64,7 @@ export default function UserSearchScreen() {
   );
 
   const renderFooter = () => {
-    if (isFirstRender && isFetchingNextPage) {
-      return (
-        <View style={styles.footerLoader}>
-          <ActivityIndicator size="small" color={COLORS.black} />
-        </View>
-      );
-    }
-
-    if (!isFirstRender && isSearchLoading) {
+    if (isSearchLoading) {
       return (
         <View style={styles.footerLoader}>
           <ActivityIndicator size="small" color={COLORS.black} />
@@ -98,7 +76,7 @@ export default function UserSearchScreen() {
   };
 
   const renderEmptyComponent = () => {
-    if (isLoading) {
+    if (isSearchLoading) {
       return null;
     }
 
@@ -166,7 +144,7 @@ export default function UserSearchScreen() {
     </Animated.View>
   );
 
-  if (isLoading || isSearchLoading) {
+  if (isSearchLoading) {
     return (
       <View style={styles.container}>
         <UserSearchFilter scrollY={scrollY} isHeaderVisible={isHeaderVisible} />
@@ -186,7 +164,7 @@ export default function UserSearchScreen() {
     );
   }
 
-  if (!isFirstRender && searchResults.length === 0) {
+  if (searchResults.length === 0) {
     return (
       <View style={styles.container}>
         <UserSearchFilter scrollY={scrollY} isHeaderVisible={isHeaderVisible} />
@@ -208,26 +186,7 @@ export default function UserSearchScreen() {
     );
   }
 
-  if (isError) {
-    return (
-      <View style={styles.container}>
-        <UserSearchFilter scrollY={scrollY} isHeaderVisible={isHeaderVisible} />
-        {renderHeader()}
-        <View style={[styles.errorContainer, { paddingTop: HEADER_HEIGHT }]}>
-          <Ionicons
-            name="alert-circle-outline"
-            size={48}
-            color={COLORS.gray[30]}
-            style={styles.errorIcon}
-          />
-          <Text style={styles.errorText}>에러가 발생했어요</Text>
-          <Text style={styles.errorSubText}>
-            사용자들을 받아오던 중 문제가 발생했습니다
-          </Text>
-        </View>
-      </View>
-    );
-  }
+  // TODO: 에러 처리 구현 필요
 
   return (
     <View style={styles.container}>
