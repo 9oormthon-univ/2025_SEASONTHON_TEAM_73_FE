@@ -14,7 +14,7 @@ type ProfileSectionProps = {
 const ProfileSection: React.FC<ProfileSectionProps> = ({
   userId,
   nickname,
-  badgeText = "대학생 인증",
+  badgeText,
   profileImageUrl = "https://api.builder.io/api/v1/image/assets/TEMP/6bbcfd6c72685e98e894256a944ad514466dd509?placeholderIfAbsent=true&apiKey=7adddd5587f24b91884c2915be4df62c",
 }) => {
   const handleNavigateToProfile = () => {
