@@ -11,7 +11,7 @@ export default function OnboardingScreen() {
   };
 
   const handleSignUp = () => {
-    router.push("/signUp" as any);
+    router.push("/sign-up" as any);
   };
 
   return (
