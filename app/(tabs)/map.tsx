@@ -1,6 +1,6 @@
 import api from "@/shared/api/axios";
 import { COLORS, FONT_SIZE } from "@/shared/styles";
-import KakaoMap from "@/widgets/detail/KakaoMap";
+import { KakaoMap } from "@/widgets/detail";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -89,7 +89,7 @@ export default function MapFullScreen() {
         <Pressable style={styles.overlay} onPress={() => setInfo(null)}>
           <Pressable
             style={styles.infoBox}
-            onPress={() => router.push(`/(tabs)/(home)/detail/${info.id}`)}
+            onPress={() => router.push(`/post/${info.id}`)}
           >
             <Image source={{ uri: info.image }} style={styles.image} />
             <View style={styles.textBox}>
@@ -100,16 +100,16 @@ export default function MapFullScreen() {
             </View>
           </Pressable>
 
-            <View style={styles.noticeBox}>
-              <Text style={styles.noticeText}>
-                실제 위치와 200m정도 차이가 날 수 있습니다.
-              </Text>
-            </View>
+          <View style={styles.noticeBox}>
+            <Text style={styles.noticeText}>
+              실제 위치와 200m정도 차이가 날 수 있습니다.
+            </Text>
+          </View>
         </Pressable>
       )}
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.white },
@@ -138,29 +138,29 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     paddingRight: 10,
   },
-  textBox: { 
-    flex: 1, 
+  textBox: {
+    flex: 1,
     flexShrink: 1,
   },
-  price: { 
-    fontWeight: "bold", 
-    fontSize: FONT_SIZE.b1, 
+  price: {
+    fontWeight: "bold",
+    fontSize: FONT_SIZE.b1,
     marginTop: 4,
-    marginBottom: 8
+    marginBottom: 8,
   },
-  desc: { 
-    color: COLORS.black, 
-    fontSize: FONT_SIZE.c1, 
-    marginBottom: 4 
+  desc: {
+    color: COLORS.black,
+    fontSize: FONT_SIZE.c1,
+    marginBottom: 4,
   },
-  etc: { 
-    color: COLORS.black, 
-    fontSize: FONT_SIZE.c1, 
-    marginBottom: 4 
+  etc: {
+    color: COLORS.black,
+    fontSize: FONT_SIZE.c1,
+    marginBottom: 4,
   },
-  schedule: { 
-    color: COLORS.black, 
-    fontSize: FONT_SIZE.c1 
+  schedule: {
+    color: COLORS.black,
+    fontSize: FONT_SIZE.c1,
   },
   noticeBox: {
     top: 520,
@@ -175,4 +175,3 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
 });
-
