@@ -1,5 +1,4 @@
 import api from "@/shared/api/axios";
-import { PropertyCard } from "@/shared/components/propertycard/PropertyCard";
 import { useAuthStore } from "@/shared/store";
 import { COLORS } from "@/shared/styles";
 import { HorizontalPropertyCarousel } from "@/widgets/user/HorizontalPropertyCarousel";
@@ -34,17 +33,17 @@ export const MyPageScreen: React.FC = () => {
   console.log(user);
 
   const handleEditProfile = () => {
-    router.push("/profileEdit" as any);
+    router.push("/(tabs)/user/profile-edit");
   };
 
   const handleMyPersonality = () => {
     console.log("My personality pressed");
-    router.push("/user/profile");
+    router.push("/(tabs)/user/profile");
   };
 
   const handleTwoFactorAuth = () => {
     console.log("Two factor auth pressed");
-    router.push("/user/verify");
+    router.push("/(tabs)/user/verify");
   };
 
   const handleDeleteAccount = () => {
@@ -71,18 +70,21 @@ export const MyPageScreen: React.FC = () => {
         onMyPersonality={handleMyPersonality}
       />
 
-      {/* 유저가 작성한 글이 없을 때 */}
-      {user.posts?.length > 0 ? (
-      <HorizontalPropertyCarousel posts={user.posts} nickname={user.nickname} />
-      ) : (
-        <PropertyCard name="작성한 글이 없습니다." />
+      {user.posts?.length > 0 && (
+        <HorizontalPropertyCarousel
+          posts={user.posts}
+          nickname={user.nickname}
+        />
       )}
 
       <MenuListItem title="2단계 인증" onPress={handleTwoFactorAuth} />
-      <MenuListItem title="로그아웃" onPress={() => {
-        logout();
-        router.replace({ pathname: "/onboarding" as any });
-        }}/>
+      <MenuListItem
+        title="로그아웃"
+        onPress={() => {
+          logout();
+          router.replace({ pathname: "/onboarding" as any });
+        }}
+      />
       <MenuListItem title="탈퇴하기" onPress={handleDeleteAccount} />
       <MenuListItem title="고객 지원" onPress={handleCustomerSupport} />
       <MenuListItem title="이용 약관" onPress={handleTermsOfService} />

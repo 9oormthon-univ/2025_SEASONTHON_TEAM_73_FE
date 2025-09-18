@@ -137,7 +137,7 @@ export const RegistrationForm: React.FC = () => {
         placeholder="닉네임을 입력하세요."
         value={form.nickname}
         onChangeText={(text) => handleChange("nickname", text)}
-        textContentType="nickname" // ✅ iOS에서 닉네임 입력 필드로 인식
+        textContentType="nickname"
         errorMessage={errors.nickname}
       />
 

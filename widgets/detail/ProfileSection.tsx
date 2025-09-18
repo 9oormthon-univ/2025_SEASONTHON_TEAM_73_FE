@@ -1,8 +1,8 @@
 // ProfileSection.tsx
-import { COLORS, FONT_SIZE, FONTS } from '@/shared/styles';
-import { router } from 'expo-router';
-import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { COLORS, FONT_SIZE, FONTS } from "@/shared/styles";
+import { router } from "expo-router";
+import React from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 type ProfileSectionProps = {
   userId: number; // 상대방 유저 ID
@@ -14,21 +14,21 @@ type ProfileSectionProps = {
 const ProfileSection: React.FC<ProfileSectionProps> = ({
   userId,
   nickname,
-  badgeText = '대학생 인증',
+  badgeText = "대학생 인증",
   profileImageUrl = "https://api.builder.io/api/v1/image/assets/TEMP/6bbcfd6c72685e98e894256a944ad514466dd509?placeholderIfAbsent=true&apiKey=7adddd5587f24b91884c2915be4df62c",
 }) => {
-  //console.log(userId);
   const handleNavigateToProfile = () => {
-    router.push(`/userDetail/${userId}` as any); // 프로필 페이지로 이동
+    router.push(`/user/${userId}`);
   };
 
   return (
-    <TouchableOpacity style={styles.container} onPress={handleNavigateToProfile} activeOpacity={0.8}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={handleNavigateToProfile}
+      activeOpacity={0.8}
+    >
       <View style={styles.profileContent}>
-        <Image
-            source={{ uri: profileImageUrl }}
-            style={styles.profileImage}
-          />
+        <Image source={{ uri: profileImageUrl }} style={styles.profileImage} />
         {/* 닉네임 + 뱃지를 감싸는 컨테이너 */}
         <View style={styles.nameBadgeWrapper}>
           <Text style={styles.nickname}>{nickname}</Text>
@@ -45,13 +45,13 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FCFCFC',
+    backgroundColor: "#FCFCFC",
     paddingHorizontal: 18,
     paddingVertical: 16,
   },
   profileContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     minWidth: 360,
   },
   profileImage: {
@@ -62,15 +62,15 @@ const styles = StyleSheet.create({
   },
   nameBadgeWrapper: {
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   nickname: {
-    color: '#17171B',
+    color: "#17171B",
     fontSize: FONT_SIZE.b2,
     fontFamily: FONTS.bold,
-    lineHeight: 30
+    lineHeight: 30,
   },
   badge: {
     borderRadius: 100,
@@ -79,14 +79,14 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary[10],
     paddingHorizontal: 8,
     paddingVertical: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   badgeText: {
     color: COLORS.primary[100],
     fontSize: FONT_SIZE.c1,
     fontFamily: FONTS.regular,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });
 

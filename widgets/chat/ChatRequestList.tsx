@@ -31,8 +31,7 @@ type ChatRoom = {
 };
 
 const ChatRequestList: React.FC<ChatRequestListProps> = ({ requests }) => {
-
-const myUserId = useAuthStore.getState().userId;
+  const myUserId = useAuthStore.getState().userId;
 
   if (requests.length === 0) {
     return (
@@ -63,7 +62,7 @@ const myUserId = useAuthStore.getState().userId;
             key={request.chatRoomId}
             onPress={() =>
               router.push({
-                pathname: `/chat/room/${request.chatRoomId}` as any,
+                pathname: `/chat/${request.chatRoomId}` as any,
                 params: {
                   senderName: otherName,
                   chatRoomStatus: request.chatRoomStatus, // 상태 전달
