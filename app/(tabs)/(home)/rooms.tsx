@@ -1,14 +1,18 @@
+import { Header } from "@/shared/components";
 import { COLORS, FONTS, SPACING } from "@/shared/styles";
 import { useFetchPostList, useSubmitPostSearch } from "@/widgets/home/api";
 import { RoomListItem, RoomSearchFilter } from "@/widgets/home/components";
 import { useDefaultFilter } from "@/widgets/home/contexts";
 import { Room } from "@/widgets/home/types";
 import { Ionicons } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Animated,
   FlatList,
   ListRenderItem,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
   StyleSheet,
   Text,
   View,
@@ -18,6 +22,9 @@ export default function HomeScreen() {
   const { defaultFilter } = useDefaultFilter();
   const [searchResults, setSearchResults] = useState<Room[]>([]);
   const [isFirstRender, setIsFirstRender] = useState(true);
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const lastScrollY = useRef(0);
 
   const {
     data,
@@ -104,28 +111,80 @@ export default function HomeScreen() {
 
   const keyExtractor = (item: Room) => item.id.toString();
 
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const currentScrollY = event.nativeEvent.contentOffset.y;
+    const scrollThreshold = 50;
+
+    if (
+      currentScrollY > lastScrollY.current &&
+      currentScrollY > scrollThreshold
+    ) {
+      setIsHeaderVisible(false);
+    } else if (
+      currentScrollY < lastScrollY.current ||
+      currentScrollY <= scrollThreshold
+    ) {
+      setIsHeaderVisible(true);
+    }
+
+    lastScrollY.current = currentScrollY;
+    scrollY.setValue(currentScrollY);
+  };
+
+  const renderHeader = () => (
+    <Animated.View
+      style={[
+        {
+          transform: [
+            {
+              translateY: scrollY.interpolate({
+                inputRange: [0, 80],
+                outputRange: [0, -80],
+                extrapolate: "clamp",
+              }),
+            },
+          ],
+          opacity: scrollY.interpolate({
+            inputRange: [0, 40],
+            outputRange: [1, 0],
+            extrapolate: "clamp",
+          }),
+        },
+      ]}
+    >
+      <Header title="Sharer 게시글" />
+    </Animated.View>
+  );
+
   if (
     isLoading ||
     (!isFirstRender && isSearchLoading && searchResults.length === 0)
   ) {
     return (
-      <>
-        <RoomSearchFilter />
-        <View style={[styles.loadingContainer, { paddingBottom: SPACING.md }]}>
+      <View style={styles.container}>
+        <RoomSearchFilter scrollY={scrollY} isHeaderVisible={isHeaderVisible} />
+        {renderHeader()}
+        <View
+          style={[
+            styles.loadingContainer,
+            { paddingBottom: SPACING.md, paddingTop: 60 },
+          ]}
+        >
           <RoomListItem.Skeleton />
           <RoomListItem.Skeleton />
           <RoomListItem.Skeleton />
           <RoomListItem.Skeleton />
         </View>
-      </>
+      </View>
     );
   }
 
   if (isError) {
     return (
-      <>
-        <RoomSearchFilter />
-        <View style={styles.errorContainer}>
+      <View style={styles.container}>
+        <RoomSearchFilter scrollY={scrollY} isHeaderVisible={isHeaderVisible} />
+        {renderHeader()}
+        <View style={[styles.errorContainer, { paddingTop: 60 }]}>
           <Ionicons
             name="alert-circle-outline"
             size={48}
@@ -137,25 +196,29 @@ export default function HomeScreen() {
             방들을 받아오던 중 문제가 발생했습니다
           </Text>
         </View>
-      </>
+      </View>
     );
   }
 
   return (
-    <>
-      <RoomSearchFilter />
+    <View style={styles.container}>
+      <RoomSearchFilter scrollY={scrollY} isHeaderVisible={isHeaderVisible} />
+      {renderHeader()}
       <FlatList
         data={allRooms}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.1}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
         ListFooterComponent={renderFooter}
         ListEmptyComponent={renderEmptyComponent}
         showsVerticalScrollIndicator={false}
         style={styles.roomList}
+        contentContainerStyle={{ paddingTop: 74 }}
       />
-    </>
+    </View>
   );
 }
 

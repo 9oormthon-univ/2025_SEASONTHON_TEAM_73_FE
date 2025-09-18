@@ -1,6 +1,8 @@
-import { COLORS, FONT_SIZE, FONTS } from "@/shared/styles";
+import { COLORS, FONT_SIZE, FONTS, SPACING } from "@/shared/styles";
 import { FilterDefaultProvider } from "@/widgets/home/contexts";
-import { Stack } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { router, Stack } from "expo-router";
+import { Text, TouchableOpacity, View } from "react-native";
 
 export default function HomeLayout() {
   return (
@@ -8,6 +10,25 @@ export default function HomeLayout() {
       <Stack
         screenOptions={{
           headerShown: false,
+          header: (props) => (
+            <View
+              style={{
+                paddingHorizontal: SPACING.normal,
+                paddingVertical: SPACING.sm,
+                flexDirection: "row",
+                alignItems: "center",
+                gap: SPACING.sm,
+              }}
+            >
+              <TouchableOpacity onPress={() => router.back()}>
+                <Ionicons name="chevron-back" size={20} />
+              </TouchableOpacity>
+              <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZE.b1 }}>
+                {props.options.title || (props.options.headerTitle as string)}
+              </Text>
+            </View>
+          ),
+          headerTitleAlign: "left",
           headerTitleStyle: {
             fontFamily: FONTS.bold,
             fontSize: FONT_SIZE.b1,
@@ -27,17 +48,13 @@ export default function HomeLayout() {
         <Stack.Screen name="post-create" />
         <Stack.Screen
           name="users"
-          options={{ headerShown: true, headerTitle: "내가 찜한 사용자" }}
+          options={{ headerShown: true, title: "내가 찜한 사용자" }}
         />
-        <Stack.Screen
-          name="user-search"
-          options={{ headerShown: true, headerTitle: "Joiner 프로필" }}
-        />
+        <Stack.Screen name="user-search" options={{ headerShown: false }} />
         <Stack.Screen
           name="rooms"
           options={{
-            headerShown: true,
-            headerTitle: "Sharer 게시글",
+            headerShown: false,
           }}
         />
       </Stack>

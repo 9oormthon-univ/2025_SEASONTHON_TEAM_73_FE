@@ -1,11 +1,19 @@
 import { COLORS, SPACING } from "@/shared/styles";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { Animated, StyleSheet, TouchableOpacity } from "react-native";
 import { useDefaultFilter } from "../contexts";
 import FilterBottomSheet from "./FilterBottomSheet";
 
-export default function RoomSearchFilter() {
+interface RoomSearchFilterProps {
+  scrollY?: Animated.Value;
+  isHeaderVisible?: boolean;
+}
+
+export default function RoomSearchFilter({
+  scrollY,
+  isHeaderVisible = true,
+}: RoomSearchFilterProps) {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
 
   const {
@@ -35,9 +43,23 @@ export default function RoomSearchFilter() {
     setIsFilterVisible(false);
   };
 
+  const animatedStyle = scrollY
+    ? {
+        transform: [
+          {
+            translateY: scrollY.interpolate({
+              inputRange: [0, 80],
+              outputRange: [60, 0],
+              extrapolate: "clamp",
+            }),
+          },
+        ],
+      }
+    : { top: 60 };
+
   return (
     <>
-      <View style={styles.filterContainer}>
+      <Animated.View style={[styles.filterContainer, animatedStyle]}>
         <TouchableOpacity
           style={[
             styles.customButton,
@@ -52,7 +74,7 @@ export default function RoomSearchFilter() {
             color={applied ? COLORS.primary[90] : COLORS.gray[40]}
           />
         </TouchableOpacity>
-      </View>
+      </Animated.View>
 
       <FilterBottomSheet
         isVisible={isFilterVisible}
@@ -64,6 +86,11 @@ export default function RoomSearchFilter() {
 
 const styles = StyleSheet.create({
   filterContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1000,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",
@@ -73,6 +100,7 @@ const styles = StyleSheet.create({
     paddingTop: SPACING.sm,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.gray[10],
+    backgroundColor: "#fff",
   },
   filterButtonIcon: {
     marginTop: 2,
