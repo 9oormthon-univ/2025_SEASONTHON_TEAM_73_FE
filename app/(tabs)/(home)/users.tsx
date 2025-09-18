@@ -10,7 +10,7 @@ export default function UsersScreen() {
   const renderItem = () => {
     if (data) {
       return data.content.map((user) => (
-        <UserListItem key={user.userId} user={user} />
+        <UserListItem key={user.id} user={user} />
       ));
     }
     return null;
