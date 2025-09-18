@@ -1,24 +1,24 @@
 import React, { createContext, ReactNode, useContext, useState } from "react";
 import type {
+  CombinedPostData,
   CostFormData,
   DescriptionFormData,
   RoomInfoFormData,
 } from "../types/post";
 
 interface PostCreateContextType {
-  // 데이터
   roomInfo: RoomInfoFormData | null;
   cost: CostFormData | null;
   description: DescriptionFormData | null;
 
-  // 액션
   setRoomInfo: (data: RoomInfoFormData) => void;
   setCost: (data: CostFormData) => void;
   setDescription: (data: DescriptionFormData) => void;
 
-  // 유틸리티
   clearAll: () => void;
-  getCombinedData: (descriptionData?: DescriptionFormData) => any;
+  getCombinedData: (
+    descriptionData?: DescriptionFormData
+  ) => CombinedPostData | null;
 }
 
 const PostCreateContext = createContext<PostCreateContextType | undefined>(

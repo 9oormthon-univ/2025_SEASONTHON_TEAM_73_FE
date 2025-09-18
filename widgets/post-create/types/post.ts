@@ -35,6 +35,40 @@ export type CostFormData = {
   preferredGender: Gender[];
 };
 
-export type DescriptionFormData = {
+export type DescriptionFormData = Partial<{
   content: string;
+}>;
+
+// PostCreateContext의 getCombinedData가 반환하는 최종 데이터 타입
+export type CombinedPostData = {
+  // RoomInfoFormData에서 온 필드들
+  title: string;
+  latitude: number;
+  longitude: number;
+  location: string;
+  roomType: keyof typeof ROOM_TYPE;
+  areaSize: number;
+  floor: number;
+  buildingFloor: number;
+  roomCount: number;
+  washroomCount: number;
+  heatingType: "CENTRAL";
+  hasElevator: boolean;
+  images: string[];
+
+  // CostFormData에서 온 필드들
+  deposit: number;
+  monthlyRent: number;
+  maintenanceFee: number;
+  depositShare: boolean;
+  rentShare: boolean;
+  maintenanceShare: boolean;
+  utilitiesShare: boolean;
+  availableDate: string;
+  minStayMonths: number;
+  maxStayMonths: number;
+  preferredGender: Gender[];
+
+  // DescriptionFormData에서 온 필드들
+  content?: string;
 };
