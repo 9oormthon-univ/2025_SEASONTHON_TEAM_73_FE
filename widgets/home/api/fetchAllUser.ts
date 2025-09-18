@@ -1,21 +1,30 @@
 import { REQUEST, userGet } from "@/shared/api";
-import { LikedUser, LikedUserBaseRes } from "@/shared/types";
-import { useQuery } from "@tanstack/react-query";
+import { DEFAULT_PAGE_SIZE } from "@/shared/constants";
+import { LikedUserBaseRes, UserProfile } from "@/shared/types";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 const fetchAllUser = async (page: number) => {
-  const response = await userGet<LikedUserBaseRes<LikedUser[]>>({
-    request: REQUEST.USER_LIKED,
+  const response = await userGet<LikedUserBaseRes<UserProfile[]>>({
+    request: REQUEST.USER_ALL,
     params: {
       page: page,
-      size: 10,
+      size: DEFAULT_PAGE_SIZE,
     },
   });
   return response.data.data;
 };
 
-export const useFetchAllUser = (page: number) => {
-  return useQuery({
+export const useFetchAllUser = () => {
+  return useInfiniteQuery({
     queryKey: ["allUser"],
-    queryFn: () => fetchAllUser(page),
+    queryFn: ({ pageParam = 0 }: { pageParam: number }) =>
+      fetchAllUser(pageParam),
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.content.length < DEFAULT_PAGE_SIZE) {
+        return undefined;
+      }
+      return allPages.length;
+    },
+    initialPageParam: 0,
   });
 };

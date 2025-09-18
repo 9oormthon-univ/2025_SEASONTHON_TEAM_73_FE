@@ -8,6 +8,7 @@ export const REQUEST = {
   CERTIFICATE_UPLOAD: "/certificate/upload",
   USER_VERIFY: "/certificate/upload",
   USER_LIKED: "/likes",
+  USER_ALL: "/profile/all",
   DASHBOARD_NOROOM: "/dashboard/noroom",
   DASHBOARD_ROOM: "/dashboard/hasroom",
 };
