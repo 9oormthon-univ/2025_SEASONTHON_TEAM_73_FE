@@ -1,3 +1,5 @@
+import { UserDefaultFilter } from "../types";
+
 export const MAX_DEPOSIT = 20000;
 
 export const DEPOSIT_STEP = 100;
@@ -24,6 +26,14 @@ export const FILTER_DEFAULT = {
   keyword: "",
   dongs: [],
   selectedRegions: [],
+};
+
+export const USER_FILTER_DEFAULT: UserDefaultFilter = {
+  smoking: false,
+  alcoholCount: "UNKNOWN",
+  sleepLevel: "UNKNOWN",
+  pet: [],
+  tidinessLevel: "UNKNOWN",
 };
 
 export const ROOM_TYPE = {

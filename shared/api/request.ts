@@ -9,6 +9,7 @@ export const REQUEST = {
   USER_VERIFY: "/certificate/upload",
   USER_LIKED: "/likes",
   USER_ALL: "/profile/all",
+  USER_SEARCH: "/profile/filter",
   DASHBOARD_NOROOM: "/dashboard/noroom",
   DASHBOARD_ROOM: "/dashboard/hasroom",
 };

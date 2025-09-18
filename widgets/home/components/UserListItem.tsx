@@ -2,6 +2,7 @@ import { Skeleton } from "@/shared/components";
 import { COLORS, FONT_SIZE, FONTS, SPACING } from "@/shared/styles";
 import { UserProfile } from "@/shared/types";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
@@ -10,15 +11,35 @@ interface UserListItemProps {
 }
 
 export default function UserListItem({ user }: UserListItemProps) {
-  const { nickname, gender, age, smoking, verified, certified, boosted } = user;
+  const {
+    id,
+    nickname,
+    userProfileImage,
+    gender,
+    age,
+    smoking,
+    verified,
+    certified,
+    boosted,
+  } = user;
   const smokingText = smoking ? "흡연" : "비흡연";
 
   return (
-    <View style={styles.container}>
+    <TouchableOpacity
+      onPress={() => {
+        router.push(`/userDetail/${id}`);
+      }}
+      activeOpacity={0.8}
+      style={styles.container}
+    >
       <View style={styles.userInfo}>
         <Image
           style={styles.profileImage}
-          source={require("@/assets/images/profile-default.png")}
+          source={
+            userProfileImage
+              ? { uri: userProfileImage }
+              : require("@/assets/images/profile-default.png")
+          }
         />
         <View style={styles.userDetails}>
           <View style={styles.nameContainer}>
@@ -64,7 +85,7 @@ export default function UserListItem({ user }: UserListItemProps) {
       <TouchableOpacity onPress={() => {}}>
         <Ionicons name="heart-outline" size={24} color={COLORS.gray[50]} />
       </TouchableOpacity>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -122,6 +143,7 @@ const styles = StyleSheet.create({
   profileImage: {
     width: 48,
     height: 48,
+    borderRadius: 24,
   },
   userDetails: {
     height: 44,
