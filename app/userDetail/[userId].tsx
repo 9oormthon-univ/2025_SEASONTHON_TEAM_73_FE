@@ -35,7 +35,7 @@ export const UserDetailScreen: React.FC = () => {
             });
             if (res.data.success) {
                 const data = res.data.data;
-                console.log(data.soundSensitivity.sleepHabit);
+                //console.log(data.soundSensitivity.sleepHabit);
 
                 // sleepHabit 처리
                 if (Array.isArray(data.soundSensitivity.sleepHabit)) {
@@ -83,7 +83,7 @@ export const UserDetailScreen: React.FC = () => {
             age={user.age}
             description={user.introduce}
             avatarUri={user.userProfileImage}
-            smoking={user.smoking}
+            smoking={user.etc?.smoking ?? '정보 없음'}
             userId={user.userId}
         />
 

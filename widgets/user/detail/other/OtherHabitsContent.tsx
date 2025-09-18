@@ -1,9 +1,10 @@
+import { Etc } from '@/shared/types/userProfile';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { InfoSection } from '../InfoSection';
 
 interface OtherHabitsContentProps {
-  etc: any;
+  etc: Etc;
 }
 
 export const OtherHabitsContent: React.FC<OtherHabitsContentProps> = ({ etc }) => {

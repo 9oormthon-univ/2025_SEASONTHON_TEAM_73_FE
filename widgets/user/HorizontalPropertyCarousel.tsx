@@ -1,11 +1,12 @@
 import { PropertyCard } from '@/shared/components/propertycard/PropertyCard';
+import { Post } from '@/shared/types/userProfile';
 import React, { useRef, useState } from 'react';
 import { Dimensions, ScrollView, StyleSheet, View } from 'react-native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface HorizontalPropertyCarouselProps {
-  posts: any[];
+  posts: Post[];
   nickname: string;
 }
 

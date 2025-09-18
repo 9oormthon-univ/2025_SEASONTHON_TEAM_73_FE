@@ -1,10 +1,11 @@
+import { LifeHabit } from '@/shared/types/userProfile';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { InfoSection } from './InfoSection';
 import { WorkScheduleSection } from './WorkScheduleSection';
 
 interface LifestyleContentProps {
-  lifeHabit: any; // API 데이터 타입에 맞게 지정 가능
+  lifeHabit: LifeHabit; // API 데이터 타입에 맞게 지정 가능
 }
 
 export const LifestyleContent: React.FC<LifestyleContentProps> = ({ lifeHabit }) => {

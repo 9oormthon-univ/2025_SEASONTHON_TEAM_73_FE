@@ -1,9 +1,10 @@
+import { MealHabit } from '@/shared/types/userProfile';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { InfoSection } from '../InfoSection';
 
 interface MealPreferenceContentProps {
-  mealHabit: any;
+  mealHabit: MealHabit;
 }
 
 export const MealPreferenceContent: React.FC<MealPreferenceContentProps> = ({ mealHabit }) => {
