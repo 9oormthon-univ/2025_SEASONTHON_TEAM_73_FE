@@ -124,7 +124,7 @@ function FavoriteUsersSection({
   isFetching: boolean;
 }) {
   return (
-    <View>
+    <View style={{ marginTop: 35 }}>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>내가 찜한 사용자</Text>
         <TouchableOpacity
@@ -167,7 +167,7 @@ function RecommendSection({
   isFetching: boolean;
 }) {
   return (
-    <View>
+    <View style={{ marginTop: 35 }}>
       <View style={styles.sectionHeader}>
         <View>
           <Text style={styles.sectionTitle}>
@@ -407,6 +407,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: SPACING.normal,
+    marginBottom: 16,
   },
   sectionTitle: {
     fontSize: FONT_SIZE.b1,
