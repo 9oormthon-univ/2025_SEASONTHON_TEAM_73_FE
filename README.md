@@ -1,50 +1,17 @@
-# Welcome to your Expo app 👋
+![1번 사진](https://github.com/user-attachments/assets/4a945c20-f73c-4814-9ae8-f99739cfb86d)
+![2번 사진](https://github.com/user-attachments/assets/908db9fb-d299-4ee9-a51f-86fc5656b042)
+![3번 사진](https://github.com/user-attachments/assets/4c10cf07-d9fd-4226-9b7d-f3d84e56d305)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+# 2. Team Members (팀원 및 팀 소개)
 
-## Get started
-
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+| 이재민 | 주현지 | 엄현용 | 한유진 | 윤지원 | 정다운 |
+|:------:|:------:|:------:|:------:|:------:|:------:|
+| <img width="420" height="420" alt="이재민" src="https://github.com/user-attachments/assets/ea5790cb-28e5-490c-b492-c028b1368f3a" />
+ | <img width="420" height="420" alt="주현지" src="https://github.com/user-attachments/assets/ef8b96bd-9c90-4171-b72a-d2fe19cec637" />
+ | ![엄현용](https://github.com/user-attachments/assets/374318f4-7bab-4408-933b-5b88e6e34f5f)
+ | ![한유진](https://github.com/user-attachments/assets/6827cde5-2b7e-4257-8d6f-47792464d717)
+ | <img width="420" height="420" alt="윤지원" src="https://github.com/user-attachments/assets/66dbd89b-5c5f-4137-9bd2-7f923033dcf6" />
+ | ![정다운](https://github.com/user-attachments/assets/642a6f6d-071a-4b4f-a465-63f91211147e)
+ |
+| PM | PD | FE | FE | BE | BE |
+| [GitHub]([https://github.com/LDK1009](https://github.com/lee-jaemmin)) | [GitHub](https://github.com/SinYusi) | [GitHub](https://github.com/nay3on) | [GitHub](https://github.com/conconcc) | [GitHub](https://github.com/새팀원1) | [GitHub](https://github.com/새팀원2) |
