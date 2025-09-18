@@ -1,102 +1,110 @@
-import { GENDER } from "@/shared/constants";
-import { COLORS, FONT_SIZE, FONTS, SPACING } from "@/shared/styles";
-import { PostCreateField, Toggle } from "@/widgets/post-create/components";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { renderMultiRadio, renderToggle } from "@/shared/utils";
+import { ScrollView } from "react-native";
+import {
+  getFilterDisplayValue,
+  getRadioSelectedIndices,
+  USER_FILTER_FIELDS,
+} from "../constants/userFilter";
+import { UserDefaultFilter } from "../types";
 
-export default function PreferenceTab() {
+interface PreferenceTabProps {
+  userFilter: UserDefaultFilter | null;
+  onFilterChange: (key: string, value: any) => void;
+}
+
+export default function PreferenceTab({
+  userFilter,
+  onFilterChange,
+}: PreferenceTabProps) {
+  const renderToggleField = (
+    fieldKey: keyof UserDefaultFilter,
+    title: string
+  ) => {
+    const isOn =
+      fieldKey === "smoking"
+        ? userFilter?.smoking || false
+        : !!(userFilter?.pet && userFilter.pet.length > 0);
+
+    const handleToggle = (value: boolean) => {
+      if (fieldKey === "smoking") {
+        if (isOn && value) {
+          onFilterChange(fieldKey, undefined);
+        } else {
+          onFilterChange(fieldKey, value);
+        }
+      } else if (fieldKey === "pet") {
+        if (isOn && value) {
+          onFilterChange(fieldKey, undefined);
+        } else {
+          onFilterChange(fieldKey, value ? ["강아지"] : undefined);
+        }
+      }
+    };
+
+    return renderToggle(title, isOn, handleToggle);
+  };
+
+  const renderRadioField = (
+    fieldKey: keyof UserDefaultFilter,
+    title: string,
+    options: readonly { label: string; value: any }[]
+  ) => {
+    const description = getFilterDisplayValue(userFilter, fieldKey);
+    const items = options.map((option) => option.label);
+    const selected = getRadioSelectedIndices(userFilter, fieldKey);
+
+    const handleSelectionChange = (selected: number[]) => {
+      if (selected.length === 0) {
+        onFilterChange(fieldKey, undefined);
+      } else {
+        // 선택된 인덱스들을 ENUM 값으로 변환
+        const selectedValues = selected
+          .map((index) => options[index]?.value)
+          .filter((value) => value !== undefined);
+
+        onFilterChange(fieldKey, selectedValues);
+      }
+    };
+
+    return renderMultiRadio(
+      title,
+      description,
+      items,
+      selected,
+      handleSelectionChange,
+      true
+    );
+  };
+
   return (
     <ScrollView style={{ maxHeight: 510 }} showsVerticalScrollIndicator={false}>
-      <View style={styles.selectContainer}>
-        <View style={styles.headerWrapper}>
-          <Text style={styles.title}>정리정돈 성향</Text>
-          <Text style={styles.description}>ㅎㅇ</Text>
-        </View>
-        <PostCreateField.MultiRadio
-          items={Object.values(GENDER)}
-          selected={[]}
-          setSelected={() => {}}
-        />
-      </View>
-      <View style={styles.selectContainer}>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Text style={styles.title}>흡연 여부</Text>
-          <Toggle />
-        </View>
-      </View>
-      <View style={styles.selectContainer}>
-        <View style={styles.headerWrapper}>
-          <Text style={styles.title}>반려동물 종류</Text>
-          <Text style={styles.description}>ㅎㅇ</Text>
-        </View>
-        <PostCreateField.MultiRadio
-          items={Object.values(GENDER)}
-          selected={[]}
-          setSelected={() => {}}
-        />
-      </View>
-      <View style={styles.selectContainer}>
-        <View style={styles.headerWrapper}>
-          <Text style={styles.title}>주 음주 횟수</Text>
-          <Text style={styles.description}>ㅎㅇ</Text>
-        </View>
-        <PostCreateField.MultiRadio
-          items={Object.values(GENDER)}
-          selected={[]}
-          setSelected={() => {}}
-        />
-      </View>
-      <View style={styles.selectContainer}>
-        <View style={styles.headerWrapper}>
-          <Text style={styles.title}>잠귀 민감도</Text>
-          <Text style={styles.description}>ㅎㅇ</Text>
-        </View>
-        <PostCreateField.MultiRadio
-          items={Object.values(GENDER)}
-          selected={[]}
-          setSelected={() => {}}
-        />
-      </View>
+      {renderToggleField(
+        USER_FILTER_FIELDS.SMOKING.key,
+        USER_FILTER_FIELDS.SMOKING.title
+      )}
+
+      {renderRadioField(
+        USER_FILTER_FIELDS.ALCOHOL_COUNT.key,
+        USER_FILTER_FIELDS.ALCOHOL_COUNT.title,
+        USER_FILTER_FIELDS.ALCOHOL_COUNT.options
+      )}
+
+      {renderRadioField(
+        USER_FILTER_FIELDS.SLEEP_LEVEL.key,
+        USER_FILTER_FIELDS.SLEEP_LEVEL.title,
+        USER_FILTER_FIELDS.SLEEP_LEVEL.options
+      )}
+
+      {renderToggleField(
+        USER_FILTER_FIELDS.PET.key,
+        USER_FILTER_FIELDS.PET.title
+      )}
+
+      {renderRadioField(
+        USER_FILTER_FIELDS.TIDINESS_LEVEL.key,
+        USER_FILTER_FIELDS.TIDINESS_LEVEL.title,
+        USER_FILTER_FIELDS.TIDINESS_LEVEL.options
+      )}
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  headerWrapper: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "baseline",
-  },
-  title: {
-    fontFamily: FONTS.bold,
-    includeFontPadding: false,
-    fontSize: FONT_SIZE.b1,
-  },
-  description: {
-    fontSize: FONT_SIZE.c1,
-    fontFamily: FONTS.bold,
-    color: COLORS.primary[90],
-  },
-  selectContainer: {
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.gray[10],
-    paddingVertical: SPACING.lg,
-    gap: SPACING.lg,
-    paddingHorizontal: SPACING.normal,
-  },
-  placeholderContainer: {
-    paddingVertical: SPACING.xl,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  placeholderText: {
-    fontSize: FONT_SIZE.c1,
-    color: COLORS.gray[50],
-    textAlign: "center",
-  },
-});

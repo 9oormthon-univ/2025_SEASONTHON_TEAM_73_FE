@@ -1,15 +1,7 @@
-import { Button } from "@/shared/components";
+import { BottomSheet } from "@/shared/components";
 import { Gender } from "@/shared/constants";
-import { COLORS, SPACING } from "@/shared/styles";
 import { useDefaultFilter } from "@/widgets/home/contexts";
-import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import PreferenceTab from "./PreferenceTab";
 import RegionTab from "./RegionTab";
@@ -27,9 +19,6 @@ export default function FilterBottomSheet({
   isVisible,
   onClose,
 }: FilterBottomSheetProps) {
-  const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ["84%"], []);
-
   const {
     minDeposit,
     maxDeposit,
@@ -43,6 +32,8 @@ export default function FilterBottomSheet({
     setRentRange,
     selectedRegions,
     setSelectedRegions,
+    userFilter,
+    updateUserFilter,
   } = useDefaultFilter();
 
   const [activeTab, setActiveTab] = useState<TabType>("preference");
@@ -58,23 +49,7 @@ export default function FilterBottomSheet({
   const [localGender, setLocalGender] = useState<string[]>(preferredGender);
   const [localSelectedRegions, setLocalSelectedRegions] =
     useState(selectedRegions);
-
-  useEffect(() => {
-    if (isVisible) {
-      bottomSheetRef.current?.present();
-    } else {
-      bottomSheetRef.current?.dismiss();
-    }
-  }, [isVisible]);
-
-  const handleSheetChanges = useCallback(
-    (index: number) => {
-      if (index === -1) {
-        onClose();
-      }
-    },
-    [onClose]
-  );
+  const [localUserFilter, setLocalUserFilter] = useState(userFilter || {});
 
   const handleApply = () => {
     setDepositRange(localDeposit[0], localDeposit[1]);
@@ -82,7 +57,7 @@ export default function FilterBottomSheet({
     setRoomTypes(localRoomTypes);
     setGenders(localGender as Gender[]);
     setSelectedRegions(localSelectedRegions);
-    onClose();
+    updateUserFilter(localUserFilter);
   };
 
   const handleDepositChange = useCallback(
@@ -97,19 +72,31 @@ export default function FilterBottomSheet({
   }, []);
 
   return (
-    <BottomSheetModal
-      ref={bottomSheetRef}
-      snapPoints={snapPoints}
-      onChange={handleSheetChanges}
-      enablePanDownToClose
-      backgroundStyle={styles.bottomSheetBackground}
-      handleIndicatorStyle={styles.handleIndicator}
-      onDismiss={onClose}
+    <BottomSheet
+      isVisible={isVisible}
+      onClose={onClose}
+      showButton={true}
+      buttonText="적용"
+      onButtonPress={handleApply}
+      contentPadding={false}
     >
-      <BottomSheetView style={styles.contentContainer}>
+      <View style={styles.contentContainer}>
         <TabHeader activeTab={activeTab} onTabChange={setActiveTab} />
 
-        {activeTab === "preference" && <PreferenceTab />}
+        {activeTab === "preference" && (
+          <PreferenceTab
+            userFilter={localUserFilter}
+            onFilterChange={(key, value) => {
+              const newFilter = { ...localUserFilter };
+              if (value === undefined) {
+                delete newFilter[key as keyof typeof newFilter];
+              } else {
+                (newFilter as any)[key] = value;
+              }
+              setLocalUserFilter(newFilter);
+            }}
+          />
+        )}
 
         {activeTab === "roomType" && (
           <RoomTypeTab
@@ -130,40 +117,13 @@ export default function FilterBottomSheet({
             onRegionsChange={setLocalSelectedRegions}
           />
         )}
-
-        <View style={styles.buttonWrapper}>
-          <Button size="lg" text="적용" onPress={handleApply} />
-        </View>
-      </BottomSheetView>
-    </BottomSheetModal>
+      </View>
+    </BottomSheet>
   );
 }
 
 const styles = StyleSheet.create({
-  bottomSheetBackground: {
-    backgroundColor: COLORS.white,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    shadowColor: COLORS.black,
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  handleIndicator: {
-    backgroundColor: COLORS.gray[30],
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-    marginBottom: SPACING.sm,
-  },
   contentContainer: {
     flex: 1,
-  },
-  buttonWrapper: {
-    paddingVertical: SPACING.lg,
-    alignItems: "center",
-    paddingHorizontal: SPACING.normal,
-    marginBottom: SPACING.lg,
   },
 });

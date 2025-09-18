@@ -7,6 +7,8 @@ export default function HomeLayout() {
   const isUserScreen = usePathname().includes("/users");
   const isRoomScreen = usePathname().includes("/rooms");
   const isUserSearchScreen = usePathname().includes("/user-search");
+  const isPostCreateScreen = usePathname().includes("/post-create");
+  const isDetailScreen = usePathname().includes("/detail");
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -17,7 +19,11 @@ export default function HomeLayout() {
           tabBarInactiveTintColor: COLORS.gray[30],
           tabBarStyle: {
             display:
-              isUserScreen || isRoomScreen || isUserSearchScreen
+              isUserScreen ||
+              isRoomScreen ||
+              isUserSearchScreen ||
+              isPostCreateScreen ||
+              isDetailScreen
                 ? "none"
                 : "flex",
             borderTopWidth: 1,

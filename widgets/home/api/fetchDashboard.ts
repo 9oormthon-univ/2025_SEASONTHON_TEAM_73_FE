@@ -1,5 +1,5 @@
 import { REQUEST, userGet } from "@/shared/api";
-import { BaseResponse } from "@/shared/types";
+import { BaseResponse, UserProfile } from "@/shared/types";
 import { useQuery } from "@tanstack/react-query";
 
 type User = {
@@ -15,18 +15,12 @@ export type RecommendUser = User & {
   smoking: boolean;
 };
 
-export type LikedUser = User & {
-  gender: string;
-  age: number;
-  smoking: boolean;
-};
-
 type FetchDashboardResponse = BaseResponse<{
   recommendedUsers: {
     users: RecommendUser[];
   };
   likedUsers: {
-    users: LikedUser[];
+    users: UserProfile[];
   };
   isPersonalitySurveyCompleted: boolean;
 }>;

@@ -1,23 +1,31 @@
+import { Header } from "@/shared/components";
 import { COLORS, FONTS, SPACING } from "@/shared/styles";
 import { useFetchPostList, useSubmitPostSearch } from "@/widgets/home/api";
 import { RoomListItem, RoomSearchFilter } from "@/widgets/home/components";
+import { FILTER_DEFAULT } from "@/widgets/home/constants";
 import { useDefaultFilter } from "@/widgets/home/contexts";
 import { Room } from "@/widgets/home/types";
 import { Ionicons } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Animated,
   FlatList,
   ListRenderItem,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
   StyleSheet,
   Text,
   View,
 } from "react-native";
 
 export default function HomeScreen() {
-  const { defaultFilter } = useDefaultFilter();
+  const { defaultFilter, userFilter } = useDefaultFilter();
   const [searchResults, setSearchResults] = useState<Room[]>([]);
   const [isFirstRender, setIsFirstRender] = useState(true);
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const lastScrollY = useRef(0);
 
   const {
     data,
@@ -32,14 +40,30 @@ export default function HomeScreen() {
     useSubmitPostSearch();
 
   useEffect(() => {
+    console.log("필터 변경 감지:", defaultFilter);
     if (!isFirstRender) {
-      submitPostSearch(defaultFilter, {
-        onSuccess: (data) => {
-          setSearchResults(data.content);
-        },
-      });
+      // 필터가 기본값과 다른지 확인
+      const isFilterChanged =
+        JSON.stringify(defaultFilter) !== JSON.stringify(FILTER_DEFAULT);
+
+      if (isFilterChanged) {
+        const searchData = {
+          ...defaultFilter,
+          userFilter: userFilter,
+        };
+        console.log("POST 요청으로 검색 실행:", searchData);
+        submitPostSearch(searchData, {
+          onSuccess: (data) => {
+            console.log("검색 결과:", data.content.length, "개");
+            setSearchResults(data.content);
+          },
+        });
+      } else {
+        console.log("필터가 기본값이므로 검색하지 않음");
+        setSearchResults([]);
+      }
     }
-  }, [defaultFilter, submitPostSearch, isFirstRender]);
+  }, [defaultFilter, userFilter, submitPostSearch, isFirstRender]);
 
   useEffect(() => {
     if (isFirstRender) {
@@ -47,14 +71,24 @@ export default function HomeScreen() {
     }
   }, [isFirstRender]);
 
-  const allRooms = isFirstRender
-    ? data?.pages.flatMap((page) => page.content) ?? []
-    : searchResults;
+  // 필터가 기본값인지 확인
+  const isDefaultFilter =
+    JSON.stringify(defaultFilter) === JSON.stringify(FILTER_DEFAULT);
+
+  const allRooms =
+    isFirstRender || isDefaultFilter
+      ? data?.pages.flatMap((page) => page.content) ?? []
+      : searchResults;
 
   const handleLoadMore = () => {
-    if (isFirstRender && hasNextPage && !isFetchingNextPage) {
+    if (
+      (isFirstRender || isDefaultFilter) &&
+      hasNextPage &&
+      !isFetchingNextPage
+    ) {
       fetchNextPage();
     }
+    // TODO: 필터 검색 결과에 대한 페이지네이션 구현 필요
   };
 
   const renderItem: ListRenderItem<Room> = ({ item }) => (
@@ -62,7 +96,7 @@ export default function HomeScreen() {
   );
 
   const renderFooter = () => {
-    if (isFirstRender && isFetchingNextPage) {
+    if ((isFirstRender || isDefaultFilter) && isFetchingNextPage) {
       return (
         <View style={styles.footerLoader}>
           <ActivityIndicator size="small" color={COLORS.black} />
@@ -70,7 +104,7 @@ export default function HomeScreen() {
       );
     }
 
-    if (!isFirstRender && isSearchLoading) {
+    if (!isDefaultFilter && isSearchLoading) {
       return (
         <View style={styles.footerLoader}>
           <ActivityIndicator size="small" color={COLORS.black} />
@@ -104,28 +138,80 @@ export default function HomeScreen() {
 
   const keyExtractor = (item: Room) => item.id.toString();
 
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const currentScrollY = event.nativeEvent.contentOffset.y;
+    const scrollThreshold = 50;
+
+    if (
+      currentScrollY > lastScrollY.current &&
+      currentScrollY > scrollThreshold
+    ) {
+      setIsHeaderVisible(false);
+    } else if (
+      currentScrollY < lastScrollY.current ||
+      currentScrollY <= scrollThreshold
+    ) {
+      setIsHeaderVisible(true);
+    }
+
+    lastScrollY.current = currentScrollY;
+    scrollY.setValue(currentScrollY);
+  };
+
+  const renderHeader = () => (
+    <Animated.View
+      style={[
+        {
+          transform: [
+            {
+              translateY: scrollY.interpolate({
+                inputRange: [0, 80],
+                outputRange: [0, -80],
+                extrapolate: "clamp",
+              }),
+            },
+          ],
+          opacity: scrollY.interpolate({
+            inputRange: [0, 40],
+            outputRange: [1, 0],
+            extrapolate: "clamp",
+          }),
+        },
+      ]}
+    >
+      <Header title="Sharer 게시글" />
+    </Animated.View>
+  );
+
   if (
     isLoading ||
-    (!isFirstRender && isSearchLoading && searchResults.length === 0)
+    (!isDefaultFilter && isSearchLoading && searchResults.length === 0)
   ) {
     return (
-      <>
-        <RoomSearchFilter />
-        <View style={[styles.loadingContainer, { paddingBottom: SPACING.md }]}>
+      <View style={styles.container}>
+        <RoomSearchFilter scrollY={scrollY} isHeaderVisible={isHeaderVisible} />
+        {renderHeader()}
+        <View
+          style={[
+            styles.loadingContainer,
+            { paddingBottom: SPACING.md, paddingTop: 60 },
+          ]}
+        >
           <RoomListItem.Skeleton />
           <RoomListItem.Skeleton />
           <RoomListItem.Skeleton />
           <RoomListItem.Skeleton />
         </View>
-      </>
+      </View>
     );
   }
 
   if (isError) {
     return (
-      <>
-        <RoomSearchFilter />
-        <View style={styles.errorContainer}>
+      <View style={styles.container}>
+        <RoomSearchFilter scrollY={scrollY} isHeaderVisible={isHeaderVisible} />
+        {renderHeader()}
+        <View style={[styles.errorContainer, { paddingTop: 60 }]}>
           <Ionicons
             name="alert-circle-outline"
             size={48}
@@ -137,25 +223,29 @@ export default function HomeScreen() {
             방들을 받아오던 중 문제가 발생했습니다
           </Text>
         </View>
-      </>
+      </View>
     );
   }
 
   return (
-    <>
-      <RoomSearchFilter />
+    <View style={styles.container}>
+      <RoomSearchFilter scrollY={scrollY} isHeaderVisible={isHeaderVisible} />
+      {renderHeader()}
       <FlatList
         data={allRooms}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.1}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
         ListFooterComponent={renderFooter}
         ListEmptyComponent={renderEmptyComponent}
         showsVerticalScrollIndicator={false}
         style={styles.roomList}
+        contentContainerStyle={{ paddingTop: 74 }}
       />
-    </>
+    </View>
   );
 }
 

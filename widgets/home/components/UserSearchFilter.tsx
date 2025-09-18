@@ -2,27 +2,22 @@ import { COLORS, SPACING } from "@/shared/styles";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { Animated, StyleSheet, TouchableOpacity } from "react-native";
-import { useDefaultFilter } from "../contexts";
-import FilterBottomSheet from "./FilterBottomSheet";
+import { useUserFilter } from "../contexts/filterUserDefault";
+import UserFilterBottomSheet from "./UserFilterBottomSheet";
 
-interface RoomSearchFilterProps {
+interface UserSearchFilterProps {
   scrollY?: Animated.Value;
   isHeaderVisible?: boolean;
 }
 
-export default function RoomSearchFilter({
+export default function UserSearchFilter({
   scrollY,
   isHeaderVisible = true,
-}: RoomSearchFilterProps) {
+}: UserSearchFilterProps) {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
+  const { defaultFilter } = useUserFilter();
 
-  const { roomTypes, preferredGender, dongs, userFilter } = useDefaultFilter();
-
-  const applied =
-    roomTypes.length > 0 ||
-    preferredGender.length > 0 ||
-    dongs.length > 0 ||
-    (userFilter && Object.keys(userFilter).length > 0);
+  const applied = defaultFilter && Object.keys(defaultFilter).length > 0;
 
   const handleFilterPress = () => {
     setIsFilterVisible(true);
@@ -65,7 +60,7 @@ export default function RoomSearchFilter({
         </TouchableOpacity>
       </Animated.View>
 
-      <FilterBottomSheet
+      <UserFilterBottomSheet
         isVisible={isFilterVisible}
         onClose={handleFilterClose}
       />

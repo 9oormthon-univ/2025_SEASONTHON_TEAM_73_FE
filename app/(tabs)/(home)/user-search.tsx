@@ -1,45 +1,50 @@
-import { COLORS, FONTS, SPACING } from "@/shared/styles";
-import { useFetchPostList, useSubmitPostSearch } from "@/widgets/home/api";
-import { RoomListItem, RoomSearchFilter } from "@/widgets/home/components";
-import { useDefaultFilter } from "@/widgets/home/contexts";
-import { Room } from "@/widgets/home/types";
+import { Header } from "@/shared/components";
+import { HEADER_HEIGHT } from "@/shared/constants";
+import { COLORS, FONT_SIZE, FONTS, SPACING } from "@/shared/styles";
+import { UserProfile } from "@/shared/types";
+import { useSubmitUserSearch } from "@/widgets/home/api/submitUserSearch";
+import { UserListItem, UserSearchFilter } from "@/widgets/home/components";
+import { useUserFilter } from "@/widgets/home/contexts/filterUserDefault";
 import { Ionicons } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Animated,
   FlatList,
   ListRenderItem,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
   StyleSheet,
   Text,
   View,
 } from "react-native";
 
-export default function HomeScreen() {
-  const { defaultFilter } = useDefaultFilter();
-  const [searchResults, setSearchResults] = useState<Room[]>([]);
+export default function UserSearchScreen() {
+  const { defaultFilter } = useUserFilter();
+  const [searchResults, setSearchResults] = useState<UserProfile[]>([]);
   const [isFirstRender, setIsFirstRender] = useState(true);
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const lastScrollY = useRef(0);
 
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    isError,
-  } = useFetchPostList();
-
-  const { mutate: submitPostSearch, isPending: isSearchLoading } =
-    useSubmitPostSearch();
+  const { mutate: submitUserSearch, isPending: isSearchLoading } =
+    useSubmitUserSearch();
 
   useEffect(() => {
+    console.log("필터 변경 감지:", defaultFilter);
     if (!isFirstRender) {
-      submitPostSearch(defaultFilter, {
-        onSuccess: (data) => {
-          setSearchResults(data.content);
-        },
-      });
+      console.log("POST 요청으로 검색 실행:", defaultFilter || {});
+      submitUserSearch(
+        { filters: defaultFilter || {}, page: 0 },
+        {
+          onSuccess: (data) => {
+            console.log("검색 결과:", data.content.length, "개");
+            setSearchResults(data.content);
+          },
+        }
+      );
     }
-  }, [defaultFilter, submitPostSearch, isFirstRender]);
+  }, [defaultFilter, isFirstRender, submitUserSearch]);
 
   useEffect(() => {
     if (isFirstRender) {
@@ -47,30 +52,19 @@ export default function HomeScreen() {
     }
   }, [isFirstRender]);
 
-  const allRooms = isFirstRender
-    ? data?.pages.flatMap((page) => page.content) ?? []
-    : searchResults;
+  const allUsers = searchResults;
 
   const handleLoadMore = () => {
-    if (isFirstRender && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
+    // TODO: 페이지네이션 구현 필요
+    console.log("더 많은 데이터 로드 요청");
   };
 
-  const renderItem: ListRenderItem<Room> = ({ item }) => (
-    <RoomListItem room={item} />
+  const renderItem: ListRenderItem<UserProfile> = ({ item }) => (
+    <UserListItem user={item} />
   );
 
   const renderFooter = () => {
-    if (isFirstRender && isFetchingNextPage) {
-      return (
-        <View style={styles.footerLoader}>
-          <ActivityIndicator size="small" color={COLORS.black} />
-        </View>
-      );
-    }
-
-    if (!isFirstRender && isSearchLoading) {
+    if (isSearchLoading) {
       return (
         <View style={styles.footerLoader}>
           <ActivityIndicator size="small" color={COLORS.black} />
@@ -82,80 +76,137 @@ export default function HomeScreen() {
   };
 
   const renderEmptyComponent = () => {
-    if (isLoading || isSearchLoading) {
+    if (isSearchLoading) {
       return null;
     }
 
     return (
       <View style={styles.emptyContainer}>
         <Ionicons
-          name="home-outline"
+          name="people-outline"
           size={48}
           color={COLORS.gray[30]}
           style={styles.emptyIcon}
         />
-        <Text style={styles.emptyText}>방이 없어요</Text>
+        <Text style={styles.emptyText}>사용자가 없어요</Text>
         <Text style={styles.emptySubText}>
-          조건에 맞는 방을 찾을 수 없습니다
+          조건에 맞는 사용자를 찾을 수 없습니다
         </Text>
       </View>
     );
   };
 
-  const keyExtractor = (item: Room) => item.id.toString();
+  const keyExtractor = (item: UserProfile, index: number) =>
+    `user-search-${item.id}-${index}`;
 
-  if (
-    isLoading ||
-    (!isFirstRender && isSearchLoading && searchResults.length === 0)
-  ) {
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const currentScrollY = event.nativeEvent.contentOffset.y;
+    const scrollThreshold = 50;
+
+    if (
+      currentScrollY > lastScrollY.current &&
+      currentScrollY > scrollThreshold
+    ) {
+      setIsHeaderVisible(false);
+    } else if (
+      currentScrollY < lastScrollY.current ||
+      currentScrollY <= scrollThreshold
+    ) {
+      setIsHeaderVisible(true);
+    }
+
+    lastScrollY.current = currentScrollY;
+    scrollY.setValue(currentScrollY);
+  };
+
+  const renderHeader = () => (
+    <Animated.View
+      style={[
+        {
+          transform: [
+            {
+              translateY: scrollY.interpolate({
+                inputRange: [0, 80],
+                outputRange: [0, -80],
+                extrapolate: "clamp",
+              }),
+            },
+          ],
+          opacity: scrollY.interpolate({
+            inputRange: [0, 40],
+            outputRange: [1, 0],
+            extrapolate: "clamp",
+          }),
+        },
+      ]}
+    >
+      <Header title="Joiner 프로필" />
+    </Animated.View>
+  );
+
+  if (isSearchLoading) {
     return (
-      <>
-        <RoomSearchFilter />
-        <View style={[styles.loadingContainer, { paddingBottom: SPACING.md }]}>
-          <RoomListItem.Skeleton />
-          <RoomListItem.Skeleton />
-          <RoomListItem.Skeleton />
-          <RoomListItem.Skeleton />
+      <View style={styles.container}>
+        <UserSearchFilter scrollY={scrollY} isHeaderVisible={isHeaderVisible} />
+        {renderHeader()}
+        <View
+          style={[
+            styles.loadingContainer,
+            { paddingBottom: SPACING.md, paddingTop: HEADER_HEIGHT },
+          ]}
+        >
+          <UserListItem.Skeleton />
+          <UserListItem.Skeleton />
+          <UserListItem.Skeleton />
+          <UserListItem.Skeleton />
         </View>
-      </>
+      </View>
     );
   }
 
-  if (isError) {
+  if (searchResults.length === 0) {
     return (
-      <>
-        <RoomSearchFilter />
-        <View style={styles.errorContainer}>
+      <View style={styles.container}>
+        <UserSearchFilter scrollY={scrollY} isHeaderVisible={isHeaderVisible} />
+        {renderHeader()}
+
+        <View style={styles.emptyContainer}>
           <Ionicons
-            name="alert-circle-outline"
+            name="people-outline"
             size={48}
             color={COLORS.gray[30]}
-            style={styles.errorIcon}
+            style={styles.emptyIcon}
           />
-          <Text style={styles.errorText}>에러가 발생했어요</Text>
-          <Text style={styles.errorSubText}>
-            방들을 받아오던 중 문제가 발생했습니다
+          <Text style={styles.emptyText}>사용자가 없어요</Text>
+          <Text style={styles.emptySubText}>
+            조건에 맞는 사용자를 찾을 수 없습니다
           </Text>
         </View>
-      </>
+      </View>
     );
   }
 
+  // TODO: 에러 처리 구현 필요
+
   return (
-    <>
-      <RoomSearchFilter />
+    <View style={styles.container}>
+      <UserSearchFilter scrollY={scrollY} isHeaderVisible={isHeaderVisible} />
+      {renderHeader()}
       <FlatList
-        data={allRooms}
+        data={allUsers}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.1}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
         ListFooterComponent={renderFooter}
         ListEmptyComponent={renderEmptyComponent}
         showsVerticalScrollIndicator={false}
-        style={styles.roomList}
+        style={styles.userList}
+        contentContainerStyle={{ paddingTop: 74 }}
       />
-    </>
+    </View>
   );
 }
 
@@ -164,6 +215,26 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: SPACING.normal,
+    paddingVertical: SPACING.sm,
+    backgroundColor: COLORS.white,
+  },
+  backButton: {
+    padding: SPACING.xs,
+  },
+  headerTitle: {
+    flex: 1,
+    textAlign: "center",
+    fontFamily: FONTS.bold,
+    fontSize: FONT_SIZE.b1,
+    color: COLORS.black,
+  },
+  headerSpacer: {
+    width: 40,
+  },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -171,7 +242,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
   },
-  roomList: {
+  userList: {
     flex: 1,
   },
   createButton: {

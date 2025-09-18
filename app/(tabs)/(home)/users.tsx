@@ -1,5 +1,27 @@
-import { View } from "react-native";
+import { COLORS } from "@/shared/styles";
+import { useFetchLikedUser } from "@/widgets/home/api";
+import { UserListItem } from "@/widgets/home/components";
+import React from "react";
+import { ScrollView, StyleSheet } from "react-native";
 
 export default function UsersScreen() {
-  return <View></View>;
+  const { data } = useFetchLikedUser(0);
+
+  const renderItem = () => {
+    if (data) {
+      return data.content.map((user) => (
+        <UserListItem key={user.id} user={user} />
+      ));
+    }
+    return null;
+  };
+
+  return <ScrollView style={styles.container}>{renderItem()}</ScrollView>;
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.white,
+  },
+});

@@ -1,4 +1,9 @@
 import { Gender } from "@/shared/constants";
+import {
+  AlcoholCountValue,
+  SleepLevelValue,
+  TidinessLevelValue,
+} from "../constants/userFilter";
 
 export type PriceRange = {
   min: number;
@@ -16,6 +21,14 @@ export type DefaultFilter = SearchFilter &
   };
 
 export type SearchFilter = { keyword: string };
+
+export type UserDefaultFilter = Partial<{
+  smoking: boolean;
+  alcoholCount: AlcoholCountValue[];
+  sleepLevel: SleepLevelValue[];
+  pet: string[];
+  tidinessLevel: TidinessLevelValue[];
+}>;
 
 export interface SelectedRegion {
   id: string;
