@@ -118,7 +118,8 @@ export default function UserSearchScreen() {
     );
   };
 
-  const keyExtractor = (item: UserProfile) => item.id.toString();
+  const keyExtractor = (item: UserProfile, index: number) =>
+    `user-search-${item.id}-${index}`;
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const currentScrollY = event.nativeEvent.contentOffset.y;

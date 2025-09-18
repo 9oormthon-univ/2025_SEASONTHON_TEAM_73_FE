@@ -149,7 +149,9 @@ function FavoriteUsersSection({
         {isFetching ? (
           <UserListItem.Skeleton />
         ) : likedUsers && likedUsers.length > 0 ? (
-          likedUsers.map((user) => <UserListItem key={user.id} user={user} />)
+          likedUsers.map((user, index) => (
+            <UserListItem key={`user-${user.id}-${index}`} user={user} />
+          ))
         ) : (
           <EmptyFavoriteUsersState />
         )}
