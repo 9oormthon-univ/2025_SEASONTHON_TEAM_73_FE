@@ -2,11 +2,16 @@ import { EmptyStatus } from "@/shared/components";
 import { COLORS } from "@/shared/styles";
 import { useFetchLikedUser } from "@/widgets/home/api";
 import { UserListItem } from "@/widgets/home/components";
+import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import { ScrollView, StyleSheet } from "react-native";
 
 export default function UsersScreen() {
+  const { type } = useLocalSearchParams();
+
   const { data, isLoading } = useFetchLikedUser(0);
+
+  console.log(type);
 
   const renderItem = () => {
     if (data && data.content.length > 0) {

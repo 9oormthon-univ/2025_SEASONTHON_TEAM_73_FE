@@ -57,7 +57,6 @@ export default function UserSearchScreen() {
   const allUsers = searchResults;
 
   const handleLoadMore = () => {
-    // TODO: 페이지네이션 구현 필요
     console.log("더 많은 데이터 로드 요청");
   };
 
